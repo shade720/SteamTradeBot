@@ -1,0 +1,8 @@
+﻿namespace TradeBot
+{
+    class Validation
+    {
+
+    }
+}
+
