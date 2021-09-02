@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option csharp_namespace = "SteamTradeBotService.Protos";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+package SteamTradeBotService.Protos;
+
+service InterfaceService{
+
+
+}
