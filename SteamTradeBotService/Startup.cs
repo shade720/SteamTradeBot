@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SteamTradeBotService.Models;
 using SteamTradeBotService.Services;
 
 namespace SteamTradeBotService
@@ -18,6 +19,7 @@ namespace SteamTradeBotService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
+            services.AddSingleton<Core>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

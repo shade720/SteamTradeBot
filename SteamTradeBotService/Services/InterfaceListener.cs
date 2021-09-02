@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Grpc.Core;
 using SteamTradeBotService.Models;
 using SteamTradeBotService.Protos;
@@ -10,21 +7,35 @@ namespace SteamTradeBotService.Services
 {
     public class InterfaceListener : InterfaceService.InterfaceServiceBase
     {
+        private readonly Core _core = new ();
+
         public override async Task<StartResponse> StartBot(StartRequest request, ServerCallContext context)
         {
-            var core = new Core(new Configuration());
-            await core.StartWork();
+            _core.StartWork();
             return new StartResponse();
         }
 
-        public override Task<StopResponse> StopBot(StopRequest request, ServerCallContext context)
+        public override async Task<StopResponse> StopBot(StopRequest request, ServerCallContext context)
         {
-            return base.StopBot(request, context);
+            _core.StopWork();
+            return new StopResponse();
         }
 
-        public override Task<SetConfigurationResponse> SetConfiguration(SetConfigurationRequest request, ServerCallContext context)
+        public override async Task<SetConfigurationResponse> SetConfiguration(SetConfigurationRequest request, ServerCallContext context)
         {
-            return base.SetConfiguration(request, context);
+            return new SetConfigurationResponse();
+        }
+
+        public override async Task<LogInResponse> LogIn(LogInRequest request, ServerCallContext context)
+        {
+            await _core.LogIn();
+            return new LogInResponse();
+        }
+
+        public override async Task<LogOutResponse> LogOut(LogOutRequest request, ServerCallContext context)
+        {
+            await _core.LogOut();
+            return new LogOutResponse();
         }
     }
 }

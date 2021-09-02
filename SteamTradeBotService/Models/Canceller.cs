@@ -9,23 +9,23 @@ namespace SteamTradeBotService.Models
     public class Canceller : Base
     {
         private List<string> _myItemsList;
-        private readonly CancellationToken _token;
+        private readonly Browser _browser;
 
-        public Canceller(List<string> myItemList, CancellationToken token)
+        public Canceller(List<string> myItemList, Browser browser)
         {
             _myItemsList = myItemList;
-            _token = token;
+            _browser = browser;
         }
 
-        public async Task Run()
+        public async Task Run(CancellationToken token)
         {
             await Task.Run(() =>
             {
-                while (!_token.IsCancellationRequested)
+                while (true)
                 {
-
+                    _core.Notify(this, "cancel");
                 }
-            });
+            }, token);
         }
         public void UpdateMyItemList(List<string> incomingList)
         {

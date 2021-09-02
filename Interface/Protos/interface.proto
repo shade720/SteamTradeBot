@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+option csharp_namespace = "SteamTradeBotService.Protos";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+package SteamTradeBotService.Protos;
+
+service InterfaceService{
+	//запрашивает начать работу
+	rpc StartBot (StartRequest) returns (StartResponse);
+
+	//запрашивает остановить бота
+	rpc StopBot (StopRequest) returns (StopResponse);
+
+	//выставляет конфигурацию в сервисе
+	rpc SetConfiguration(SetConfigurationRequest) returns (SetConfigurationResponse);
+
+	//подписывает на логи
+	rpc WriteBack(stream WriteBackRequest) returns (WriteBackResponse);
+
+	//загружает новый список предметов
+	rpc LoadItemList (LoadItemListRequest) returns (LoadItemListResponse);
+
+	rpc LogIn(LogInRequest) returns (LogInResponse);
+
+	rpc LogOut(LogOutRequest) returns (LogOutResponse);
+
+}
+
+message DefaultResponse{
+	ReplyCode code = 1;
+	string message = 2;
+}
+
+enum ReplyCode{
+	REPLY_CODE_UNSPECIFIED = 0;
+	REPLY_CODE_SUCCEED = 1;
+	REPLY_CODE_FAILURE = 2;
+}
+
+message Configuration{
+	 double SalesPerWeek = 1;
+     double PlaceOnListing = 2;
+     double CoefficientOfSales = 3;
+     double RequiredProfit = 4;
+     double MinProfit = 5;
+     double AvailableBalance = 6;
+     double FitPriceInterval = 7;
+     double AveragePrice = 8;
+     string AnalysisInterval = 9;
+     double MinPrice = 10;
+     double MaxPrice = 11;
+     double OrderVolume = 12;
+     double ItemListCount = 13;
+     double Trend = 14;
+}
+
+
+message StartRequest{
+	Configuration configuration = 1;
+}
+message StartResponse{
+	google.protobuf.Empty empty = 1;
+}
+message StopRequest{
+	google.protobuf.Empty empty = 1;
+}
+message StopResponse{
+	google.protobuf.Empty empty = 1;
+}
+message SetConfigurationRequest{
+	Configuration configuration = 1;
+}
+message SetConfigurationResponse{
+	google.protobuf.Empty empty = 1;
+}
+
+message WriteBackRequest{
+	google.protobuf.Empty empty = 1;
+}
+message WriteBackResponse{
+	oneof event_type{
+		double balance = 1;
+		string message = 2;
+	}
+}
+message LoadItemListRequest{
+	google.protobuf.Empty empty = 1;
+}
+message LoadItemListResponse{
+	DefaultResponse response = 1;
+}
+message LogInRequest{
+	google.protobuf.Empty empty = 1;
+}
+message LogInResponse{
+	DefaultResponse response = 1;
+}
+message LogOutRequest{
+	google.protobuf.Empty empty = 1;
+}
+message LogOutResponse{
+	DefaultResponse response = 1;
+}

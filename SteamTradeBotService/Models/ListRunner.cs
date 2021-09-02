@@ -8,25 +8,22 @@ namespace SteamTradeBotService.Models
     {
         private readonly Analyzer _analyzer;
         private List<string> _itemList;
-        private readonly CancellationToken _token;
 
-        public ListRunner(List<string> itemList, CancellationToken token)
+        public ListRunner(List<string> itemList, Browser browser)
         {
             _itemList = itemList;
-            _analyzer = new Analyzer(_browser);
-            _token = token;
+            _analyzer = new Analyzer(browser);
         }
 
-        public async Task Run()
+        public async Task Run(CancellationToken token)
         {
             await Task.Run(() =>
             {
                 foreach (var item in _itemList)
                 {
                     if (_analyzer.AnalyzeItem(item)) _core.Notify(this, "buy");
-                    if (_token.IsCancellationRequested) break;
                 }
-            });
+            }, token);
         }
 
         public void SetItemsList(List<string> newItemsList)

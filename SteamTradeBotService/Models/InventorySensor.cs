@@ -9,23 +9,23 @@ namespace SteamTradeBotService.Models
     public class InventorySensor : Base
     {
         private List<string> _myItemsList;
-        private readonly CancellationToken _token;
+        private Browser _browser;
 
-        public InventorySensor(List<string> myItemsList, CancellationToken token)
+        public InventorySensor(List<string> myItemsList, Browser browser)
         {
-            _token = token;
             _myItemsList = myItemsList;
+            _browser = browser;
         }
 
-        public async Task Run()
+        public async Task Run(CancellationToken token)
         {
             await Task.Run(() =>
             {
-                while (!_token.IsCancellationRequested)
+                while (true)
                 {
-
+                    _core.Notify(this, "sell");
                 }
-            });
+            }, token);
         }
 
         public void UpdateMyItemList(List<string> incomingList)

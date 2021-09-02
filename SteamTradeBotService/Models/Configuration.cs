@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBotService.Models
 {
-    public class Configuration
+    public static class Configuration
     {
     }
 }

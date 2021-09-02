@@ -7,6 +7,13 @@ namespace SteamTradeBotService.Models
 {
     public class Executor : Base
     {
+        private readonly Browser _browser;
+
+        public Executor(Browser browser)
+        {
+            _browser = browser;
+        }
+
         public void BuyItem()
         {
         }
