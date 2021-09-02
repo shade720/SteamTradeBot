@@ -21,6 +21,7 @@ namespace SteamTradeBotService.Models
             {
                 foreach (var item in _itemList)
                 {
+                    Thread.Sleep(5000);
                     if (_analyzer.AnalyzeItem(item)) _core.Notify(this, "buy");
                 }
             }, token);

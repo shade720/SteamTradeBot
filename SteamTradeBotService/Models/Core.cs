@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using SteamTradeBotService.Clients;
 
 namespace SteamTradeBotService.Models
@@ -16,7 +17,7 @@ namespace SteamTradeBotService.Models
         private CancellationTokenSource _token;
         private readonly Account _account;
 
-        public Core ()
+        public Core()
         {
             _postgresClient = new PostgresClient();
             var itemList = _postgresClient.GetItemList();
@@ -48,14 +49,14 @@ namespace SteamTradeBotService.Models
         public async Task StartWork()
         {
             _token = new CancellationTokenSource();
-            await _listRunner.Run(_token.Token);
-            await _inventorySensor.Run(_token.Token);
-            await _canceller.Run(_token.Token);
+            _listRunner.Run(_token.Token);
+            _inventorySensor.Run(_token.Token);
+            _canceller.Run(_token.Token);
         }
 
         public async Task StopWork()
         {
-            await Task.Run(()=>_token.Cancel());
+            _token.Cancel();
         }
 
         public async Task LogIn()
@@ -79,16 +80,19 @@ namespace SteamTradeBotService.Models
             if (ev == "buy")
             {
                 _executor.BuyItem();
+                Log.Information(ev);
             }
 
             if (ev == "sell")
             {
                 _executor.SellItem();
+                Log.Information(ev);
             }
 
             if (ev == "cancel")
             {
                 _executor.CancelItem();
+                Log.Information(ev);
             }
         }
     }

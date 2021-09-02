@@ -23,6 +23,7 @@ namespace SteamTradeBotService.Models
             {
                 while (true)
                 {
+                    Thread.Sleep(5000);
                     _core.Notify(this, "cancel");
                 }
             }, token);

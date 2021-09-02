@@ -6,7 +6,7 @@ namespace Interface
 {
     class TradeBotClient
     {
-        private readonly InterfaceService.InterfaceServiceClient _client = new(GrpcChannel.ForAddress("http://localhost:5001"));
+        private readonly InterfaceService.InterfaceServiceClient _client = new(GrpcChannel.ForAddress("https://localhost:5051"));
 
         public async Task StartBot(Configuration configuration)
         {

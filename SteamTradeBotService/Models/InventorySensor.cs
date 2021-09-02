@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,6 +21,7 @@ namespace SteamTradeBotService.Models
             {
                 while (true)
                 {
+                    Thread.Sleep(5000);
                     _core.Notify(this, "sell");
                 }
             }, token);

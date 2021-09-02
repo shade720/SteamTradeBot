@@ -23,10 +23,20 @@ service InterfaceService{
 	//загружает новый список предметов
 	rpc LoadItemList (LoadItemListRequest) returns (LoadItemListResponse);
 
+	rpc ClearMyLots (ClearMyLotsRequest) returns (ClearMyLotsResponse);
+
 	rpc LogIn(LogInRequest) returns (LogInResponse);
 
 	rpc LogOut(LogOutRequest) returns (LogOutResponse);
 
+}
+
+message ClearMyLotsRequest{
+	google.protobuf.Empty empty = 1;
+}
+
+message ClearMyLotsResponse{
+	google.protobuf.Empty empty = 1;
 }
 
 message DefaultResponse{
