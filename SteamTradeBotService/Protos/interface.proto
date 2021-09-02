@@ -8,6 +8,48 @@ import "google/protobuf/empty.proto";
 package SteamTradeBotService.Protos;
 
 service InterfaceService{
+	//запрашивает начать работу
+	rpc StartBot (StartRequest) returns (StartResponse);
 
+	//запрашивает остановить бота
+	rpc StopBot (StopRequest) returns (StopResponse);
+
+	//выставляет конфигурацию в сервисе
+	rpc SetConfiguration(SetConfigurationRequest) returns (SetConfigurationResponse);
+
+	//подписывает на логи
+	rpc WriteBack(stream WriteBackRequest) returns (WriteBackResponse);
+
+	rpc LoadItemList (LoadItemListRequest) returns (LoadItemListResponse);
+}
+
+message StartRequest{
+	google.protobuf.Empty empty = 1;
+}
+message StartResponse{
+
+}
+message StopRequest{
+
+}
+message StopResponse{
+
+}
+message SetConfigurationRequest{
+
+}
+message SetConfigurationResponse{
+
+}
+message WriteBackRequest{
+
+}
+message WriteBackResponse{
+
+}
+message LoadItemListRequest{
+
+}
+message LoadItemListResponse{
 
 }

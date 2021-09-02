@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SteamTradeBotService.Models;
 
-namespace SteamTradeBotService.Clients
+namespace SteamTradeBotService.Models
 {
-    public class Callbacks
+    public class Configuration
     {
     }
 }

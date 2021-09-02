@@ -5,18 +5,25 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBotService.Models
 {
-    class Base
+    public class Base
     {
         protected ICore _core;
+        protected Browser _browser;
 
-        public Base(ICore mediator = null)
+        public Base(ICore core = null, Browser browser = null)
         {
-            this._core = mediator;
+            _core = core;
+            _browser = browser;
         }
 
-        public void SetMediator(ICore mediator)
+        public void SetCore(ICore core)
         {
-            this._core = mediator;
+            _core = core;
+        }
+
+        public void SetBrowser(Browser browser)
+        {
+            _browser = browser;
         }
     }
 }

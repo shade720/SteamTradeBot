@@ -7,5 +7,15 @@ namespace SteamTradeBotService.Models
 {
     public class Analyzer
     {
+        private Browser _browser;
+        public Analyzer(Browser browser)
+        {
+            _browser = browser;
+        }
+
+        public bool AnalyzeItem(string itemName)
+        {
+            return false;
+        }
     }
 }

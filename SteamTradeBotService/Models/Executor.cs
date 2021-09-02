@@ -5,7 +5,18 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBotService.Models
 {
-    public class Executor
+    public class Executor : Base
     {
+        public void BuyItem()
+        {
+        }
+
+        public void SellItem()
+        {
+        }
+
+        public void CancelItem()
+        {
+        }
     }
 }
