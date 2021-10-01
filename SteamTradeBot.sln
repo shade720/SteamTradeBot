@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBotService", "SteamTradeBotService\SteamTradeBotService.csproj", "{79989548-2D4B-4E6F-818D-5D8ACF0D0C0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface", "Interface\Interface.csproj", "{EE63221C-49F2-4A1B-8618-9340992FD7CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interface", "Interface\Interface.csproj", "{EE63221C-49F2-4A1B-8618-9340992FD7CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamTradeBotInterface", "SteamTradeBotInterface\SteamTradeBotInterface.csproj", "{4DE27173-E747-4089-B6EC-6AFCAE7B1A65}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{EE63221C-49F2-4A1B-8618-9340992FD7CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE63221C-49F2-4A1B-8618-9340992FD7CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE63221C-49F2-4A1B-8618-9340992FD7CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DE27173-E747-4089-B6EC-6AFCAE7B1A65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DE27173-E747-4089-B6EC-6AFCAE7B1A65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DE27173-E747-4089-B6EC-6AFCAE7B1A65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DE27173-E747-4089-B6EC-6AFCAE7B1A65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
