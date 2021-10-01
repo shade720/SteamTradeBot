@@ -1,8 +1,0 @@
-﻿namespace TradeBot
-{
-    class Validation
-    {
-
-    }
-}
-
