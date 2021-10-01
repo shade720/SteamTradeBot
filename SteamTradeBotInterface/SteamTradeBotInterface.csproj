@@ -6,4 +6,12 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Views\Resources\Icons\" />
+    <Folder Include="Views\Resources\Backgrounds\" />
+    <Folder Include="Views\Resources\" />
+  </ItemGroup>
+
 </Project>
