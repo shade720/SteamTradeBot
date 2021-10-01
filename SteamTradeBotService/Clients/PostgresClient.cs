@@ -30,9 +30,8 @@ namespace SteamTradeBotService.Clients
         public void ClearItemList()
         {
             using var database = new DataContext();
-            database.Database.Ex
+            database.Database.ExecuteSqlRaw("TRUNCATE TABLE [ItemList]");
         }
-
 
         public List<string> GetItemList()
         {

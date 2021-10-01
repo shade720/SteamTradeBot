@@ -19,7 +19,7 @@ namespace SteamTradeBotService.Models
         {
             _postgresClient = new PostgresClient();
             var itemList = _postgresClient.GetItemList();
-            var myItemList = _postgresClient.GetOrdersList();
+            var myOrdersList = _postgresClient.GetOrdersList();
 
             var browser = new Browser();
 
@@ -29,10 +29,10 @@ namespace SteamTradeBotService.Models
             _listRunner = new ListRunner(itemList, browser);
             _listRunner.SetCore(this);
 
-            _inventorySensor = new InventorySensor(myItemList, browser);
+            _inventorySensor = new InventorySensor(myOrdersList, browser);
             _inventorySensor.SetCore(this);
 
-            _canceler = new Canceler(myItemList, browser);
+            _canceler = new Canceler(myOrdersList, browser);
             _canceler.SetCore(this);
 
             _executor = new Executor(browser);

@@ -8,7 +8,7 @@ import "google/protobuf/empty.proto";
 package SteamTradeBotService.Protos;
 
 
-service LogService{
+service ReportService{
 
 	//подписывает на логи
 	rpc WriteBack(WriteBackRequest) returns (stream WriteBackResponse);

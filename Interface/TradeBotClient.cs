@@ -9,7 +9,7 @@ namespace Interface
     class TradeBotClient
     {
         private readonly InterfaceService.InterfaceServiceClient _clientInterface = new (GrpcChannel.ForAddress("https://localhost:5051"));
-        private readonly LogService.LogServiceClient _clientLogs = new (GrpcChannel.ForAddress("https://localhost:5051"));
+        private readonly ReportService.ReportServiceClient _clientReports = new (GrpcChannel.ForAddress("https://localhost:5051"));
         private CancellationTokenSource _token;
 
         public delegate void BalanceWriter (double balance);
@@ -43,7 +43,7 @@ namespace Interface
 
         public async Task SubscribeWriteBacks()
         {
-            using var call = _clientLogs.WriteBack(new WriteBackRequest());
+            using var call = _clientReports.WriteBack(new WriteBackRequest());
             _token = new CancellationTokenSource();
 
             while (await call.ResponseStream.MoveNext(_token.Token))
