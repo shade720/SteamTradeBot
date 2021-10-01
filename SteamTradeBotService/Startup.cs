@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SteamTradeBotService.Clients;
 using SteamTradeBotService.Models;
 using SteamTradeBotService.Services;
 
@@ -15,7 +16,6 @@ namespace SteamTradeBotService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
-            services.AddSingleton<Core>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,6 +31,7 @@ namespace SteamTradeBotService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<InterfaceListener>();
+                endpoints.MapGrpcService<Reports>();
 
                 endpoints.MapGet("/", async context =>
                 {

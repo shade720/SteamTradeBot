@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Serilog;
 using SteamTradeBotService.Clients;
 
 namespace SteamTradeBotService.Models
@@ -9,19 +8,18 @@ namespace SteamTradeBotService.Models
     {
         private readonly ListRunner _listRunner;
         private readonly Executor _executor;
-        private readonly Canceller _canceller;
+        private readonly Canceler _canceler;
         private readonly InventorySensor _inventorySensor;
         private readonly ItemListLoader _itemListLoader;
         private readonly PostgresClient _postgresClient;
-        private Callbacks _callbacks;
-        private CancellationTokenSource _token;
+        private static CancellationTokenSource _token;
         private readonly Account _account;
 
         public Core()
         {
             _postgresClient = new PostgresClient();
             var itemList = _postgresClient.GetItemList();
-            var myItemList = _postgresClient.GetMyItemsList();
+            var myItemList = _postgresClient.GetOrdersList();
 
             var browser = new Browser();
 
@@ -34,27 +32,28 @@ namespace SteamTradeBotService.Models
             _inventorySensor = new InventorySensor(myItemList, browser);
             _inventorySensor.SetCore(this);
 
-            _canceller = new Canceller(myItemList, browser);
-            _canceller.SetCore(this);
+            _canceler = new Canceler(myItemList, browser);
+            _canceler.SetCore(this);
 
             _executor = new Executor(browser);
             _executor.SetCore(this);
 
             _itemListLoader = new ItemListLoader();
             _itemListLoader.SetCore(this);
-
-            _callbacks = new Callbacks();
         }
 
         public async Task StartWork()
         {
             _token = new CancellationTokenSource();
-            _listRunner.Run(_token.Token);
-            _inventorySensor.Run(_token.Token);
-            _canceller.Run(_token.Token);
+            await Task.WhenAll
+                (
+                    Task.Run(() => _listRunner.Run(_token.Token)), 
+                    Task.Run(() => _inventorySensor.Run(_token.Token)), 
+                    Task.Run(() => _canceler.Run(_token.Token))
+                );
         }
 
-        public async Task StopWork()
+        public void StopWork()
         {
             _token.Cancel();
         }
@@ -77,22 +76,20 @@ namespace SteamTradeBotService.Models
 
         public void Notify(object sender, string ev)
         {
-            if (ev == "buy")
+            switch (ev)
             {
-                _executor.BuyItem();
-                Log.Information(ev);
-            }
-
-            if (ev == "sell")
-            {
-                _executor.SellItem();
-                Log.Information(ev);
-            }
-
-            if (ev == "cancel")
-            {
-                _executor.CancelItem();
-                Log.Information(ev);
+                case "buy":
+                    _executor.BuyItem();
+                    Reports.MessageWriteEvent?.Invoke("buy");
+                    break;
+                case "sell":
+                    _executor.SellItem();
+                    Reports.MessageWriteEvent?.Invoke("sell");
+                    break;
+                case "cancel":
+                    _executor.CancelItem();
+                    Reports.MessageWriteEvent?.Invoke("cancel");
+                    break;
             }
         }
     }

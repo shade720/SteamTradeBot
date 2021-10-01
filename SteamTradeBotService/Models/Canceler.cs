@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBotService.Models
 {
-    public class Canceller : Base
+    public class Canceler : Base
     {
         private List<string> _myItemsList;
         private readonly Browser _browser;
 
-        public Canceller(List<string> myItemList, Browser browser)
+        public Canceler(List<string> myItemList, Browser browser)
         {
             _myItemsList = myItemList;
             _browser = browser;
@@ -21,12 +21,12 @@ namespace SteamTradeBotService.Models
         {
             await Task.Run(() =>
             {
-                while (true)
+                while (!token.IsCancellationRequested)
                 {
                     Thread.Sleep(5000);
                     _core.Notify(this, "cancel");
                 }
-            }, token);
+            });
         }
         public void UpdateMyItemList(List<string> incomingList)
         {

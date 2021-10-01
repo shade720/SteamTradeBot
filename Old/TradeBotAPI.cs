@@ -51,7 +51,7 @@ namespace TradeBot
                 DialogResult dialogResult = MessageBox.Show("SDA не включен! Включить его?", "SDA не включен", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    Process.Start(Directory.GetCurrentDirectory() + "/../" + "/../" + "/../" + "/SDA/Steam Desktop Authenticator.exe");
+                    Process.Start(Directory.GetCurrentDirectory() + "/../" + "/../" + "/../" + "/../" +"/SteamDesktopAuthenticator/Steam Desktop Authenticator.exe");
                     IsSDADisabledLabel.Text = "SDA включен";
                     IsSDADisabledLabel.ForeColor = Color.Chartreuse;
                 }

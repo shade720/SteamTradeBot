@@ -17,9 +17,6 @@ service InterfaceService{
 	//выставляет конфигурацию в сервисе
 	rpc SetConfiguration(SetConfigurationRequest) returns (SetConfigurationResponse);
 
-	//подписывает на логи
-	rpc WriteBack(stream WriteBackRequest) returns (WriteBackResponse);
-
 	//загружает новый список предметов
 	rpc LoadItemList (LoadItemListRequest) returns (LoadItemListResponse);
 
@@ -85,16 +82,6 @@ message SetConfigurationRequest{
 }
 message SetConfigurationResponse{
 	google.protobuf.Empty empty = 1;
-}
-
-message WriteBackRequest{
-	google.protobuf.Empty empty = 1;
-}
-message WriteBackResponse{
-	oneof event_type{
-		double balance = 1;
-		string message = 2;
-	}
 }
 message LoadItemListRequest{
 	google.protobuf.Empty empty = 1;

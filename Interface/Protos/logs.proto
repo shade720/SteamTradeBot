@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "SteamTradeBotService.Protos";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+package SteamTradeBotService.Protos;
+
+
+service LogService{
+
+	//подписывает на логи
+	rpc WriteBack(WriteBackRequest) returns (stream WriteBackResponse);
+}
+
+message WriteBackRequest{
+	google.protobuf.Empty empty = 1;
+}
+message WriteBackResponse{
+	oneof event_type{
+		double balance = 1;
+		string message = 2;
+	}
+}

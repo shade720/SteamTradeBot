@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Grpc.Core;
 using SteamTradeBotService.Models;
 using SteamTradeBotService.Protos;
@@ -12,46 +13,20 @@ namespace SteamTradeBotService.Services
 
         public override async Task<StartResponse> StartBot(StartRequest request, ServerCallContext context)
         {
-            Configuration.AnalysisInterval = request.Configuration.AnalysisInterval;
-            Configuration.AvailableBalance = request.Configuration.AvailableBalance;
-            Configuration.AveragePrice = request.Configuration.AveragePrice;
-            Configuration.CoefficientOfSales = request.Configuration.CoefficientOfSales;
-            Configuration.FitPriceInterval = request.Configuration.FitPriceInterval;
-            Configuration.ItemListCount = request.Configuration.ItemListCount;
-            Configuration.MaxPrice = request.Configuration.MaxPrice;
-            Configuration.MinPrice = request.Configuration.MinPrice;
-            Configuration.MinProfit = request.Configuration.MinProfit;
-            Configuration.OrderVolume = request.Configuration.OrderVolume;
-            Configuration.PlaceOnListing = request.Configuration.PlaceOnListing;
-            Configuration.RequiredProfit = request.Configuration.RequiredProfit;
-            Configuration.SalesPerWeek = request.Configuration.SalesPerWeek;
-            Configuration.Trend = request.Configuration.Trend;
+            Configuration.SetConfiguration(request.Configuration);
             _core.StartWork();
             return new StartResponse();
         }
 
-        public override async Task<StopResponse> StopBot(StopRequest request, ServerCallContext context)
+        public override Task<StopResponse> StopBot(StopRequest request, ServerCallContext context)
         {
             _core.StopWork();
-            return new StopResponse();
+            return Task.FromResult(new StopResponse());
         }
 
         public override async Task<SetConfigurationResponse> SetConfiguration(SetConfigurationRequest request, ServerCallContext context)
         {
-            Configuration.AnalysisInterval = request.Configuration.AnalysisInterval;
-            Configuration.AvailableBalance = request.Configuration.AvailableBalance;
-            Configuration.AveragePrice = request.Configuration.AveragePrice;
-            Configuration.CoefficientOfSales = request.Configuration.CoefficientOfSales;
-            Configuration.FitPriceInterval = request.Configuration.FitPriceInterval;
-            Configuration.ItemListCount = request.Configuration.ItemListCount;
-            Configuration.MaxPrice = request.Configuration.MaxPrice;
-            Configuration.MinPrice = request.Configuration.MinPrice;
-            Configuration.MinProfit = request.Configuration.MinProfit;
-            Configuration.OrderVolume = request.Configuration.OrderVolume;
-            Configuration.PlaceOnListing = request.Configuration.PlaceOnListing;
-            Configuration.RequiredProfit = request.Configuration.RequiredProfit;
-            Configuration.SalesPerWeek = request.Configuration.SalesPerWeek;
-            Configuration.Trend = request.Configuration.Trend;
+            Configuration.SetConfiguration(request.Configuration);
             return new SetConfigurationResponse();
         }
 

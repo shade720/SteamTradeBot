@@ -18,7 +18,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <Protobuf ProtoRoot="Protos" Include="Protos/interface.proto" GrpcServices="Both" />
+    <Protobuf ProtoRoot="Protos" Include="Protos/interface.proto" GrpcServices="Client" />
+    <Protobuf ProtoRoot="Protos" Include="Protos/logs.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

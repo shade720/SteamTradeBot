@@ -19,12 +19,12 @@ namespace SteamTradeBotService.Models
         {
             await Task.Run(() =>
             {
-                while (true)
+                while (!token.IsCancellationRequested)
                 {
                     Thread.Sleep(5000);
                     _core.Notify(this, "sell");
                 }
-            }, token);
+            });
         }
 
         public void UpdateMyItemList(List<string> incomingList)

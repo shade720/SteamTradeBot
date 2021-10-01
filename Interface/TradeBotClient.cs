@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Grpc.Net.Client;
 using SteamTradeBotService.Protos;
 
@@ -6,11 +8,19 @@ namespace Interface
 {
     class TradeBotClient
     {
-        private readonly InterfaceService.InterfaceServiceClient _client = new(GrpcChannel.ForAddress("https://localhost:5051"));
+        private readonly InterfaceService.InterfaceServiceClient _clientInterface = new (GrpcChannel.ForAddress("https://localhost:5051"));
+        private readonly LogService.LogServiceClient _clientLogs = new (GrpcChannel.ForAddress("https://localhost:5051"));
+        private CancellationTokenSource _token;
+
+        public delegate void BalanceWriter (double balance);
+        public delegate void MessageWriter (string message);
+
+        public BalanceWriter BalanceWriteEvent;
+        public MessageWriter MessageWriteEvent;
 
         public async Task StartBot(Configuration configuration)
         {
-            await _client.StartBotAsync(new StartRequest {Configuration = new SteamTradeBotService.Protos.Configuration
+            await _clientInterface.StartBotAsync(new StartRequest {Configuration = new SteamTradeBotService.Protos.Configuration
                 {
                     SalesPerWeek = configuration.SalesPerWeek,
                     PlaceOnListing = configuration.PlaceOnListing,
@@ -28,26 +38,52 @@ namespace Interface
                     MinProfit = configuration.MinProfit,
                 }
             });
+            await SubscribeWriteBacks();
+        }
+
+        public async Task SubscribeWriteBacks()
+        {
+            using var call = _clientLogs.WriteBack(new WriteBackRequest());
+            _token = new CancellationTokenSource();
+
+            while (await call.ResponseStream.MoveNext(_token.Token))
+            {
+                switch (call.ResponseStream.Current.EventTypeCase)
+                {
+                    case WriteBackResponse.EventTypeOneofCase.Balance:
+                        BalanceWriteEvent?.Invoke(call.ResponseStream.Current.Balance);
+                        break;
+                    case WriteBackResponse.EventTypeOneofCase.Message:
+                        MessageWriteEvent?.Invoke(call.ResponseStream.Current.Message);
+                        break;
+                    case WriteBackResponse.EventTypeOneofCase.None:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
         }
 
         public async Task StopBot()
         {
-            await _client.StopBotAsync(new StopRequest());
+            await _clientInterface.StopBotAsync(new StopRequest());
+            _token.Cancel();
         }
 
         public async Task LogIn()
         {
-            await _client.LogInAsync(new LogInRequest());
+            await _clientInterface.LogInAsync(new LogInRequest());
         }
 
         public async Task LogOut()
         {
-            await _client.LogOutAsync(new LogOutRequest());
+            await _clientInterface.LogOutAsync(new LogOutRequest());
         }
 
         public async Task SetConfiguration(Configuration configuration)
         {
-            await _client.SetConfigurationAsync(new SetConfigurationRequest
+            await _clientInterface.SetConfigurationAsync(new SetConfigurationRequest
             {
                 Configuration = new SteamTradeBotService.Protos.Configuration
                 {
@@ -76,7 +112,7 @@ namespace Interface
 
         public async Task LoadItemsList()
         {
-            await _client.LoadItemListAsync(new LoadItemListRequest());
+            await _clientInterface.LoadItemListAsync(new LoadItemListRequest());
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Serilog;
 
 namespace SteamTradeBotService.Models
 {
@@ -16,14 +13,17 @@ namespace SteamTradeBotService.Models
 
         public void BuyItem()
         {
+            Log.Information("buy");
         }
 
         public void SellItem()
         {
+            Log.Information("sell");
         }
 
         public void CancelItem()
         {
+            Log.Information("cancell");
         }
     }
 }

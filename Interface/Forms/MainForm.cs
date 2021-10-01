@@ -29,6 +29,7 @@ namespace Interface.Forms
             AddTrayMenuContext();
             ValidateConfiguration();
             SetConfiguration();
+            _client.MessageWriteEvent += message => EventConsole.AppendText(message);
         }
 
         #region Handlers

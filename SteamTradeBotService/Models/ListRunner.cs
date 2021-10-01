@@ -21,10 +21,11 @@ namespace SteamTradeBotService.Models
             {
                 foreach (var item in _itemList)
                 {
+                    if (token.IsCancellationRequested) break;
                     Thread.Sleep(5000);
                     if (_analyzer.AnalyzeItem(item)) _core.Notify(this, "buy");
                 }
-            }, token);
+            });
         }
 
         public void SetItemsList(List<string> newItemsList)

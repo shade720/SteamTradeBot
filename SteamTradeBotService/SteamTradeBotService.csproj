@@ -5,14 +5,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\reports.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.39.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.7" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="93.0.4577.1500" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <Protobuf ProtoRoot="Protos" Include="Protos/interface.proto" GrpcServices="Both" />
+    <Protobuf ProtoRoot="Protos" Include="Protos/interface.proto" GrpcServices="Server" />
+    <Protobuf ProtoRoot="Protos" Include="Protos\reports.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

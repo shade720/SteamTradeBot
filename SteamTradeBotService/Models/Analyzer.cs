@@ -15,7 +15,7 @@ namespace SteamTradeBotService.Models
 
         public bool AnalyzeItem(string itemName)
         {
-            return false;
+            return true;
         }
     }
 }
