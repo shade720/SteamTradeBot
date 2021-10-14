@@ -31,7 +31,7 @@ namespace SteamTradeBotService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<InterfaceListener>();
-                endpoints.MapGrpcService<Reports>();
+                endpoints.MapGrpcService<Reporter>();
 
                 endpoints.MapGet("/", async context =>
                 {

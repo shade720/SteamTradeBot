@@ -1,17 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SteamTradeBotService.Models
 {
-    public class InventorySensor : Base
+    public class OrderCancelerSensor : BaseComponent
     {
         private List<string> _myItemsList;
-        private Browser _browser;
+        private readonly Browser _browser;
 
-        public InventorySensor(List<string> myItemsList, Browser browser)
+        public OrderCancelerSensor(List<string> myItemList, Browser browser)
         {
-            _myItemsList = myItemsList;
+            _myItemsList = myItemList;
             _browser = browser;
         }
 
@@ -22,11 +24,10 @@ namespace SteamTradeBotService.Models
                 while (!token.IsCancellationRequested)
                 {
                     Thread.Sleep(5000);
-                    _core.Notify(this, "sell");
+                    _core.Notify(this, "cancel");
                 }
             });
         }
-
         public void UpdateMyItemList(List<string> incomingList)
         {
             _myItemsList = new List<string>(incomingList);

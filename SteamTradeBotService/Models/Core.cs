@@ -6,14 +6,14 @@ namespace SteamTradeBotService.Models
 {
     public class Core : ICore
     {
-        private readonly ListRunner _listRunner;
-        private readonly Executor _executor;
-        private readonly Canceler _canceler;
-        private readonly InventorySensor _inventorySensor;
+        private readonly ItemListRunner _listRunner;
+        private readonly MarketOperationExecutor _executor;
+        private readonly OrderCancelerSensor _canceler;
+        private readonly OrderExecutionSensor _inventorySensor;
         private readonly ItemListLoader _itemListLoader;
         private readonly PostgresClient _postgresClient;
         private static CancellationTokenSource _token;
-        private readonly Account _account;
+        private readonly AccountLogger _account;
 
         public Core()
         {
@@ -23,19 +23,19 @@ namespace SteamTradeBotService.Models
 
             var browser = new Browser();
 
-            _account = new Account(browser);
+            _account = new AccountLogger(browser);
             _account.SetCore(this);
-
-            _listRunner = new ListRunner(itemList, browser);
+            
+            _listRunner = new ItemListRunner(itemList, browser);
             _listRunner.SetCore(this);
 
-            _inventorySensor = new InventorySensor(myOrdersList, browser);
+            _inventorySensor = new OrderExecutionSensor(myOrdersList, browser);
             _inventorySensor.SetCore(this);
 
-            _canceler = new Canceler(myOrdersList, browser);
+            _canceler = new OrderCancelerSensor(myOrdersList, browser);
             _canceler.SetCore(this);
 
-            _executor = new Executor(browser);
+            _executor = new MarketOperationExecutor(browser);
             _executor.SetCore(this);
 
             _itemListLoader = new ItemListLoader();
@@ -80,15 +80,15 @@ namespace SteamTradeBotService.Models
             {
                 case "buy":
                     _executor.BuyItem();
-                    Reports.MessageWriteEvent?.Invoke("buy");
+                    Reporter.MessageWriteEvent?.Invoke("buy");
                     break;
                 case "sell":
                     _executor.SellItem();
-                    Reports.MessageWriteEvent?.Invoke("sell");
+                    Reporter.MessageWriteEvent?.Invoke("sell");
                     break;
                 case "cancel":
                     _executor.CancelItem();
-                    Reports.MessageWriteEvent?.Invoke("cancel");
+                    Reporter.MessageWriteEvent?.Invoke("cancel");
                     break;
             }
         }

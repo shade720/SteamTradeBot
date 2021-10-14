@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBotService.Models
 {
-    public class Account : Base
+    public class AccountLogger : BaseComponent
     {
         private Browser _browser;
 
-        public Account(Browser browser)
+        public AccountLogger(Browser browser)
         {
             _browser = browser;
         }

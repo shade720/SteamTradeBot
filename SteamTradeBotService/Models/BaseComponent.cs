@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBotService.Models
 {
-    public class Base
+    public class BaseComponent
     {
         protected ICore _core;
 
-        public Base(ICore core = null, Browser browser = null)
+        public BaseComponent(ICore core = null, Browser browser = null)
         {
             _core = core;
         }

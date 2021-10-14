@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBotService.Models
 {
-    public class ItemListLoader : Base
+    public class ItemListLoader : BaseComponent
     {
         public async Task<List<string>> Load()
         {

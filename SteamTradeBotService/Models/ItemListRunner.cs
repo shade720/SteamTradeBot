@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBotService.Models
 {
-    public class ListRunner : Base
+    public class ItemListRunner : BaseComponent
     {
-        private readonly Analyzer _analyzer;
+        private readonly ItemAnalyzer _analyzer;
         private List<string> _itemList;
 
-        public ListRunner(List<string> itemList, Browser browser)
+        public ItemListRunner(List<string> itemList, Browser browser)
         {
             _itemList = itemList;
-            _analyzer = new Analyzer(browser);
+            _analyzer = new ItemAnalyzer(browser);
         }
 
         public async Task Run(CancellationToken token)

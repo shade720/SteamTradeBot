@@ -5,7 +5,7 @@ using SteamTradeBotService.Protos;
 
 namespace SteamTradeBotService.Clients
 {
-    public class Reports : ReportService.ReportServiceBase
+    public class Reporter : ReportService.ReportServiceBase
     {
         public delegate void BalanceWriter (double balance);
         public delegate void MessageWriter (string message);

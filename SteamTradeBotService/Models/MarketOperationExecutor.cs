@@ -2,11 +2,11 @@
 
 namespace SteamTradeBotService.Models
 {
-    public class Executor : Base
+    public class MarketOperationExecutor : BaseComponent
     {
         private readonly Browser _browser;
 
-        public Executor(Browser browser)
+        public MarketOperationExecutor(Browser browser)
         {
             _browser = browser;
         }

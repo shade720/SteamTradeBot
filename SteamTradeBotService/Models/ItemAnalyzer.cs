@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBotService.Models
 {
-    public class Analyzer
+    public class ItemAnalyzer
     {
         private Browser _browser;
-        public Analyzer(Browser browser)
+        public ItemAnalyzer(Browser browser)
         {
             _browser = browser;
         }
