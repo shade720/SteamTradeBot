@@ -14,7 +14,7 @@ namespace Interface.Forms
         private DateTime _startTime;
         private Configuration _configuration;
         private readonly ExtendedConsoleForm _extendedConsole = new();
-        private readonly TradeBotClient _client = new ();
+        public TradeBotClient _client = new ();
 
         public MainForm()
         {

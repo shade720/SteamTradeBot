@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\interface.proto" />
     <None Remove="Protos\reports.proto" />
   </ItemGroup>
   <ItemGroup>
@@ -17,8 +18,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <Protobuf ProtoRoot="Protos" Include="Protos/interface.proto" GrpcServices="Client" />
     <Protobuf ProtoRoot="Protos" Include="Protos/reports.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\interface.proto" GrpcServices="Client">
+      <ProtoRoot>Protos</ProtoRoot>
+    </Protobuf>
   </ItemGroup>
 
 </Project>

@@ -90,7 +90,9 @@ message LoadItemListResponse{
 	DefaultResponse response = 1;
 }
 message LogInRequest{
-	google.protobuf.Empty empty = 1;
+	string login = 1;
+	string password = 2;
+	string code = 3;
 }
 message LogInResponse{
 	DefaultResponse response = 1;

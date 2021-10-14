@@ -32,7 +32,7 @@ namespace SteamTradeBotService.Services
 
         public override async Task<LogInResponse> LogIn(LogInRequest request, ServerCallContext context)
         {
-            await _core.LogIn();
+            await _core.LogIn(request.Login, request.Password, request.Code);
             return new LogInResponse();
         }
 

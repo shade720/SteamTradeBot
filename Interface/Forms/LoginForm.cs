@@ -25,6 +25,8 @@ namespace Interface.Forms
         }
         private async void LoginButton_Click(object sender, EventArgs e)
         {
+            var owner = Owner as MainForm;
+            await owner._client.LogIn(LoginTextBox.Text, PasswordTextBox.Text, SteamGuardTextBox.Text);
         }
         
         private void Observe_Click(object sender, EventArgs e)

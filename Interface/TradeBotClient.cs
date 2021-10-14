@@ -6,7 +6,7 @@ using SteamTradeBotService.Protos;
 
 namespace Interface
 {
-    class TradeBotClient
+    public class TradeBotClient
     {
         private readonly InterfaceService.InterfaceServiceClient _clientInterface = new (GrpcChannel.ForAddress("https://localhost:5051"));
         private readonly ReportService.ReportServiceClient _clientReports = new (GrpcChannel.ForAddress("https://localhost:5051"));
@@ -62,7 +62,6 @@ namespace Interface
                         throw new ArgumentOutOfRangeException();
                 }
             }
-
         }
 
         public async Task StopBot()
@@ -71,9 +70,9 @@ namespace Interface
             _token.Cancel();
         }
 
-        public async Task LogIn()
+        public async Task LogIn(string login, string password, string code)
         {
-            await _clientInterface.LogInAsync(new LogInRequest());
+            await _clientInterface.LogInAsync(new LogInRequest{ Login = login, Password = password, Code = code});
         }
 
         public async Task LogOut()
