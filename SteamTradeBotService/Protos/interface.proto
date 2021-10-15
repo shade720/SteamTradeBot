@@ -26,6 +26,19 @@ service InterfaceService{
 
 	rpc LogOut(LogOutRequest) returns (LogOutResponse);
 
+	rpc Report(SubscribeReports) returns (stream WriteReport);
+
+}
+
+
+message SubscribeReports{
+	google.protobuf.Empty empty = 1;
+}
+message WriteReport{
+	oneof event_type{
+		double balance = 1;
+		string message = 2;
+	}
 }
 
 message ClearMyLotsRequest{
@@ -33,7 +46,7 @@ message ClearMyLotsRequest{
 }
 
 message ClearMyLotsResponse{
-	google.protobuf.Empty empty = 1;
+	DefaultResponse response = 1;
 }
 
 message DefaultResponse{
@@ -66,7 +79,7 @@ message Configuration{
 
 
 message StartRequest{
-	Configuration configuration = 1;
+	google.protobuf.Empty empty = 1;
 }
 message StartResponse{
 	google.protobuf.Empty empty = 1;
@@ -75,7 +88,7 @@ message StopRequest{
 	google.protobuf.Empty empty = 1;
 }
 message StopResponse{
-	google.protobuf.Empty empty = 1;
+	DefaultResponse response = 1;
 }
 message SetConfigurationRequest{
 	Configuration configuration = 1;

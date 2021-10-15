@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SteamTradeBotService.Clients;
-using SteamTradeBotService.Models;
 using SteamTradeBotService.Services;
 
 namespace SteamTradeBotService
@@ -30,8 +28,7 @@ namespace SteamTradeBotService
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<InterfaceListener>();
-                endpoints.MapGrpcService<Reporter>();
+                endpoints.MapGrpcService<Facade>();
 
                 endpoints.MapGet("/", async context =>
                 {

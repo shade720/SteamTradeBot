@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Protos\reports.proto" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.39.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
@@ -19,7 +15,6 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <Protobuf ProtoRoot="Protos" Include="Protos/interface.proto" GrpcServices="Server" />
-    <Protobuf ProtoRoot="Protos" Include="Protos\reports.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SteamTradeBotService.Models
+namespace SteamTradeBotService.Models.WorkerClasses
 {
     public class OrderExecutionSensor : BaseComponent
     {
@@ -22,7 +22,7 @@ namespace SteamTradeBotService.Models
                 while (!token.IsCancellationRequested)
                 {
                     Thread.Sleep(5000);
-                    _core.Notify(this, "sell");
+                    _worker.Notify(this, "sell");
                 }
             });
         }

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SteamTradeBotService.Models
+namespace SteamTradeBotService.Models.WorkerClasses
 {
     public class ItemListRunner : BaseComponent
     {
@@ -23,7 +23,7 @@ namespace SteamTradeBotService.Models
                 {
                     if (token.IsCancellationRequested) break;
                     Thread.Sleep(5000);
-                    if (_analyzer.AnalyzeItem(item)) _core.Notify(this, "buy");
+                    if (_analyzer.AnalyzeItem(item)) _worker.Notify(this, "buy");
                 }
             });
         }
