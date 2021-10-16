@@ -12,36 +12,36 @@ namespace SteamTradeBotService.Services
 {
     public class Facade : InterfaceService.InterfaceServiceBase
     {
-        public delegate void BalanceWriter (double balance);
-        public delegate void MessageWriter (string message);
-
-        public static BalanceWriter BalanceWriteEvent;
-        public static MessageWriter MessageWriteEvent;
-
-        private Browser _browser;
+        private readonly Browser _browser;
         private readonly AccountLogger _account;
         private readonly ItemListLoader _itemListLoader;
         private readonly PostgresClient _database;
         private readonly Worker _worker;
+        private readonly Reporter _reporter;
 
         public Facade()
         {
             _browser = new Browser();
             _database = new PostgresClient();
-            _account = new AccountLogger(_browser);
+            _reporter = new Reporter();
+            _account = new AccountLogger(_browser, _reporter);
             _itemListLoader = new ItemListLoader(_browser, _database);
             _worker = new Worker(_browser, _database);
+            
         }
 
         public override async Task<StartResponse> StartBot(StartRequest request, ServerCallContext context)
         {
-            await _worker.StartWork();
+            if (_itemListLoader.ItemList.Count > 0)
+                if (!_worker.WorkingState)
+                    await _worker.StartWork();
             return new StartResponse();
         }
 
         public override async Task<StopResponse> StopBot(StopRequest request, ServerCallContext context)
         {
-            await _worker.StopWork();
+            if (_worker.WorkingState) 
+                await _worker.StopWork();
             return new StopResponse();
         }
 
@@ -80,15 +80,18 @@ namespace SteamTradeBotService.Services
         public override async Task<WriteReport> Report(SubscribeReports request, IServerStreamWriter<WriteReport> responseStream, ServerCallContext context)
         {
             var task = new TaskCompletionSource<WriteReport>();
-            void WriteMessage<T>(T param)
+            void Write<T>(T param)
             {
-                WriteEvent(param, responseStream);
+                responseStream.WriteAsync(double.TryParse(param.ToString(), out var balance)
+                    ? new WriteReport { Balance = balance }
+                    : new WriteReport { Message = param.ToString() });
             }
+
             try
             {
                 context.CancellationToken.Register(() => task.SetCanceled());
-                BalanceWriteEvent += WriteMessage;
-                MessageWriteEvent += WriteMessage;
+                _reporter.WriteBalanceEvent += Write;
+                _reporter.WriteMessageEvent += Write;
                 await task.Task;
             }
             catch (RpcException e)
@@ -98,19 +101,10 @@ namespace SteamTradeBotService.Services
             }
             finally
             {
-                BalanceWriteEvent -= WriteMessage;
-                MessageWriteEvent -= WriteMessage;
+                _reporter.WriteBalanceEvent -= Write;
+                _reporter.WriteMessageEvent -= Write;
             }
-
             return await task.Task;
-        }
-
-
-        private static void WriteEvent<T>(T param, IAsyncStreamWriter<WriteReport> responseStream)
-        {
-            responseStream.WriteAsync(double.TryParse(param.ToString(), out var balance)
-                ? new WriteReport { Balance = balance }
-                : new WriteReport { Message = param.ToString() });
         }
     }
 }
