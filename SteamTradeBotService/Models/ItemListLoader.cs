@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using SteamTradeBotService.Clients;
@@ -11,7 +9,7 @@ namespace SteamTradeBotService.Models
 {
     public class ItemListLoader
     {
-        public List<string> ItemList { get; private set; }
+        public List<Item> ItemList { get; private set; }
         private readonly IWebDriver _browser;
         private readonly PostgresClient _database;
 

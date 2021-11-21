@@ -6,9 +6,9 @@ namespace SteamTradeBotService.Models
 {
     public class Browser
     {
-        public IWebDriver ChromeBrowser;
+	    public IWebDriver ChromeBrowser { get; }
 
-        public Browser() {
+	    public Browser() {
             var driverService = ChromeDriverService.CreateDefaultService();
             driverService.HideCommandPromptWindow = true;
             var options = new ChromeOptions();
