@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "SteamTradeBotService": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "POSTGRES_CONNECTION_STRING": "Host=localhost;Port=5432;Database=steamtradebotdb;Username=postgres;Password=password"
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "http://localhost:5050;https://localhost:5051"
+    }
+  }
+}
