@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBotService", "Ste
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBotClient", "TradeBotClient\SteamTradeBotClient.csproj", "{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing", "Testing\Testing.csproj", "{B31AB6F0-1BA8-4981-9F5C-F366D6CAF615}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B31AB6F0-1BA8-4981-9F5C-F366D6CAF615}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B31AB6F0-1BA8-4981-9F5C-F366D6CAF615}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B31AB6F0-1BA8-4981-9F5C-F366D6CAF615}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B31AB6F0-1BA8-4981-9F5C-F366D6CAF615}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
