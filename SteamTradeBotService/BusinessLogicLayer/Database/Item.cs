@@ -24,7 +24,7 @@ public class Item
     public bool IsBeingPurchased { get; set; }
     public int BuyOrderQuantity { get; set; }
     public static double Balance { get; set; }
-    public Priority ItemPriority { get; private set; } = Priority.Free;
+    public Priority ItemPriority { get; private set; } = Priority.ForReview;
 
     #region NotMapped
 
@@ -139,7 +139,7 @@ public class Item
         Log.Information($"Buy {quantity} {RusItemName} at price {BuyPrice}");
         _steamApi.PlaceBuyOrder(ItemUrl, BuyPrice, quantity);
         BuyOrderQuantity = quantity;
-        ItemPriority = Priority.PlacedForBuy;
+        ItemPriority = Priority.BuyOrder;
     }
 
     public void Sell()
@@ -156,7 +156,7 @@ public class Item
         BuyPrice = 0;
         SellPrice = 0;
         IsBeingPurchased = false;
-        ItemPriority = Priority.PlacedForSell;
+        ItemPriority = Priority.SellOrder;
     }
 
     public void CancelBuyOrder()
@@ -167,7 +167,12 @@ public class Item
         BuyPrice = 0;
         SellPrice = 0;
         IsBeingPurchased = false;
-        ItemPriority = Priority.Free;
+        ItemPriority = Priority.ForReview;
+    }
+
+    public override string ToString()
+    {
+        return EngItemName;
     }
 
     #region Private

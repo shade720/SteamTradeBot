@@ -7,16 +7,15 @@ namespace SteamTradeBotService.BusinessLogicLayer;
 public class TradeBot
 {
     private readonly SteamAPI _steamApi;
-    private readonly DatabaseClient _database;
     private readonly Worker _worker;
     private readonly Reporter _reporter;
 
     public TradeBot(IConfiguration configuration, IDbContextFactory<MarketDataContext> factory)
     {
-        _database = new DatabaseClient(factory);
+        var database = new DatabaseClient(factory);
         _steamApi = new SteamAPI();
         _reporter = new Reporter();
-        _worker = new Worker(_steamApi, _database, configuration);
+        _worker = new Worker(_steamApi, database, configuration);
     }
 
     public void StartTrading()

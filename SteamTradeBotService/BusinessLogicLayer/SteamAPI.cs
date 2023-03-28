@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading;
+using ThrottleDebounce;
 
 namespace SteamTradeBotService.BusinessLogicLayer;
 
@@ -211,7 +212,7 @@ public class SteamAPI : IDisposable
         {
             SetPage(itemUrl);
             var itemName = ReadFromElement(By.Id("largeiteminfo_item_name"));
-            var quality = ReadFromElement(By.XPath("//*[@id='largeiteminfo_item_descriptors']/div[1]")).SkipWhile(x => x != ':').Skip(2);
+            var quality = string.Join("", ReadFromElement(By.XPath("//*[@id='largeiteminfo_item_descriptors']/div[1]")).SkipWhile(x => x != ':').Skip(2));
             return $"{itemName} ({quality})";
         });
     }
@@ -442,11 +443,13 @@ public class SteamAPI : IDisposable
 
     private T SafeConnect<T>(Func<T> networkAction)
     {
+        var throttled = Throttler.Throttle(networkAction, TimeSpan.FromSeconds(5));
+
         for (var attempts = 0; attempts < 5; attempts++)
         {
             try
             {
-                return networkAction();
+                return throttled.Invoke();
             }
             catch (Exception e)
             {
