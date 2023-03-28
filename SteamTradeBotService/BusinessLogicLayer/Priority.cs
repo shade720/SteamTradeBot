@@ -2,7 +2,7 @@
 
 public enum Priority
 {
-    PlacedForSell = 1,
-    PlacedForBuy = 2,
-    Free = 3
+    SellOrder = 1,
+    BuyOrder = 2,
+    ForReview = 3
 }

@@ -1,12 +1,12 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Serilog;
 using SteamTradeBotService.BusinessLogicLayer.Database;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Globalization;
 
 namespace SteamTradeBotService.BusinessLogicLayer;
 
@@ -15,17 +15,21 @@ public class Worker
     private readonly DatabaseClient _database;
     private readonly SteamAPI _steamApi;
     private readonly IConfiguration _configuration;
+
     private PriorityQueue<Item, Priority> _itemsPipeline;
+    private List<(Item, Priority)> _processedItems;
+
     private CancellationTokenSource _cancellationTokenSource;
 
-    public Worker(
-        SteamAPI steamApi, 
+    public Worker
+    (
+        SteamAPI steamApi,
         DatabaseClient database,
         IConfiguration configuration)
     {
-        _configuration = configuration;
         _steamApi = steamApi;
         _database = database;
+        _configuration = configuration;
     }
 
     public void StartWork()
@@ -37,12 +41,19 @@ public class Worker
             return;
         }
 
-        if (!CheckConfigurationIntegrity()) 
-            return; 
+        if (!CheckConfigurationIntegrity())
+            return;
 
         _itemsPipeline = InitializePipeline();
 
+        if (_itemsPipeline.Count == 0)
+        {
+            Log.Error("Worker is not started. Pipeline is empty!");
+            return;
+        }
+
         _cancellationTokenSource = new CancellationTokenSource();
+        _processedItems = new List<(Item, Priority)>();
 
         Task.Run(ProcessPipeline, _cancellationTokenSource.Token);
         Log.Information("Worker started!");
@@ -66,8 +77,11 @@ public class Worker
             if (item.IsBuyOrderSatisfied())
                 item.Sell();
 
-            _itemsPipeline.Enqueue(item, item.ItemPriority);
+            _processedItems.Add((item, item.ItemPriority));
             _database.UpdateItem(item);
+
+            if (_itemsPipeline.Count == 0)
+                RestartPipeline();
         }
         Log.Information("Pipeline processing has ended");
     }
@@ -75,6 +89,12 @@ public class Worker
     public void StopWork()
     {
         _cancellationTokenSource.Cancel();
+    }
+
+    private void RestartPipeline()
+    {
+        _itemsPipeline = new PriorityQueue<Item, Priority>(_processedItems);
+        _processedItems.Clear();
     }
 
     private PriorityQueue<Item, Priority> InitializePipeline()
@@ -87,7 +107,7 @@ public class Worker
             Log.Information("Local pipeline loaded");
             foreach (var savedItem in savedItems)
             {
-                pipeline.Enqueue(savedItem.SetExecutionProperties(_configuration, _steamApi, _database), savedItem.IsBeingPurchased ? Priority.PlacedForBuy : Priority.Free);
+                pipeline.Enqueue(savedItem.SetExecutionProperties(_configuration, _steamApi, _database), savedItem.IsBeingPurchased ? Priority.BuyOrder : Priority.ForReview);
             }
         }
         else
@@ -96,7 +116,7 @@ public class Worker
             foreach (var newItem in GetItemNames().Select(itemName => new Item { EngItemName = itemName }.SetExecutionProperties(_configuration, _steamApi, _database)))
             {
                 _database.AddItem(newItem);
-                pipeline.Enqueue(newItem, Priority.Free);
+                pipeline.Enqueue(newItem, Priority.ForReview);
             }
         }
         Log.Information("Pipeline initialized");
@@ -106,7 +126,7 @@ public class Worker
     private IEnumerable<string> GetItemNames()
     {
         Log.Information("Load pipeline from skins-table.xyz...");
-        return _steamApi.GetItemNamesList(double.Parse(_configuration["StartPrice"], NumberStyles.Any, CultureInfo.InvariantCulture), double.Parse(_configuration["EndPrice"], NumberStyles.Any, CultureInfo.InvariantCulture), int.Parse(_configuration["Sales"]) * 7, int.Parse(_configuration["PipelineSize"]));
+        return _steamApi.GetItemNamesList(double.Parse(_configuration["StartPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture), double.Parse(_configuration["EndPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture), int.Parse(_configuration["Sales"]!) * 7, int.Parse(_configuration["PipelineSize"]!));
     }
 
     private bool CheckConfigurationIntegrity()
@@ -134,7 +154,7 @@ public class Worker
 
     public void ClearLots()
     {
-        foreach (var item in _itemsPipeline.UnorderedItems.Where(x => x.Priority == Priority.PlacedForBuy))
+        foreach (var item in _itemsPipeline.UnorderedItems.Where(x => x.Priority == Priority.BuyOrder))
         {
             item.Element.CancelBuyOrder();
         }
