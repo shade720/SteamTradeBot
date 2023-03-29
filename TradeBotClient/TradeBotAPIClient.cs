@@ -1,7 +1,8 @@
 ﻿using Grpc.Net.Client;
 using Interface;
+using TradeBotClient;
 
-namespace TradeBotClient;
+namespace SteamTradeBotClient;
 
 class TradeBotAPIClient
 {

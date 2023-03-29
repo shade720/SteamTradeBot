@@ -3,8 +3,10 @@ using System.Diagnostics;
 using Interface;
 using Interface.Forms;
 using Newtonsoft.Json;
+using TradeBotClient;
+using TradeBotClient.Forms;
 
-namespace TradeBotClient.Forms
+namespace SteamTradeBotClient.Forms
 {
     public partial class MainForm : Form
     {

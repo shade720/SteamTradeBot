@@ -1,4 +1,4 @@
-﻿namespace TradeBotClient.Forms
+﻿namespace SteamTradeBotClient.Forms
 {
     partial class MainForm
     {

@@ -20,12 +20,14 @@ public class TradeBot
 
     public void StartTrading()
     {
-        _worker.StartWork();
+        if (!_worker.IsWorking)
+            _worker.StartWork();
     }
 
     public void StopTrading()
     {
-        _worker.StopWork();
+        if (_worker.IsWorking)
+            _worker.StopWork();
     }
 
     public void ClearLots()
