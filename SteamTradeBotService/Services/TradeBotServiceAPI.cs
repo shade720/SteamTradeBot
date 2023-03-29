@@ -29,7 +29,7 @@ public class TradeBotServiceAPI : SteamTradeBot.SteamTradeBotBase
 
 	public override async Task<LoadItemListResponse> LoadItemList(LoadItemListRequest request, ServerCallContext context)
     {
-        _tradeBot.RefreshItemsList();
+        _tradeBot.RefreshWorkingSet();
 		return new LoadItemListResponse();
     }
 

@@ -7,46 +7,65 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using Serilog;
+using System.Globalization;
+using System.Linq;
+using System;
 
 namespace SteamTradeBotService.BusinessLogicLayer;
 
 public class TradeBot
 {
-    private readonly SteamAPI _steamApi;
-    private readonly Worker _worker;
-    private readonly Reporter _reporter;
+    #region Public
 
     public TradeBot
     (
-        IConfiguration configuration, 
+        IConfiguration configuration,
         IDbContextFactory<MarketDataContext> factory)
     {
-        var database = new DatabaseClient(factory);
+        _configuration = configuration;
+        _database = new DatabaseClient(factory);
         _steamApi = new SteamAPI();
         _reporter = new Reporter();
-        _worker = new Worker(_steamApi, database, configuration);
     }
 
     public void StartTrading()
     {
-        if (!_worker.IsWorking)
-            _worker.StartWork();
+        if (!CheckConfigurationIntegrity())
+        {
+            Log.Error("Configuration is corrupted. Trading not started!");
+            return;
+        }
+        if (_worker is not null) return;
+        var items = InitializePipeline();
+        _worker = new Worker(items);
+        _worker.OnItemUpdate += OnItemUpdate;
+        _worker.StartWork();
     }
 
     public void StopTrading()
     {
-        if (_worker.IsWorking)
-            _worker.StopWork();
+        _worker.OnItemUpdate -= OnItemUpdate;
+        _worker?.StopWork();
     }
 
     public void ClearBuyOrders()
     {
-        _worker.ClearBuyOrders();
+        var itemsWithPurchaseOrders = _database.GetItems().Where(item => item.IsTherePurchaseOrder || item.ItemPriority == Priority.BuyOrder);
+        foreach (var item in itemsWithPurchaseOrders)
+        {
+            item.CancelBuyOrder();
+        }
     }
 
-    public void RefreshItemsList()
+    public void RefreshWorkingSet()
     {
-        //_steamApi.GetItemNamesList();
+        _worker.OnItemUpdate -= OnItemUpdate;
+        _worker?.StopWork();
+        _database.ClearItems();
+        var items = InitializePipeline();
+        _worker = new Worker(items);
+        _worker.OnItemUpdate += OnItemUpdate;
+        _worker.StartWork();
     }
 
     public void LogIn(string login, string password, string token)
@@ -95,4 +114,77 @@ public class TradeBot
         File.WriteAllText(appSettingsPath, newAppSettingsJson);
         return true;
     }
+
+    #endregion
+
+    #region Private
+
+    private readonly SteamAPI _steamApi;
+    private readonly IConfiguration _configuration;
+    private readonly DatabaseClient _database;
+    private readonly Reporter _reporter;
+
+    private Worker _worker;
+
+    private void OnItemUpdate(Item item) => _database.UpdateItem(item);
+
+    private List<Item> InitializePipeline()
+    {
+        Log.Information("Initializing pipeline...");
+        var pipeline = new List<Item>();
+        var savedItems = _database.GetItems();
+        if (savedItems.Any())
+        {
+            Log.Information("Local pipeline loaded");
+            pipeline.AddRange(savedItems.Select(savedItem => savedItem.ConfigureServiceProperties(_configuration, _steamApi)));
+        }
+        else
+        {
+            Log.Information("Local pipeline not found");
+            foreach (var newItem in GetItemNames().Select(itemName => new Item { EngItemName = itemName }.ConfigureServiceProperties(_configuration, _steamApi)))
+            {
+                _database.AddItem(newItem);
+                pipeline.Add(newItem);
+            }
+        }
+        Log.Information("Pipeline initialized");
+        return pipeline;
+    }
+
+    private IEnumerable<string> GetItemNames()
+    {
+        Log.Information("Load pipeline from skins-table.xyz...");
+        return _steamApi.GetItemNamesList(
+            double.Parse(_configuration["StartPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
+            double.Parse(_configuration["EndPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
+            int.Parse(_configuration["Sales"]!) * 7,
+            int.Parse(_configuration["PipelineSize"]!));
+    }
+
+    private bool CheckConfigurationIntegrity()
+    {
+        Log.Information("Check configuration integrity...");
+        try
+        {
+            if (!int.TryParse(_configuration["BuyQuantity"], out _)) return false;
+            if (!int.TryParse(_configuration["Sales"], out _)) return false;
+            if (_configuration["SteamUserId"] is null) return false;
+            if (!int.TryParse(_configuration["ListingFindRange"], out _)) return false;
+            if (!int.TryParse(_configuration["AnalysisPeriod"], out _)) return false;
+            if (!double.TryParse(_configuration["PriceRangeToCancel"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
+            if (!double.TryParse(_configuration["AvgPrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
+            if (!double.TryParse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
+            if (!double.TryParse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
+            if (!double.TryParse(_configuration["RequiredProfit"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
+        }
+        catch (Exception e)
+        {
+            Log.Fatal($"Configuration error: {e.Message}");
+            return false;
+        }
+        Log.Information("Check configuration integrity -> OK");
+        return true;
+    }
+
+    #endregion
 }
