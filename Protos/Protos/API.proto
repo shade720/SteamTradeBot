@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "TradeBotService";
+option csharp_namespace = "TradeBotProto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
@@ -16,7 +16,6 @@ service SteamTradeBot{
 	rpc LogIn(LogInRequest) returns (LogInResponse);
 	rpc LogOut(LogOutRequest) returns (LogOutResponse);
 	rpc Report(SubscribeReports) returns (stream WriteReport);
-
 }
 
 message StartRequest{

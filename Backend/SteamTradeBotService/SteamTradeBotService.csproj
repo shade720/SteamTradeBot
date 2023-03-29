@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
@@ -14,11 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Protos\API.proto" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
+	  <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
     <PackageReference Include="Google.Protobuf" Version="3.22.1" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.52.0" />
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
@@ -41,11 +37,10 @@
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
-    <PackageReference Include="ThrottleDebounce" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf ProtoRoot="Protos" Include="Protos\API.proto" GrpcServices="Server" />
+    <ProjectReference Include="..\..\Protos\Protos\Protos.csproj" />
   </ItemGroup>
 
 </Project>

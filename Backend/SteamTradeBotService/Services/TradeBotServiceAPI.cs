@@ -2,7 +2,7 @@
 using Grpc.Core;
 using Serilog;
 using SteamTradeBotService.BusinessLogicLayer;
-using TradeBotService;
+using TradeBotProto;
 
 namespace SteamTradeBotService.Services;
 
