@@ -1,4 +1,4 @@
-﻿namespace SteamTradeBotService.BusinessLogicLayer;
+﻿namespace SteamTradeBotService.BusinessLogicLayer.Database;
 
 public enum Priority
 {
