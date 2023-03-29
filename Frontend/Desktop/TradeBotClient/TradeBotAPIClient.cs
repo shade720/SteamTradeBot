@@ -1,6 +1,6 @@
 ﻿using Grpc.Net.Client;
 using Interface;
-using TradeBotClient;
+using TradeBotProto;
 
 namespace SteamTradeBotClient;
 
