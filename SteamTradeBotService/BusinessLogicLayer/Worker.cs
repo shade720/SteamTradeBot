@@ -167,6 +167,7 @@ public class Worker
             if (!double.TryParse(_configuration["AvgPrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
             if (!double.TryParse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
             if (!double.TryParse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
+            if (!double.TryParse(_configuration["RequiredProfit"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
         }
         catch (Exception e)
         {
@@ -177,11 +178,15 @@ public class Worker
         return true;
     }
 
-    public void ClearLots()
+    public void ClearBuyOrders()
     {
         foreach (var item in _itemsPipeline.UnorderedItems.Where(x => x.Priority == Priority.BuyOrder))
         {
             item.Element.CancelBuyOrder();
+        }
+        foreach (var processedItem in _processedItems.Where(x => x.Item2 == Priority.BuyOrder))
+        {
+            processedItem.Item1.CancelBuyOrder();
         }
     }
 }

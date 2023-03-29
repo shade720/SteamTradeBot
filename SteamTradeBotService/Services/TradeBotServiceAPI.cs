@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Grpc.Core;
+using Serilog;
 using SteamTradeBotService.BusinessLogicLayer;
 using TradeBotService;
 
@@ -28,20 +29,23 @@ public class TradeBotServiceAPI : SteamTradeBot.SteamTradeBotBase
 
 	public override async Task<LoadItemListResponse> LoadItemList(LoadItemListRequest request, ServerCallContext context)
     {
-        _tradeBot.LoadItemsList();
+        _tradeBot.RefreshItemsList();
 		return new LoadItemListResponse();
     }
 
 	public override async Task<ClearMyLotsResponse> ClearMyLots(ClearMyLotsRequest request, ServerCallContext context)
     {
-        _tradeBot.ClearLots();
+        _tradeBot.ClearBuyOrders();
 		return new ClearMyLotsResponse();
 	}
         
 	public override async Task<SetConfigurationResponse> SetConfiguration(SetConfigurationRequest request, ServerCallContext context)
     {
-        _tradeBot.SetConfiguration();
-		return new SetConfigurationResponse();
+        if (_tradeBot.SetConfiguration(request.ConfigurationJson))
+            Log.Information("Configuration successfully updated!");
+        else
+            Log.Error("Configuration not updated due error!");
+        return new SetConfigurationResponse();
 	}
 
 	public override async Task<LogInResponse> LogIn(LogInRequest request, ServerCallContext context)
