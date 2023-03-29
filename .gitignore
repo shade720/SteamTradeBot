@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Testing/Testing.csproj
 /Testing/SteamAPITests.cs
+/Testing/WorkerTesting.cs
