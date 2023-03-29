@@ -262,7 +262,7 @@ public class SteamAPI : IDisposable
 
     #endregion
 
-    #region LoadItemsList
+    #region RefreshItemsList
 
     public List<string> GetItemNamesList(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
     {
