@@ -13,15 +13,15 @@ public class Item
 {
     [Key]
     public int Id { get; set; }
-    public int ItemId { get; set; }
     public string EngItemName { get; set; }
     public string RusItemName { get; set; }
+    private string ItemUrl { get; set; }
     public double BuyPrice { get; set; }
     public double SellPrice { get; set; }
     public double AvgPrice { get; set; }
     public double Trend { get; set; }
     public double Sales { get; set; }
-    public bool IsBeingPurchased { get; set; }
+    public bool IsTherePurchaseOrder { get; private set; }
     public int BuyOrderQuantity { get; set; }
     public static double Balance { get; set; }
     public Priority ItemPriority { get; private set; } = Priority.ForReview;
@@ -34,31 +34,25 @@ public class Item
     [NotMapped]
     private SteamAPI _steamApi;
 
-    [NotMapped]
-    private DatabaseClient _database;
-
     [NotMapped] 
     public List<SteamAPI.OrderBookItem> SellOrderBook;
 
     [NotMapped]
     public List<SteamAPI.OrderBookItem> BuyOrderBook;
-    [NotMapped] 
-    private string ItemUrl { get; set; }
 
     #endregion
 
-    public Item SetExecutionProperties(IConfiguration configuration, SteamAPI steamApi, DatabaseClient database)
+    public Item ConfigureServiceProperties(IConfiguration configuration, SteamAPI steamApi)
     {
         _configuration = configuration;
         _steamApi = steamApi;
-        _database = database;
         return this;
     }
 
     public void CollectItemData()
     {
         Log.Information("Collect item data...");
-        ItemUrl ??= _steamApi.GetUrl(EngItemName);
+        ItemUrl ??= _steamApi.GetItemUrl(EngItemName);
         RusItemName ??= _steamApi.GetRusItemName(ItemUrl);
         Balance = _steamApi.GetBalance(ItemUrl);
 
@@ -76,9 +70,7 @@ public class Item
         BuyOrderBook = _steamApi.GetBuyOrdersBook(ItemUrl);
         SellOrderBook = _steamApi.GetSellOrdersBook(ItemUrl, int.Parse(_configuration["ListingFindRange"]!));
         
-        Log.Information($"Collected item data EngItemName: {EngItemName}; Balance: {Balance}; Sales: {Sales}; AvgPrice: {AvgPrice}; Trend: {Trend}; BestSellPrice: {SellOrderBook[0].Price}; BestBuyPrice: {BuyOrderBook[0].Price};");
-
-        _database.UpdateItem(this);
+        Log.Information($"Collected item data:\r\nEngItemName: {EngItemName}; \r\nBalance: {Balance}; \r\nSales: {Sales}; \r\nAvgPrice: {AvgPrice}; \r\nTrend: {Trend}; \r\nBestSellPrice: {SellOrderBook[0].Price}; \r\nBestBuyPrice: {BuyOrderBook[0].Price};");
     }
 
     public bool IsProfitable()
@@ -89,7 +81,9 @@ public class Item
             Log.Information("Item is not profitable. Reason: sales volume is lower than needed.");
             return false;
         }
-        if (AvgPrice > double.Parse(_configuration["AvgPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture))
+
+        var avgPriceRange = double.Parse(_configuration["AvgPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
+        if (SellOrderBook.All(sellOrder => sellOrder.Price < AvgPrice + avgPriceRange))
         {
             Log.Information("Item is not profitable. Reason: average price is higher than needed.");
             return false;
@@ -100,18 +94,27 @@ public class Item
             return false;
         }
 
-        var profitableBuyOrder= BuyOrderBook?.Find(buyOrder => SellOrderBook.Any(sellOrder => buyOrder.Price < sellOrder.Price * (1 - 0.13)));
+        var steamCommission = double.Parse(_configuration["SteamCommission"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
+        var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
+
+        var profitableBuyOrder = SellOrderBook
+            .FirstOrDefault(sellOrder => BuyOrderBook.Take(5).Any(buyOrder => buyOrder.Price < sellOrder.Price * (1 - steamCommission)));
+
         if (profitableBuyOrder is null)
         {
-            Log.Information("Item is not profitable. Reason: profitable buy order is not found");
+            Log.Information("Item is not profitable. Reason: profitable sell order is not found");
+            return false;
+        }
+        if (Balance < profitableBuyOrder.Price)
+        {
+            Log.Information("Item is not profitable. Reason: no money for this item");
             return false;
         }
 
         BuyPrice = profitableBuyOrder.Price;
-        SellPrice = profitableBuyOrder.Price * (1 - 0.13) + 0.1;
+        SellPrice = profitableBuyOrder.Price * (1 - steamCommission) + requiredProfit;
 
         Log.Information($"Item is profitable! BuyPrice: {BuyPrice}; SellPrice: {SellPrice};");
-        _database.UpdateItem(this);
         return true;
     }
 
@@ -155,7 +158,7 @@ public class Item
         Log.Information($"All {RusItemName} has sold");
         BuyPrice = 0;
         SellPrice = 0;
-        IsBeingPurchased = false;
+        IsTherePurchaseOrder = false;
         ItemPriority = Priority.SellOrder;
     }
 
@@ -166,7 +169,7 @@ public class Item
         BuyOrderQuantity = 0;
         BuyPrice = 0;
         SellPrice = 0;
-        IsBeingPurchased = false;
+        IsTherePurchaseOrder = false;
         ItemPriority = Priority.ForReview;
     }
 

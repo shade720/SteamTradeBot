@@ -20,6 +20,7 @@ public class Worker
     private List<(Item, Priority)> _processedItems;
 
     private CancellationTokenSource _cancellationTokenSource;
+    public bool IsWorking => _cancellationTokenSource is not null && !_cancellationTokenSource.IsCancellationRequested;
 
     public Worker
     (
@@ -35,14 +36,13 @@ public class Worker
     public void StartWork()
     {
         Log.Information("Starting worker...");
-        if (_cancellationTokenSource is not null && !_cancellationTokenSource.IsCancellationRequested)
+        if (IsWorking)
         {
             Log.Warning("Worker already started!");
             return;
         }
 
-        if (!CheckConfigurationIntegrity())
-            return;
+        if (!CheckConfigurationIntegrity()) return;
 
         _itemsPipeline = InitializePipeline();
 
@@ -55,17 +55,33 @@ public class Worker
         _cancellationTokenSource = new CancellationTokenSource();
         _processedItems = new List<(Item, Priority)>();
 
-        Task.Run(ProcessPipeline, _cancellationTokenSource.Token);
+        Task.Run(ProcessPipelineLoop, _cancellationTokenSource.Token);
         Log.Information("Worker started!");
     }
 
-    private void ProcessPipeline()
+    private void ProcessPipelineLoop()
     {
         Log.Information("Pipeline processing has started");
         while (!_cancellationTokenSource.Token.IsCancellationRequested)
         {
             var item = _itemsPipeline.Dequeue();
+            var analyzedItem = AnalyzeItem(item);
 
+            if (analyzedItem is null) 
+                continue;
+            _processedItems.Add((analyzedItem, analyzedItem.ItemPriority));
+            _database.UpdateItem(analyzedItem);
+
+            if (_itemsPipeline.Count == 0)
+                RestartPipeline();
+        }
+        Log.Information("Pipeline processing has ended");
+    }
+
+    private static Item? AnalyzeItem(Item item)
+    {
+        try
+        {
             item.CollectItemData();
 
             if (item.IsProfitable())
@@ -76,18 +92,22 @@ public class Worker
 
             if (item.IsBuyOrderSatisfied())
                 item.Sell();
-
-            _processedItems.Add((item, item.ItemPriority));
-            _database.UpdateItem(item);
-
-            if (_itemsPipeline.Count == 0)
-                RestartPipeline();
         }
-        Log.Information("Pipeline processing has ended");
+        catch (Exception e)
+        {
+            Log.Error($"The item was skipped due to an error ->\r\nMessage: {e.Message}\r\nStack trace: {e.StackTrace}");
+            return null;
+        }
+        return item;
     }
 
     public void StopWork()
     {
+        if (!IsWorking)
+        {
+            Log.Warning("Worker already stopped!");
+            return;
+        }
         _cancellationTokenSource.Cancel();
     }
 
@@ -107,13 +127,13 @@ public class Worker
             Log.Information("Local pipeline loaded");
             foreach (var savedItem in savedItems)
             {
-                pipeline.Enqueue(savedItem.SetExecutionProperties(_configuration, _steamApi, _database), savedItem.IsBeingPurchased ? Priority.BuyOrder : Priority.ForReview);
+                pipeline.Enqueue(savedItem.ConfigureServiceProperties(_configuration, _steamApi), savedItem.IsTherePurchaseOrder ? Priority.BuyOrder : Priority.ForReview);
             }
         }
         else
         {
             Log.Information("Local pipeline not found");
-            foreach (var newItem in GetItemNames().Select(itemName => new Item { EngItemName = itemName }.SetExecutionProperties(_configuration, _steamApi, _database)))
+            foreach (var newItem in GetItemNames().Select(itemName => new Item { EngItemName = itemName }.ConfigureServiceProperties(_configuration, _steamApi)))
             {
                 _database.AddItem(newItem);
                 pipeline.Enqueue(newItem, Priority.ForReview);
@@ -126,7 +146,11 @@ public class Worker
     private IEnumerable<string> GetItemNames()
     {
         Log.Information("Load pipeline from skins-table.xyz...");
-        return _steamApi.GetItemNamesList(double.Parse(_configuration["StartPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture), double.Parse(_configuration["EndPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture), int.Parse(_configuration["Sales"]!) * 7, int.Parse(_configuration["PipelineSize"]!));
+        return _steamApi.GetItemNamesList(
+            double.Parse(_configuration["StartPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture), 
+            double.Parse(_configuration["EndPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture), 
+            int.Parse(_configuration["Sales"]!) * 7, 
+            int.Parse(_configuration["PipelineSize"]!));
     }
 
     private bool CheckConfigurationIntegrity()
@@ -142,6 +166,7 @@ public class Worker
             if (!double.TryParse(_configuration["PriceRangeToCancel"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
             if (!double.TryParse(_configuration["AvgPrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
             if (!double.TryParse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
+            if (!double.TryParse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
         }
         catch (Exception e)
         {

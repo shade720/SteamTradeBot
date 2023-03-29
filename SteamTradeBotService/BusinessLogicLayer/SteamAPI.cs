@@ -10,7 +10,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading;
-using ThrottleDebounce;
+using Microsoft.AspNetCore.Connections;
 
 namespace SteamTradeBotService.BusinessLogicLayer;
 
@@ -19,6 +19,9 @@ public class SteamAPI : IDisposable
     private readonly IWebDriver _chromeBrowser;
     private bool _logState;
     private const int DefaultImplicitWaitTime = 5;
+    private const int RequestDelayMs = 5000;
+    private const int RetryWaitTimeMs = 2000;
+    private const int RetriesCount = 5;
 
     public SteamAPI()
     {
@@ -41,7 +44,7 @@ public class SteamAPI : IDisposable
             SendKey(By.Id("secret"), secret);
             ClickOnElement(By.Id("generate"));
             return ReadFromElement(By.Id("result"));
-        });
+        }, true);
     }
 
     #endregion
@@ -84,28 +87,34 @@ public class SteamAPI : IDisposable
     public List<OrderBookItem> GetSellOrdersBook(string itemUrl, int listingFindRange)
     {
         const int sellListingPageSize = 10;
-        return SafeConnect(() =>
+        SafeConnect(() =>
         {
             SetPage(itemUrl);
-            var orderBook = new List<OrderBookItem>();
-            for (var pageIdx = 1; pageIdx <= listingFindRange; pageIdx++)
-            {
-                for (var itemIdx = 0; itemIdx < sellListingPageSize; itemIdx++)
-                {
-                    var sellPriceStr = ReadFromElement(By.XPath($"//*[@id='searchResultsRows']/div[{itemIdx + 2}]/div[2]/div[2]/span[1]/span[1]"));
-                    var price = ParsePrice(sellPriceStr);
-                    if (price == 0)
-                        continue;
-
-                    if (orderBook.Any(x => Math.Abs(x.Price - price) < 0.01))
-                        orderBook.First(x => Math.Abs(x.Price - price) < 0.01).Quantity += 1;
-                    else
-                        orderBook.Add(new OrderBookItem { Price = price, Quantity = 1 });
-                }
-                ClickOnElement(By.XPath($"//*[@id='searchResults_links']/span[{pageIdx + 1}]"));
-            }
-            return orderBook.OrderBy(x => x.Price).ToList();
+            return true;
         });
+
+        var orderBook = new List<OrderBookItem>();
+        for (var pageIdx = 1; pageIdx <= listingFindRange; pageIdx++)
+        {
+            for (var itemIdx = 0; itemIdx < sellListingPageSize; itemIdx++)
+            {
+                var sellPriceStr = SafeConnect(() => ReadFromElement(By.XPath($"//*[@id='searchResultsRows']/div[{itemIdx + 2}]/div[2]/div[2]/span[1]/span[1]"))); 
+                var price = ParsePrice(sellPriceStr);
+                if (price == 0)
+                    continue;
+
+                if (orderBook.Any(x => Math.Abs(x.Price - price) < 0.01))
+                    orderBook.First(x => Math.Abs(x.Price - price) < 0.01).Quantity += 1;
+                else
+                    orderBook.Add(new OrderBookItem { Price = price, Quantity = 1 });
+            }
+            SafeConnect(() =>
+            {
+                ClickOnElement(By.XPath($"//*[@id='searchResults_links']/span[{pageIdx + 1}]"));
+                return true;
+            }, true);
+        }
+        return orderBook.OrderBy(x => x.Price).ToList();
     }
 
     private static double ParsePrice(string priceStr)
@@ -228,7 +237,7 @@ public class SteamAPI : IDisposable
             ClickOnElement(By.Id("market_buyorder_dialog_accept_ssa"));
             ClickOnElement(By.Id("market_buyorder_dialog_purchase"));
             return true;
-        });
+        }, true);
     }
 
     public int GetBuyOrderQuantity(string itemUrl)
@@ -248,59 +257,65 @@ public class SteamAPI : IDisposable
             SetPage(itemUrl);
             ClickOnElement(By.XPath("/html/body/div[1]/div[7]/div[2]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div/div[2]/div[5]/div/a/span[2]"));
             return true;
-        });
+        }, true);
     }
 
     #endregion
 
     #region LoadItemsList
 
-    public IEnumerable<string> GetItemNamesList(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
+    public List<string> GetItemNamesList(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
     {
-        SetPage("https://skins-table.xyz/");
-        ClickOnElement(By.XPath("/html/body/div[1]/div[4]/div/div/center/div/div/div[2]/form/div[2]/a"));
-        ClickOnElement(By.Id("imageLogin"));
-
-        SetPage("https://skins-table.xyz/table/");
-
-        ClickOnElement(By.CssSelector("#scroll > div > div.sites.first > div:nth-child(30)"));
-        ClickOnElement(By.CssSelector("#scroll > div > div.sites.second > div:nth-child(29)"));
-        SendKey(By.Id("price1_from"), $"\b\b\b\b\b\b\b{startPrice}");
-        SendKey(By.Id("price1_to"), $"\b\b\b\b\b\b\b{endPrice}");
-        SendKey(By.Id("price2_from"), $"\b\b\b\b\b\b\b{startPrice}");
-        SendKey(By.Id("price2_to"), $"\b\b\b\b\b\b\b{endPrice}");
-        SendKey(By.Id("sc1"), $"\b\b\b\b{salesVolumeByWeek}");
-        ClickOnElement(By.Id("change1"));
-
-        var js = _chromeBrowser as IJavaScriptExecutor;
-        Thread.Sleep(15000);
-        for (var i = 1; i < 10; i++)
+        return SafeConnect(() =>
         {
-            js.ExecuteScript("scroll(0, 20000000);");
-        }
+            var result = new List<string>();
+            SetPage("https://skins-table.xyz/");
+            ClickOnElement(By.XPath("/html/body/div[1]/div[4]/div/div/center/div/div/div[2]/form/div[2]/a"));
+            ClickOnElement(By.Id("imageLogin"));
 
-        var htmlCode = _chromeBrowser.PageSource;
-        var regex = new Regex(@"data-clipboard-text=\p{P}[^\p{P}]*\p{P}?[^\p{P}]*\p{P}?[^\p{P}]*\p{P}?[^\p{P}]*\p{P}[^\p{P}]*\p{P}?[^\p{P}]*\p{P}\p{P}");
-        var matches = regex.Matches(htmlCode);
+            SetPage("https://skins-table.xyz/table/");
 
-        if (matches.Count <= 0) yield break;
+            ClickOnElement(By.CssSelector("#scroll > div > div.sites.first > div:nth-child(30)"));
+            ClickOnElement(By.CssSelector("#scroll > div > div.sites.second > div:nth-child(29)"));
+            SendKey(By.Id("price1_from"), $"\b\b\b\b\b\b\b{startPrice}");
+            SendKey(By.Id("price1_to"), $"\b\b\b\b\b\b\b{endPrice}");
+            SendKey(By.Id("price2_from"), $"\b\b\b\b\b\b\b{startPrice}");
+            SendKey(By.Id("price2_to"), $"\b\b\b\b\b\b\b{endPrice}");
+            SendKey(By.Id("sc1"), $"\b\b\b\b{salesVolumeByWeek}");
+            ClickOnElement(By.Id("change1"));
 
-        for (var i = 0; i < listSize; i++)
-        {
-            var itemName = string.Join("", matches[i].ToString().SkipWhile(x => x != '=').Skip(2).SkipLast(1));
-            if (itemName.Contains("Sealed Graffiti") || itemName.Contains("Sticker") || itemName.Contains("Case")) 
-                continue;
-            yield return itemName;
-        }
+            var js = _chromeBrowser as IJavaScriptExecutor;
+            Thread.Sleep(15000);
+            for (var i = 1; i < 10; i++)
+            {
+                js?.ExecuteScript("scroll(0, 20000000);");
+            }
+
+            var htmlCode = _chromeBrowser.PageSource;
+            var regex = new Regex(@"data-clipboard-text=\p{P}[^\p{P}]*\p{P}?[^\p{P}]*\p{P}?[^\p{P}]*\p{P}?[^\p{P}]*\p{P}[^\p{P}]*\p{P}?[^\p{P}]*\p{P}\p{P}");
+            var matches = regex.Matches(htmlCode);
+
+            if (matches.Count <= 0)
+                return new List<string>();
+
+            for (var i = 0; i < listSize; i++)
+            {
+                var itemName = string.Join("", matches[i].ToString().SkipWhile(x => x != '=').Skip(2).SkipLast(1));
+                if (itemName.Contains("Sealed Graffiti") || itemName.Contains("Sticker") || itemName.Contains("Case"))
+                    continue;
+                result.Add(itemName);
+            }
+            return result;
+        });
     }
 
-    public string GetUrl(string itemName)
+    public string GetItemUrl(string itemName)
     {
         return SafeConnect(() =>
         {
             _chromeBrowser.Navigate().GoToUrl($"https://steamcommunity.com/market/listings/730/{itemName}");
             return _chromeBrowser.Url;
-        });
+        }, true);
     }
 
     #endregion
@@ -340,8 +355,8 @@ public class SteamAPI : IDisposable
             WriteToElement(PasswordField, password);
             ClickOnElement(LoginButton);
             WriteToElement(TwoFactorField, token, true);
-            return 0;
-        });
+            return true;
+        }, true);
 
         if (!IsAuthenticationSuccessful())
         {
@@ -357,6 +372,7 @@ public class SteamAPI : IDisposable
         Log.Information("Check incoming data...");
         return string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(token);
     }
+
     private bool IsAuthenticationSuccessful()
     {
         Log.Information("Checking if authentication successful...");
@@ -441,25 +457,25 @@ public class SteamAPI : IDisposable
 
     #endregion
 
-    private T SafeConnect<T>(Func<T> networkAction)
+    private T SafeConnect<T>(Func<T> unsafeFunc, bool isDelayNeeded = false)
     {
-        var throttled = Throttler.Throttle(networkAction, TimeSpan.FromSeconds(5));
-
-        for (var attempts = 0; attempts < 5; attempts++)
+        var retryWaitTimeMs = isDelayNeeded ? RequestDelayMs : 0;
+        for (var attempt = 0; attempt < RetriesCount; attempt++)
         {
             try
             {
-                return throttled.Invoke();
+                Thread.Sleep(retryWaitTimeMs);
+                return unsafeFunc();
             }
             catch (Exception e)
             {
-                Log.Error($"Connection error! Attempt: {attempts + 1}/{5}\r\n{e.Message} ");
-                Thread.Sleep(2000);
+                Log.Error($"Connection error! Attempt: {attempt + 1}/{RetriesCount}\r\nMessage: {e.Message}\r\nStack trace: {e.StackTrace}");
+                retryWaitTimeMs = RetryWaitTimeMs;
                 _chromeBrowser.Navigate().Refresh();
             }
         }
         Log.Error("Attempts expired!");
-        return default;
+        throw new ConnectionAbortedException();
     }
 
     public void Dispose()

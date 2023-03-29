@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using SteamTradeBotClient;
 
 namespace TradeBotClient.Forms
 {
