@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SteamTradeBotService\SteamTradeBotService.csproj" />
+    <ProjectReference Include="..\SteamTradeBotService\SteamTradeBot.Backend.csproj" />
   </ItemGroup>
 
 </Project>
