@@ -364,3 +364,6 @@ FodyWeavers.xsd
 /Testing/Testing.csproj
 /Testing/SteamAPITests.cs
 /Testing/WorkerTesting.cs
+/Backend/Testing/Testing.csproj
+/Backend/Testing/SteamAPITests.cs
+/Backend/Testing/WorkerTesting.cs
