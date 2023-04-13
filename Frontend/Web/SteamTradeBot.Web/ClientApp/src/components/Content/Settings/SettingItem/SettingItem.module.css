@@ -1,0 +1,16 @@
+﻿.item {
+    display: flex;
+    justify-content: space-between;
+    width: 350px;
+    margin: 10px 0 10px;
+}
+
+.item label {
+}
+
+.item input {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom-color: silver;
+}

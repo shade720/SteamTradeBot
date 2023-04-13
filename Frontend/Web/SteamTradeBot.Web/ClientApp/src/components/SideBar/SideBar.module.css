@@ -1,0 +1,43 @@
+﻿.sideBar {
+    grid-area: n;
+    background-color: #258cfb;
+    display: block;
+}
+
+.title {
+    color: white;
+    text-align: right;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    height: 150px;
+    text-decoration: none;
+}
+
+.title:hover {
+    color: white;
+}
+
+.linksPane {
+    margin: 100px 0 0 30px;
+    font-size: 24px;
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    justify-content: space-between;
+}
+
+.link {
+    color: white;
+    text-decoration: none;
+    height: 200px;
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.activeLink {
+    color: orange;
+    background-color: chartreuse;
+}
