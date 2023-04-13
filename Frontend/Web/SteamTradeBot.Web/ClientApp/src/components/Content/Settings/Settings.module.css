@@ -1,0 +1,20 @@
+﻿
+.pane {
+    display: flex;
+    flex-direction: column;
+    height: 95vh;
+}
+
+.settingsPane {
+    display: flex;
+    flex-direction: column;
+    margin: 40px 0 0 40px;
+}
+
+.buttonPane {
+    flex: 1 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+}

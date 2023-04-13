@@ -1,0 +1,23 @@
+/* Provide sufficient contrast against white background */
+a {
+  color: #0366d6;
+}
+
+.app-wrapper {
+    display: grid;
+
+    grid-template-areas: "n c";
+    grid-template-rows: 890px;
+    grid-template-columns: 2fr 10fr;
+    grid-gap: 10px; 
+}
+
+.header {
+    grid-area: h;
+    background-color: #0366d6;
+}
+
+.footer {
+    grid-area: f;
+    background-color: #1861ac;
+}
