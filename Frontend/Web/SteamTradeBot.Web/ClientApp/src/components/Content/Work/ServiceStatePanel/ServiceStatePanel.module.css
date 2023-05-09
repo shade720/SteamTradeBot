@@ -1,0 +1,11 @@
+﻿.serviceStatePanel {
+    grid-column: 2;
+    background-color: aquamarine;
+    
+}
+
+.statePanelGroupBox {
+    border: 1px solid black;
+    padding: 30px;
+    border-radius: 10px;
+}

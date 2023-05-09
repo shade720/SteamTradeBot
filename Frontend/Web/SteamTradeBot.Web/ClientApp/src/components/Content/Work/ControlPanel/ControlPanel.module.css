@@ -1,0 +1,13 @@
+﻿.controlPanel {
+    grid-column: 2;
+    background-color: red;
+}
+
+.controlPanelGroupBox {
+    border: 1px solid black;
+    border-radius: 10px;
+    display: flex;
+    flex-flow: row wrap;
+    height: 30vh;
+    justify-content: space-between;
+}

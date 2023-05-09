@@ -1,20 +1,21 @@
-﻿
-.pane {
+﻿.pane {
+    background-color: aqua; 
     display: flex;
     flex-direction: column;
-    height: 95vh;
+    height: 100%;
+    justify-content: space-between;
 }
 
 .settingsPane {
+    background-color: aquamarine;
     display: flex;
     flex-direction: column;
-    margin: 40px 0 0 40px;
+    margin: 40px 20px 0 40px;
 }
 
 .buttonPane {
-    flex: 1 0;
-    padding: 20px;
+    background-color: firebrick;
     display: flex;
-    flex-direction: row-reverse;
-    align-items: flex-end;
+    margin: 0 20px 0 40px;
+    justify-content: flex-end;
 }

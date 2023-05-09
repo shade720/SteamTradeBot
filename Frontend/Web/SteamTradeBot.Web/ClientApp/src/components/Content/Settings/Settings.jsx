@@ -6,9 +6,22 @@ const Settings = () => {
     return (
         <div className={styles.pane}>
             <div className={styles.settingsPane}>
-                <SettingItem name='Первая строка: ' />
-                <SettingItem name='Вторая строка: ' />
-                <SettingItem name='Третья строка: ' />
+                <div>
+                    <h2>Logic settings</h2>
+                    <SettingItem name='Trend: ' />
+                    <SettingItem name='Sales: ' />
+                    <SettingItem name='Cancel range: ' />
+                    <SettingItem name='Listing find range: ' />
+                    <SettingItem name='Analysis period: ' />
+                    <SettingItem name='Buy quantity: ' />
+                    <SettingItem name='Required profit: ' />
+                </div>
+                <div>
+                    <h2>Pipeline settings</h2>
+                    <SettingItem name='Min price: ' />
+                    <SettingItem name='Max price: ' />
+                    <SettingItem name='Pipeline size: ' />
+                </div>
             </div>
             <div className={styles.buttonPane}>
                 <Button name='Submit'/>
