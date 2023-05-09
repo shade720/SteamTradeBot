@@ -8,7 +8,13 @@ const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
-root.render(
-  <BrowserRouter basename={baseUrl}>
-    <App />
-  </BrowserRouter>);
+let state = [
+    { settingName : 'Connection',         value : 'disconnected'},
+    { settingName: 'Status',              value: 'working' },
+    { settingName: 'Items Sold',            value: '34' },
+    { settingName: 'Items Bought',          value: '82' },
+    { settingName: 'Analyzed',  value: '1451' },
+    { settingName: 'Uptime',              value: '23:41.21' }
+]
+
+root.render(<BrowserRouter basename={baseUrl}><App state={state} /></BrowserRouter>);

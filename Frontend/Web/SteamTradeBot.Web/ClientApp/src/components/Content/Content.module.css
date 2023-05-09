@@ -1,4 +1,5 @@
 ﻿.content {
+    height: 95%;
     grid-area: c;
     background-color: white;
     margin: 15px;

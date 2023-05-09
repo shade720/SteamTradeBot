@@ -1,7 +1,8 @@
 ﻿.sideBar {
     grid-area: n;
-    background-color: #258cfb;
+    background-color: red;
     display: block;
+    height: 100vh;
 }
 
 .title {
@@ -10,8 +11,8 @@
     align-items: center;
     justify-content: center;
     display: flex;
-    height: 150px;
     text-decoration: none;
+    height: 100px;
 }
 
 .title:hover {
@@ -35,6 +36,10 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
+}
+
+.link:hover {
+    color: #bf0000;
 }
 
 .activeLink {

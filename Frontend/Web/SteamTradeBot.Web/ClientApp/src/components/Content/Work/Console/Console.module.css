@@ -1,0 +1,13 @@
+﻿.consolePanel {
+    grid-row: 1 / span 2;
+    grid-column: 1;
+    background-color: aqua;
+}
+
+.console {
+    resize: none;
+    height: 93%;
+    width: 100%;
+    padding: 30px;
+    border-radius: 15px;
+}

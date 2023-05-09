@@ -1,0 +1,18 @@
+﻿.header {
+    grid-area: h;
+    height: 6vh;
+    background-color: #bf0000;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.signInLink {
+    color: white;
+    text-decoration: none;
+    margin: 0 30px 0 0;
+}
+
+.signInLink:hover {
+    color: white;
+}
