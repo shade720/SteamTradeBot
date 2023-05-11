@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBotService.BusinessLogicLayer.Database;
 
-namespace SteamTradeBotService.BusinessLogicLayer;
+namespace SteamTradeBot.Backend.BusinessLogicLayer.Models;
 
 public class Worker
 {
