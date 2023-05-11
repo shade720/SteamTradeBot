@@ -4,12 +4,14 @@ using Serilog;
 using Serilog.Events;
 using System;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SteamTradeBotService.BusinessLogicLayer;
-using SteamTradeBotService.BusinessLogicLayer.Database;
-using SteamTradeBotService.Services;
+using System.IO;
+using SteamTradeBot.Backend.BusinessLogicLayer;
+using SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -27,7 +29,6 @@ builder.WebHost.ConfigureLogging(logging =>
     logging.ClearProviders();
     logging.AddSerilog(Log.Logger);
 });
-builder.Services.AddGrpc();
 
 builder.Configuration.SetBasePath(Environment.CurrentDirectory)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -39,8 +40,17 @@ builder.Services.AddSingleton<TradeBot>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<TradeBotServiceAPI>();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+#region MinimalAPI
+
+app.MapPost("api/login", ([FromServices] TradeBot tradeBot, [FromBody] Credentials credentials) => tradeBot.LogIn(credentials.Login, credentials.Password, credentials.Token));
+app.MapPost("api/logout", ([FromServices] TradeBot tradeBot) => tradeBot.LogOut());
+app.MapPost("api/activation", ([FromServices] TradeBot tradeBot) => tradeBot.StartTrading());
+app.MapPost("api/deactivation", ([FromServices] TradeBot tradeBot) => tradeBot.StopTrading());
+app.MapPost("api/configuration", ([FromServices] TradeBot tradeBot, [FromBody] string configurationJson) => tradeBot.SetConfiguration(configurationJson));
+app.MapPost("api/itemlist", ([FromServices] TradeBot tradeBot) => tradeBot.RefreshWorkingSet());
+
+#endregion
 
 app.Run();
+
+internal record Credentials(string Login, string Password, string Token);

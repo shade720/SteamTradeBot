@@ -1,5 +1,4 @@
-﻿namespace SteamTradeBotService.BusinessLogicLayer.Database;
-
+﻿namespace SteamTradeBot.Backend.BusinessLogicLayer.Models;
 public enum Priority
 {
     SellOrder = 1,

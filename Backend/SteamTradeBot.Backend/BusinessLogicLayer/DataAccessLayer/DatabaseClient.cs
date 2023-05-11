@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models;
 
-namespace SteamTradeBotService.BusinessLogicLayer.Database;
+namespace SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
 
 public class DatabaseClient
 {

@@ -1,17 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
-using SteamTradeBotService.BusinessLogicLayer.Database;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.IO;
-using Serilog;
 using System.Globalization;
+using System.IO;
 using System.Linq;
-using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Serilog;
+using SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models;
 
-namespace SteamTradeBotService.BusinessLogicLayer;
+namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
 public class TradeBot
 {
@@ -25,7 +26,6 @@ public class TradeBot
         _configuration = configuration;
         _database = new DatabaseClient(factory);
         _steamApi = new SteamAPI();
-        _reporter = new Reporter();
     }
 
     public void StartTrading()
@@ -122,7 +122,6 @@ public class TradeBot
     private readonly SteamAPI _steamApi;
     private readonly IConfiguration _configuration;
     private readonly DatabaseClient _database;
-    private readonly Reporter _reporter;
 
     private Worker _worker;
 

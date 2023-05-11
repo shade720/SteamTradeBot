@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using System.Globalization;
 
-namespace SteamTradeBotService.BusinessLogicLayer.Database;
+namespace SteamTradeBot.Backend.BusinessLogicLayer.Models;
 
 public class Item
 {
@@ -28,13 +28,13 @@ public class Item
 
     #region NotMapped
 
-    [NotMapped] 
+    [NotMapped]
     private IConfiguration _configuration;
 
     [NotMapped]
     private SteamAPI _steamApi;
 
-    [NotMapped] 
+    [NotMapped]
     public List<SteamAPI.OrderBookItem> SellOrderBook;
 
     [NotMapped]
@@ -69,7 +69,7 @@ public class Item
 
         BuyOrderBook = _steamApi.GetBuyOrdersBook(ItemUrl);
         SellOrderBook = _steamApi.GetSellOrdersBook(ItemUrl, int.Parse(_configuration["ListingFindRange"]!));
-        
+
         Log.Information($"Collected item data:\r\nEngItemName: {EngItemName}; \r\nBalance: {Balance}; \r\nSales: {Sales}; \r\nAvgPrice: {AvgPrice}; \r\nTrend: {Trend}; \r\nBestSellPrice: {SellOrderBook[0].Price}; \r\nBestBuyPrice: {BuyOrderBook[0].Price};");
     }
 
@@ -120,7 +120,7 @@ public class Item
 
     public bool IsBuyOrderSatisfied()
     {
-        if (BuyOrderQuantity <= 0) 
+        if (BuyOrderQuantity <= 0)
             return false;
         Log.Information("Checking if order satisfied...");
         return BuyOrderQuantity <= _steamApi.GetBuyOrderQuantity(ItemUrl);
@@ -128,7 +128,7 @@ public class Item
 
     public bool IsBuyOrderObsolete()
     {
-        if (BuyOrderQuantity <= 0) 
+        if (BuyOrderQuantity <= 0)
             return false;
         Log.Information("Checking if order obsolete...");
         const int listingPageSize = 1;
