@@ -35,9 +35,10 @@ public class TradeBot
             Log.Error("Configuration is corrupted. Trading not started!");
             return;
         }
-        if (_worker is not null) return;
-        var items = InitializePipeline();
-        _worker = new Worker(items);
+        if (_worker is not null) 
+            return;
+        var workingSet = InitializePipeline();
+        _worker = new Worker(workingSet);
         _worker.OnItemUpdate += OnItemUpdate;
         _worker.StartWork();
     }
@@ -163,26 +164,23 @@ public class TradeBot
     private bool CheckConfigurationIntegrity()
     {
         Log.Information("Check configuration integrity...");
-        try
+        if (int.TryParse(_configuration["BuyQuantity"], out _) &&
+            int.TryParse(_configuration["Sales"], out _) &&
+            _configuration["SteamUserId"] is not null &&
+            int.TryParse(_configuration["ListingFindRange"], out _) &&
+            int.TryParse(_configuration["AnalysisPeriod"], out _) &&
+            double.TryParse(_configuration["PriceRangeToCancel"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
+            double.TryParse(_configuration["AvgPrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
+            double.TryParse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
+            double.TryParse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
+            double.TryParse(_configuration["RequiredProfit"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)
+            )
         {
-            if (!int.TryParse(_configuration["BuyQuantity"], out _)) return false;
-            if (!int.TryParse(_configuration["Sales"], out _)) return false;
-            if (_configuration["SteamUserId"] is null) return false;
-            if (!int.TryParse(_configuration["ListingFindRange"], out _)) return false;
-            if (!int.TryParse(_configuration["AnalysisPeriod"], out _)) return false;
-            if (!double.TryParse(_configuration["PriceRangeToCancel"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
-            if (!double.TryParse(_configuration["AvgPrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
-            if (!double.TryParse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
-            if (!double.TryParse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
-            if (!double.TryParse(_configuration["RequiredProfit"], NumberStyles.Any, CultureInfo.InvariantCulture, out _)) return false;
+            Log.Information("Check configuration integrity -> OK");
+            return true;
         }
-        catch (Exception e)
-        {
-            Log.Fatal($"Configuration error: {e.Message}");
-            return false;
-        }
-        Log.Information("Check configuration integrity -> OK");
-        return true;
+        Log.Fatal($"Configuration error");
+        return false;
     }
 
     #endregion
