@@ -1,9 +1,4 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.WaitHelpers;
-using Serilog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -11,8 +6,13 @@ using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.AspNetCore.Connections;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
+using Serilog;
 
-namespace SteamTradeBotService.BusinessLogicLayer;
+namespace SteamTradeBot.Backend.BusinessLogicLayer.Models;
 
 public class SteamAPI : IDisposable
 {
@@ -76,7 +76,7 @@ public class SteamAPI : IDisposable
 
             for (var itemIdx = 2; itemIdx < buyListingPageSize; itemIdx++)
             {
-                var price = ParsePrice(ReadFromElement(By.CssSelector($"#market_commodity_buyreqeusts_table > table > tbody > tr:nth-child({itemIdx}) > td:nth-child(1)"))); 
+                var price = ParsePrice(ReadFromElement(By.CssSelector($"#market_commodity_buyreqeusts_table > table > tbody > tr:nth-child({itemIdx}) > td:nth-child(1)")));
                 var quantity = int.Parse(ReadFromElement(By.CssSelector($"#market_commodity_buyreqeusts_table > table > tbody > tr:nth-child({itemIdx}) > td:nth-child(2)")));
                 orderBook.Add(new OrderBookItem { Price = price, Quantity = quantity });
             }
@@ -98,7 +98,7 @@ public class SteamAPI : IDisposable
         {
             for (var itemIdx = 0; itemIdx < sellListingPageSize; itemIdx++)
             {
-                var sellPriceStr = SafeConnect(() => ReadFromElement(By.XPath($"//*[@id='searchResultsRows']/div[{itemIdx + 2}]/div[2]/div[2]/span[1]/span[1]"))); 
+                var sellPriceStr = SafeConnect(() => ReadFromElement(By.XPath($"//*[@id='searchResultsRows']/div[{itemIdx + 2}]/div[2]/div[2]/span[1]/span[1]")));
                 var price = ParsePrice(sellPriceStr);
                 if (price == 0)
                     continue;
@@ -119,7 +119,7 @@ public class SteamAPI : IDisposable
 
     private static double ParsePrice(string priceStr)
     {
-        if (string.IsNullOrEmpty(priceStr)) 
+        if (string.IsNullOrEmpty(priceStr))
             return 0;
         foreach (var x in priceStr.Where(x => !char.IsDigit(x) && x is not ','))
             priceStr = priceStr.Replace(x.ToString(), "");
@@ -145,19 +145,19 @@ public class SteamAPI : IDisposable
             return true;
         })) return new List<PointInfo>();
 
-       return string.Join("", _chromeBrowser.PageSource
-                .Split("\n")
-                .First(x => x.StartsWith("\t\t\tvar line1="))
-                .SkipWhile(x => x != '['))
-            .Split(",")
-            .Select(DeleteServiceCharacters)
-            .Chunk(3)
-            .Select(x => new PointInfo
-            {
-                Date = DateTime.ParseExact(x[0], "MMM dd yyyy HH: z", CultureInfo.InvariantCulture),
-                Price = double.Parse(x[1], NumberStyles.Any, CultureInfo.InvariantCulture),
-                Quantity = int.Parse(x[2])
-            });
+        return string.Join("", _chromeBrowser.PageSource
+                 .Split("\n")
+                 .First(x => x.StartsWith("\t\t\tvar line1="))
+                 .SkipWhile(x => x != '['))
+             .Split(",")
+             .Select(DeleteServiceCharacters)
+             .Chunk(3)
+             .Select(x => new PointInfo
+             {
+                 Date = DateTime.ParseExact(x[0], "MMM dd yyyy HH: z", CultureInfo.InvariantCulture),
+                 Price = double.Parse(x[1], NumberStyles.Any, CultureInfo.InvariantCulture),
+                 Quantity = int.Parse(x[2])
+             });
     }
 
     private static string DeleteServiceCharacters(string line)
@@ -174,7 +174,7 @@ public class SteamAPI : IDisposable
 
     #endregion
 
-    #region ItemSell
+    #region SellOrder
 
     public bool PlaceSellOrder(string itemNeedToSell, double price, string userId, int inventoryFindRange = 10)
     {
@@ -354,9 +354,18 @@ public class SteamAPI : IDisposable
             WriteToElement(LoginField, login);
             WriteToElement(PasswordField, password);
             ClickOnElement(LoginButton);
-            WriteToElement(TwoFactorField, token, true);
             return true;
         }, true);
+
+        try
+        {
+            WriteToElement(TwoFactorField, token, true);
+        }
+        catch
+        {
+            Log.Error("Authorization failed. Login or password are incorrect.");
+            throw new AuthenticationException("Authorization failed. Login or password are incorrect.");
+        }
 
         if (!IsAuthenticationSuccessful())
         {

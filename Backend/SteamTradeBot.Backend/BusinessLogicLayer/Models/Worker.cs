@@ -1,18 +1,18 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBotService.BusinessLogicLayer.Database;
 
-namespace SteamTradeBotService.BusinessLogicLayer;
+namespace SteamTradeBot.Backend.BusinessLogicLayer.Models;
 
 public class Worker
 {
     #region Public
 
     public delegate void UpdateItem(Item item);
-    public event UpdateItem OnItemUpdate;
+    public event UpdateItem? OnItemUpdate;
 
     public Worker(List<Item> workingSet)
     {
@@ -50,7 +50,7 @@ public class Worker
             Log.Warning("Worker already stopped!");
             return;
         }
-        _cancellationTokenSource.Cancel();
+        _cancellationTokenSource?.Cancel();
     }
 
     #endregion
@@ -59,14 +59,19 @@ public class Worker
     private bool IsWorking => _cancellationTokenSource is not null && !_cancellationTokenSource.IsCancellationRequested;
 
     private PriorityQueue<Item, Priority> _itemsPipeline;
-    private List<(Item, Priority)> _processedItems;
+    private List<(Item, Priority)>? _processedItems;
 
-    private CancellationTokenSource _cancellationTokenSource;
+    private CancellationTokenSource? _cancellationTokenSource;
 
     private void ProcessPipelineLoop()
     {
+        if (_cancellationTokenSource is null)
+            throw new ArgumentException("Cancellation token was null!");
+        if (_processedItems is null)
+            throw new ArgumentException("Processed items list was is null!");
+
         Log.Information("Pipeline processing has started");
-        while (!_cancellationTokenSource.Token.IsCancellationRequested)
+        while (!_cancellationTokenSource.IsCancellationRequested)
         {
             var item = _itemsPipeline.Dequeue();
             var analyzedItem = AnalyzeItem(item);
@@ -82,7 +87,7 @@ public class Worker
         Log.Information("Pipeline processing has ended");
     }
 
-    private static Item AnalyzeItem(Item item)
+    private static Item? AnalyzeItem(Item item)
     {
         try
         {
@@ -107,6 +112,8 @@ public class Worker
 
     private void RestartPipeline()
     {
+        if (_processedItems is null)
+            throw new ArgumentException("Processed items list was is null!");
         _itemsPipeline = new PriorityQueue<Item, Priority>(_processedItems);
         _processedItems.Clear();
     }
