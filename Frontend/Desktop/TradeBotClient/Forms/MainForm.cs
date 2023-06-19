@@ -13,7 +13,7 @@ namespace SteamTradeBotClient.Forms
         private DateTime _startTime;
         private Configuration _configuration;
         private readonly ExtendedConsoleForm _extendedConsole = new();
-        private readonly TradeBotAPIClient _client = new ();
+        private readonly TradeBotAPIClient _client = new();
 
         public MainForm()
         {
@@ -24,15 +24,15 @@ namespace SteamTradeBotClient.Forms
         {
             _configuration = ReadConfiguration();
             InitializeSda();
-			GetConfiguration();
-			AddTrayMenuContext();
-			ValidateConfiguration();
-			SetConfiguration();
+            GetConfiguration();
+            AddTrayMenuContext();
+            ValidateConfiguration();
+            SetConfiguration();
             //_client.MessageWriteEvent += message => EventConsole.AppendText(message);
         }
 
         #region Handlers
-        
+
         private async void StartButton_Click(object sender, EventArgs e)
         {
             PrepareWindowToStart();
@@ -123,7 +123,7 @@ namespace SteamTradeBotClient.Forms
             var dialogResult = MessageBox.Show(@"Очистить консоль событий?", @"Очищение консоли событий", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes) EventConsole.Text = "";
         }
-        
+
         private void MyTimer_Tick(object sender, EventArgs e)
         {
             TimeOfUptime.Text = DateTime.Now.Subtract(_startTime).ToString(@"dd\:hh\:mm\:ss");
