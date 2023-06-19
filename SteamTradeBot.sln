@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBot.Backend", "Backend\SteamTradeBot.Backend\SteamTradeBot.Backend.csproj", "{BE8C2804-92B2-43FA-8BAD-A74DE7891FC3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBotClient", "Frontend\Desktop\TradeBotClient\SteamTradeBotClient.csproj", "{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBot.Desktop.Winforms", "Frontend\Desktop\TradeBotClient\SteamTradeBot.Desktop.Winforms.csproj", "{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{118D2C99-58BA-47FA-81A9-E0147A6745D2}"
 EndProject
@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Protos", "Protos\Protos\Pro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBot.Web", "Frontend\Web\SteamTradeBot.Web\SteamTradeBot.Web.csproj", "{804B381B-04F9-489D-9A43-FC8E19D209CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamTradeBot.Desktop", "Frontend\Desktop\SteamTradeBot.Desktop\SteamTradeBot.Desktop.csproj", "{555AAAED-4278-4317-9F12-B9413F46342E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamTradeBot.Desktop.Wpf", "Frontend\Desktop\SteamTradeBot.Desktop\SteamTradeBot.Desktop.Wpf.csproj", "{555AAAED-4278-4317-9F12-B9413F46342E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
