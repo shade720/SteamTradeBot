@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using SteamTradeBot.Desktop.Winforms.BLL;
 
-namespace SteamTradeBot.Desktop.Winforms.Forms
+namespace SteamTradeBot.Desktop.Winforms.Forms;
+
+public partial class SettingsForm : Form
 {
-    public partial class SettingsForm : Form
+    private readonly SteamTradeBotRestClient _steamTradeBotRestClient;
+
+    public SettingsForm(SteamTradeBotRestClient steamTradeBotRestClient)
     {
-        public SettingsForm()
-        {
-            InitializeComponent();
-        }
+        _steamTradeBotRestClient = steamTradeBotRestClient;
+        InitializeComponent();
     }
 }

@@ -41,6 +41,7 @@
             label13 = new Label();
             panel2 = new Panel();
             LogInButton = new Button();
+            LogOutButton = new Button();
             panel7 = new Panel();
             Frame = new Panel();
             panel1.SuspendLayout();
@@ -158,6 +159,7 @@
             // 
             panel2.BackColor = Color.DarkRed;
             panel2.Controls.Add(LogInButton);
+            panel2.Controls.Add(LogOutButton);
             panel2.ForeColor = Color.DarkRed;
             panel2.Location = new Point(250, 0);
             panel2.Name = "panel2";
@@ -168,7 +170,7 @@
             // 
             LogInButton.FlatAppearance.BorderSize = 0;
             LogInButton.FlatStyle = FlatStyle.Flat;
-            LogInButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            LogInButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             LogInButton.ForeColor = Color.White;
             LogInButton.Location = new Point(1417, 0);
             LogInButton.Name = "LogInButton";
@@ -176,6 +178,22 @@
             LogInButton.TabIndex = 0;
             LogInButton.Text = "Log In";
             LogInButton.UseVisualStyleBackColor = true;
+            LogInButton.Click += LogInButton_Click;
+            // 
+            // LogOutButton
+            // 
+            LogOutButton.FlatAppearance.BorderSize = 0;
+            LogOutButton.FlatStyle = FlatStyle.Flat;
+            LogOutButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            LogOutButton.ForeColor = Color.White;
+            LogOutButton.Location = new Point(1417, 0);
+            LogOutButton.Name = "LogOutButton";
+            LogOutButton.Size = new Size(108, 50);
+            LogOutButton.TabIndex = 1;
+            LogOutButton.Text = "Log Out";
+            LogOutButton.UseVisualStyleBackColor = true;
+            LogOutButton.Visible = false;
+            LogOutButton.Click += LogOutButton_Click;
             // 
             // panel7
             // 
@@ -211,6 +229,7 @@
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "TradeBot";
+            FormClosing += MainForm_FormClosing;
             panel1.ResumeLayout(false);
             panel4.ResumeLayout(false);
             panel3.ResumeLayout(false);
@@ -238,6 +257,7 @@
         private Panel panel8;
         private Button LogInButton;
         private Panel Frame;
+        private Button LogOutButton;
     }
 }
 
