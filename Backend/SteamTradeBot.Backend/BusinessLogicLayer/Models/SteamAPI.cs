@@ -174,7 +174,7 @@ public class SteamAPI : IDisposable
 
     #endregion
 
-    #region ItemSell
+    #region SellOrder
 
     public bool PlaceSellOrder(string itemNeedToSell, double price, string userId, int inventoryFindRange = 10)
     {
