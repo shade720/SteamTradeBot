@@ -5,8 +5,6 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBot.Backend", "Backend\SteamTradeBot.Backend\SteamTradeBot.Backend.csproj", "{BE8C2804-92B2-43FA-8BAD-A74DE7891FC3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBot.Desktop.Winforms", "Frontend\Desktop\TradeBotClient\SteamTradeBot.Desktop.Winforms.csproj", "{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{118D2C99-58BA-47FA-81A9-E0147A6745D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{FDF058D7-7F01-4205-8672-D8BFC2EA2E3F}"
@@ -23,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBot.Web", "Fronte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamTradeBot.Desktop.Wpf", "Frontend\Desktop\SteamTradeBot.Desktop\SteamTradeBot.Desktop.Wpf.csproj", "{555AAAED-4278-4317-9F12-B9413F46342E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBot.Desktop.Winforms", "Frontend\Desktop\SteamTradeBot.Desktop.Winforms\SteamTradeBot.Desktop.Winforms.csproj", "{7F368734-327A-4057-8673-D7BA7FBB8508}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,10 +33,6 @@ Global
 		{BE8C2804-92B2-43FA-8BAD-A74DE7891FC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE8C2804-92B2-43FA-8BAD-A74DE7891FC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE8C2804-92B2-43FA-8BAD-A74DE7891FC3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C4A4E0E-6E16-4251-9DE1-96790198BBC9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3C057178-4D3A-401B-9756-0B1168926D5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3C057178-4D3A-401B-9756-0B1168926D5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C057178-4D3A-401B-9756-0B1168926D5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,18 +45,22 @@ Global
 		{555AAAED-4278-4317-9F12-B9413F46342E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{555AAAED-4278-4317-9F12-B9413F46342E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{555AAAED-4278-4317-9F12-B9413F46342E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F368734-327A-4057-8673-D7BA7FBB8508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F368734-327A-4057-8673-D7BA7FBB8508}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F368734-327A-4057-8673-D7BA7FBB8508}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F368734-327A-4057-8673-D7BA7FBB8508}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BE8C2804-92B2-43FA-8BAD-A74DE7891FC3} = {118D2C99-58BA-47FA-81A9-E0147A6745D2}
-		{1C4A4E0E-6E16-4251-9DE1-96790198BBC9} = {B8B170E3-856D-4593-9DFD-22B5F3A75771}
 		{B8B170E3-856D-4593-9DFD-22B5F3A75771} = {FDF058D7-7F01-4205-8672-D8BFC2EA2E3F}
 		{8D5CD004-93BB-4171-9D19-1851DC13EF8B} = {FDF058D7-7F01-4205-8672-D8BFC2EA2E3F}
 		{3C057178-4D3A-401B-9756-0B1168926D5C} = {C98F6D52-9EE7-4B88-8354-729C413BB21F}
 		{804B381B-04F9-489D-9A43-FC8E19D209CD} = {8D5CD004-93BB-4171-9D19-1851DC13EF8B}
 		{555AAAED-4278-4317-9F12-B9413F46342E} = {B8B170E3-856D-4593-9DFD-22B5F3A75771}
+		{7F368734-327A-4057-8673-D7BA7FBB8508} = {B8B170E3-856D-4593-9DFD-22B5F3A75771}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22B12097-ADA2-4178-B53E-48C0A53FCD7F}

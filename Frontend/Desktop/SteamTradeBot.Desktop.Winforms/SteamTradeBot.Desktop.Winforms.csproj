@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Protos\Protos\Protos.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Forms\ExtendedConsoleForm.cs">
       <SubType>Form</SubType>
     </Compile>
