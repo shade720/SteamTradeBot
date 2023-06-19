@@ -1,5 +1,5 @@
 using System.Globalization;
-using SteamTradeBotClient.Forms;
+using SteamTradeBot.Desktop.Winforms.Forms;
 using TradeBotClient.Forms;
 
 namespace TradeBotClient
