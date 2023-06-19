@@ -1,6 +1,6 @@
-﻿namespace TradeBotClient.Forms
+﻿namespace SteamTradeBot.Desktop.Winforms.Forms
 {
-    partial class LoginForm
+    partial class LogInForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,263 +28,203 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.LoginTextBox = new System.Windows.Forms.TextBox();
-            this.PasswordTextBox = new System.Windows.Forms.TextBox();
-            this.LoginButton = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.Observe = new System.Windows.Forms.Button();
-            this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.label5 = new System.Windows.Forms.Label();
-            this.PathTextBox = new System.Windows.Forms.Label();
-            this.SaveLoginAndPasswordCheckBox = new System.Windows.Forms.CheckBox();
-            this.SteamGuardTextBox = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.ClearSavedButton = new System.Windows.Forms.Button();
-            this.HideBrowserCheckBox = new System.Windows.Forms.CheckBox();
-            this.ErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.ErrorProvider)).BeginInit();
-            this.SuspendLayout();
+            groupBox1 = new GroupBox();
+            ChooseMaFileButton = new Button();
+            LogInButton = new Button();
+            textBox2 = new TextBox();
+            label5 = new Label();
+            label4 = new Label();
+            SaveCredentialsCheckBox = new CheckBox();
+            TokenTextBox = new TextBox();
+            label3 = new Label();
+            PasswordTextBox = new TextBox();
+            label2 = new Label();
+            LogInTextBox = new TextBox();
+            label1 = new Label();
+            FolderBrowserDialog = new FolderBrowserDialog();
+            groupBox1.SuspendLayout();
+            SuspendLayout();
             // 
-            // label1
+            // groupBox1
             // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(17, 57);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(60, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Логин";
+            groupBox1.Controls.Add(ChooseMaFileButton);
+            groupBox1.Controls.Add(LogInButton);
+            groupBox1.Controls.Add(textBox2);
+            groupBox1.Controls.Add(label5);
+            groupBox1.Controls.Add(label4);
+            groupBox1.Controls.Add(SaveCredentialsCheckBox);
+            groupBox1.Controls.Add(TokenTextBox);
+            groupBox1.Controls.Add(label3);
+            groupBox1.Controls.Add(PasswordTextBox);
+            groupBox1.Controls.Add(label2);
+            groupBox1.Controls.Add(LogInTextBox);
+            groupBox1.Controls.Add(label1);
+            groupBox1.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
+            groupBox1.ForeColor = Color.Red;
+            groupBox1.Location = new Point(407, 60);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(616, 601);
+            groupBox1.TabIndex = 0;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Log In";
             // 
-            // label2
+            // ChooseMaFileButton
             // 
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(17, 88);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 25);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Пароль";
+            ChooseMaFileButton.BackColor = Color.Red;
+            ChooseMaFileButton.FlatStyle = FlatStyle.Flat;
+            ChooseMaFileButton.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+            ChooseMaFileButton.ForeColor = Color.White;
+            ChooseMaFileButton.Location = new Point(447, 313);
+            ChooseMaFileButton.Name = "ChooseMaFileButton";
+            ChooseMaFileButton.Size = new Size(111, 31);
+            ChooseMaFileButton.TabIndex = 11;
+            ChooseMaFileButton.Text = "Path";
+            ChooseMaFileButton.UseVisualStyleBackColor = false;
             // 
-            // label3
+            // LogInButton
             // 
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(17, 178);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(125, 23);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Путь к maFile";
+            LogInButton.BackColor = Color.Red;
+            LogInButton.FlatStyle = FlatStyle.Flat;
+            LogInButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            LogInButton.ForeColor = Color.White;
+            LogInButton.Location = new Point(210, 470);
+            LogInButton.Name = "LogInButton";
+            LogInButton.Size = new Size(200, 60);
+            LogInButton.TabIndex = 10;
+            LogInButton.Text = "Log In";
+            LogInButton.UseVisualStyleBackColor = false;
+            LogInButton.Click += LogInButton_Click;
             // 
-            // LoginTextBox
+            // textBox2
             // 
-            this.LoginTextBox.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.LoginTextBox.Location = new System.Drawing.Point(142, 53);
-            this.LoginTextBox.Margin = new System.Windows.Forms.Padding(3, 3, 5, 3);
-            this.LoginTextBox.Name = "LoginTextBox";
-            this.LoginTextBox.Size = new System.Drawing.Size(178, 27);
-            this.LoginTextBox.TabIndex = 3;
-            this.LoginTextBox.TabStop = false;
-            // 
-            // PasswordTextBox
-            // 
-            this.PasswordTextBox.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.PasswordTextBox.Location = new System.Drawing.Point(142, 86);
-            this.PasswordTextBox.Margin = new System.Windows.Forms.Padding(3, 3, 5, 3);
-            this.PasswordTextBox.Name = "PasswordTextBox";
-            this.PasswordTextBox.Size = new System.Drawing.Size(178, 27);
-            this.PasswordTextBox.TabIndex = 4;
-            this.PasswordTextBox.TabStop = false;
-            this.PasswordTextBox.UseSystemPasswordChar = true;
-            // 
-            // LoginButton
-            // 
-            this.LoginButton.BackColor = System.Drawing.Color.Transparent;
-            this.LoginButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.LoginButton.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.LoginButton.ForeColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.LoginButton.Location = new System.Drawing.Point(83, 335);
-            this.LoginButton.Name = "LoginButton";
-            this.LoginButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.LoginButton.Size = new System.Drawing.Size(183, 46);
-            this.LoginButton.TabIndex = 6;
-            this.LoginButton.Text = "Войти";
-            this.LoginButton.UseVisualStyleBackColor = false;
-            this.LoginButton.Click += new System.EventHandler(this.LoginButton_Click);
-            // 
-            // label4
-            // 
-            this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label4.ForeColor = System.Drawing.SystemColors.Control;
-            this.label4.Location = new System.Drawing.Point(83, 9);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(183, 31);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Авторизация";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // Observe
-            // 
-            this.Observe.BackColor = System.Drawing.Color.Transparent;
-            this.Observe.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.Observe.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.Observe.Location = new System.Drawing.Point(141, 171);
-            this.Observe.Name = "Observe";
-            this.Observe.Size = new System.Drawing.Size(94, 30);
-            this.Observe.TabIndex = 9;
-            this.Observe.Text = "Обзор";
-            this.Observe.UseVisualStyleBackColor = false;
-            this.Observe.Click += new System.EventHandler(this.Observe_Click);
-            // 
-            // OpenFileDialog
-            // 
-            this.OpenFileDialog.FileName = "OpenFileDialog";
+            textBox2.BorderStyle = BorderStyle.None;
+            textBox2.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            textBox2.Location = new Point(238, 313);
+            textBox2.Name = "textBox2";
+            textBox2.PlaceholderText = "____________________";
+            textBox2.Size = new Size(203, 31);
+            textBox2.TabIndex = 9;
             // 
             // label5
             // 
-            this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.ForeColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.label5.Location = new System.Drawing.Point(17, 206);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 20);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Путь:\r\n";
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            label5.Location = new Point(43, 313);
+            label5.Name = "label5";
+            label5.Size = new Size(187, 31);
+            label5.TabIndex = 8;
+            label5.Text = "SDA maFile path:";
             // 
-            // PathTextBox
+            // label4
             // 
-            this.PathTextBox.BackColor = System.Drawing.Color.Transparent;
-            this.PathTextBox.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.PathTextBox.ForeColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.PathTextBox.Location = new System.Drawing.Point(67, 208);
-            this.PathTextBox.Name = "PathTextBox";
-            this.PathTextBox.Size = new System.Drawing.Size(271, 65);
-            this.PathTextBox.TabIndex = 2;
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            label4.Location = new Point(289, 260);
+            label4.Name = "label4";
+            label4.Size = new Size(39, 31);
+            label4.TabIndex = 7;
+            label4.Text = "Or";
             // 
-            // SaveLoginAndPasswordCheckBox
+            // SaveCredentialsCheckBox
             // 
-            this.SaveLoginAndPasswordCheckBox.AutoSize = true;
-            this.SaveLoginAndPasswordCheckBox.BackColor = System.Drawing.Color.Transparent;
-            this.SaveLoginAndPasswordCheckBox.ForeColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.SaveLoginAndPasswordCheckBox.Location = new System.Drawing.Point(17, 305);
-            this.SaveLoginAndPasswordCheckBox.Name = "SaveLoginAndPasswordCheckBox";
-            this.SaveLoginAndPasswordCheckBox.Size = new System.Drawing.Size(162, 24);
-            this.SaveLoginAndPasswordCheckBox.TabIndex = 12;
-            this.SaveLoginAndPasswordCheckBox.Text = "Сохранить данные";
-            this.SaveLoginAndPasswordCheckBox.UseVisualStyleBackColor = false;
-            this.SaveLoginAndPasswordCheckBox.CheckedChanged += new System.EventHandler(this.SaveLoginAndPasswordCheckBox_CheckedChanged);
+            SaveCredentialsCheckBox.AutoSize = true;
+            SaveCredentialsCheckBox.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            SaveCredentialsCheckBox.Location = new Point(415, 560);
+            SaveCredentialsCheckBox.Name = "SaveCredentialsCheckBox";
+            SaveCredentialsCheckBox.Size = new Size(201, 35);
+            SaveCredentialsCheckBox.TabIndex = 6;
+            SaveCredentialsCheckBox.Text = "Save credentials";
+            SaveCredentialsCheckBox.UseVisualStyleBackColor = true;
             // 
-            // SteamGuardTextBox
+            // TokenTextBox
             // 
-            this.SteamGuardTextBox.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.SteamGuardTextBox.Location = new System.Drawing.Point(142, 119);
-            this.SteamGuardTextBox.Margin = new System.Windows.Forms.Padding(3, 3, 5, 3);
-            this.SteamGuardTextBox.Name = "SteamGuardTextBox";
-            this.SteamGuardTextBox.Size = new System.Drawing.Size(93, 27);
-            this.SteamGuardTextBox.TabIndex = 1;
+            TokenTextBox.BorderStyle = BorderStyle.None;
+            TokenTextBox.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            TokenTextBox.Location = new Point(238, 200);
+            TokenTextBox.Name = "TokenTextBox";
+            TokenTextBox.PlaceholderText = "________________________________";
+            TokenTextBox.Size = new Size(320, 31);
+            TokenTextBox.TabIndex = 5;
             // 
-            // label6
+            // label3
             // 
-            this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(17, 123);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(125, 23);
-            this.label6.TabIndex = 15;
-            this.label6.Text = "Steam Guard";
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            label3.Location = new Point(138, 200);
+            label3.Name = "label3";
+            label3.Size = new Size(73, 31);
+            label3.TabIndex = 4;
+            label3.Text = "Token";
             // 
-            // ClearSavedButton
+            // PasswordTextBox
             // 
-            this.ClearSavedButton.BackColor = System.Drawing.Color.Transparent;
-            this.ClearSavedButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.ClearSavedButton.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.ClearSavedButton.Location = new System.Drawing.Point(280, -1);
-            this.ClearSavedButton.Name = "ClearSavedButton";
-            this.ClearSavedButton.Size = new System.Drawing.Size(67, 27);
-            this.ClearSavedButton.TabIndex = 17;
-            this.ClearSavedButton.Text = "Сброс";
-            this.ClearSavedButton.UseVisualStyleBackColor = false;
-            this.ClearSavedButton.Click += new System.EventHandler(this.ClearSavedButton_Click);
+            PasswordTextBox.BorderStyle = BorderStyle.None;
+            PasswordTextBox.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            PasswordTextBox.Location = new Point(238, 141);
+            PasswordTextBox.Name = "PasswordTextBox";
+            PasswordTextBox.PlaceholderText = "________________________________";
+            PasswordTextBox.Size = new Size(320, 31);
+            PasswordTextBox.TabIndex = 3;
             // 
-            // HideBrowserCheckBox
+            // label2
             // 
-            this.HideBrowserCheckBox.AutoSize = true;
-            this.HideBrowserCheckBox.BackColor = System.Drawing.Color.Transparent;
-            this.HideBrowserCheckBox.ForeColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.HideBrowserCheckBox.Location = new System.Drawing.Point(17, 276);
-            this.HideBrowserCheckBox.Name = "HideBrowserCheckBox";
-            this.HideBrowserCheckBox.Size = new System.Drawing.Size(142, 24);
-            this.HideBrowserCheckBox.TabIndex = 40;
-            this.HideBrowserCheckBox.Text = "Скрыть браузер";
-            this.HideBrowserCheckBox.UseVisualStyleBackColor = false;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            label2.Location = new Point(104, 141);
+            label2.Name = "label2";
+            label2.Size = new Size(110, 31);
+            label2.TabIndex = 2;
+            label2.Text = "Password";
             // 
-            // ErrorProvider
+            // LogInTextBox
             // 
-            this.ErrorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
-            this.ErrorProvider.ContainerControl = this;
+            LogInTextBox.BorderStyle = BorderStyle.None;
+            LogInTextBox.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            LogInTextBox.Location = new Point(238, 83);
+            LogInTextBox.Name = "LogInTextBox";
+            LogInTextBox.PlaceholderText = "________________________________";
+            LogInTextBox.Size = new Size(320, 31);
+            LogInTextBox.TabIndex = 1;
             // 
-            // LoginForm
+            // label1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ButtonShadow;
-            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(346, 402);
-            this.Controls.Add(this.HideBrowserCheckBox);
-            this.Controls.Add(this.ClearSavedButton);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.SteamGuardTextBox);
-            this.Controls.Add(this.SaveLoginAndPasswordCheckBox);
-            this.Controls.Add(this.PathTextBox);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.Observe);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.LoginButton);
-            this.Controls.Add(this.PasswordTextBox);
-            this.Controls.Add(this.LoginTextBox);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.KeyPreview = true;
-            this.Name = "LoginForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "LoginForm";
-            ((System.ComponentModel.ISupportInitialize)(this.ErrorProvider)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            label1.Location = new Point(143, 83);
+            label1.Name = "label1";
+            label1.Size = new Size(71, 31);
+            label1.TabIndex = 0;
+            label1.Text = "Login";
+            // 
+            // LogInForm
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1507, 733);
+            Controls.Add(groupBox1);
+            FormBorderStyle = FormBorderStyle.None;
+            Name = "LogInForm";
+            Text = "LogInForm";
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox LoginTextBox;
-        private System.Windows.Forms.TextBox PasswordTextBox;
-        private System.Windows.Forms.Button LoginButton;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button Observe;
-        private System.Windows.Forms.OpenFileDialog OpenFileDialog;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label PathTextBox;
-        private System.Windows.Forms.CheckBox SaveLoginAndPasswordCheckBox;
-        private System.Windows.Forms.TextBox SteamGuardTextBox;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button ClearSavedButton;
-        private System.Windows.Forms.CheckBox HideBrowserCheckBox;
-        private System.Windows.Forms.ErrorProvider ErrorProvider;
+        private GroupBox groupBox1;
+        private TextBox LogInTextBox;
+        private Label label1;
+        private TextBox PasswordTextBox;
+        private Label label2;
+        private TextBox textBox2;
+        private Label label5;
+        private Label label4;
+        private CheckBox SaveCredentialsCheckBox;
+        private TextBox TokenTextBox;
+        private Label label3;
+        private Button LogInButton;
+        private Button ChooseMaFileButton;
+        private FolderBrowserDialog FolderBrowserDialog;
     }
 }

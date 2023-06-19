@@ -13,12 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Forms\ExtendedConsoleForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\LoginForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
