@@ -28,12 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            MyTimer = new System.Windows.Forms.Timer(components);
-            Annotation = new ToolTip(components);
-            Tray = new NotifyIcon(components);
-            ErrorProvider = new ErrorProvider(components);
             panel1 = new Panel();
             panel5 = new Panel();
             panel4 = new Panel();
@@ -48,16 +43,11 @@
             LogInButton = new Button();
             panel7 = new Panel();
             Frame = new Panel();
-            ((System.ComponentModel.ISupportInitialize)ErrorProvider).BeginInit();
             panel1.SuspendLayout();
             panel4.SuspendLayout();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
             SuspendLayout();
-            // 
-            // ErrorProvider
-            // 
-            ErrorProvider.ContainerControl = this;
             // 
             // panel1
             // 
@@ -114,6 +104,7 @@
             SettingsNavButton.TabIndex = 2;
             SettingsNavButton.Text = "Settings";
             SettingsNavButton.UseVisualStyleBackColor = true;
+            SettingsNavButton.Click += SettingsNavButton_Click;
             // 
             // panel6
             // 
@@ -207,9 +198,8 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
-            AutoSize = true;
             BackColor = Color.White;
-            BackgroundImageLayout = ImageLayout.Stretch;
+            BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(1776, 881);
             Controls.Add(Frame);
             Controls.Add(panel7);
@@ -217,12 +207,10 @@
             Controls.Add(panel1);
             DoubleBuffered = true;
             ForeColor = SystemColors.GradientActiveCaption;
-            FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "TradeBot";
-            ((System.ComponentModel.ISupportInitialize)ErrorProvider).EndInit();
             panel1.ResumeLayout(false);
             panel4.ResumeLayout(false);
             panel3.ResumeLayout(false);
@@ -236,10 +224,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.ToolTip Annotation;
-        private System.Windows.Forms.NotifyIcon Tray;
-        private System.Windows.Forms.ErrorProvider ErrorProvider;
-        private System.Windows.Forms.Timer MyTimer;
         private Panel panel1;
         private Panel panel2;
         private Panel panel4;
