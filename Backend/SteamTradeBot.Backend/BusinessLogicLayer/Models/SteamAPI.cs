@@ -327,20 +327,22 @@ public class SteamAPI : IDisposable
     private static readonly By LoginField = By.XPath("//*[@id='responsive_page_template_content']/div[1]/div[1]/div/div/div/div[2]/div/form/div[1]/input");
     private static readonly By PasswordField = By.XPath("//*[@id='responsive_page_template_content']/div[1]/div[1]/div/div/div/div[2]/div/form/div[2]/input");
     private static readonly By LoginButton = By.XPath("//*[@id='responsive_page_template_content']/div[1]/div[1]/div/div/div/div[2]/div/form/div[4]/button");
-    private static readonly By TwoFactorField = By.XPath("//*[@id='responsive_page_template_content']/div/div[1]/div/div/div/div[2]/form/div/div[2]/div/input[1]");
+    private static readonly By TwoFactorField = By.XPath("//*[@id='responsive_page_template_content']/div[1]/div[1]/div/div/div/div[2]/form/div/div[2]/div[1]/div/input[1]");
     private static readonly By LoginCheck = By.Id("account_pulldown");
 
     #endregion
 
-    public void LogIn(string login, string password, string token)
+    public void LogIn(string login, string password, string token, string secret)
     {
         Log.Information("Signing in...");
         Log.Information($"Incoming user data {login}, {password}, {token}");
-        if (CheckIncomingData(login, password, token))
-        {
-            Log.Error("Authorization failed. Fields was null or empty.");
-            throw new ArgumentException("Authorization failed. Fields was null or empty.");
-        }
+        //if (CheckIncomingData(login, password, token))
+        //{
+        //    Log.Error("Authorization failed. Fields was null or empty.");
+        //    throw new ArgumentException("Authorization failed. Fields was null or empty.");
+        //}
+
+        token = GetToken(secret);
 
         if (_logState)
         {

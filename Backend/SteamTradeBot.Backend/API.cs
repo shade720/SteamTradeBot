@@ -8,7 +8,7 @@ namespace SteamTradeBot.Backend;
 
 public static class API
 {
-    private record Credentials(string Login, string Password, string Token);
+    private record Credentials(string Login, string Password, string Token, string Secret);
     public static void ConfigureApi(this WebApplication app)
     {
         app.MapPost("api/login", LogIn);
@@ -21,7 +21,7 @@ public static class API
 
     private static async Task<IResult> LogIn(TradeBot tradeBot, Credentials credentials)
     {
-        return await Task.Run(() => tradeBot.LogIn(credentials.Login, credentials.Password, credentials.Token))
+        return await Task.Run(() => tradeBot.LogIn(credentials.Login, credentials.Password, credentials.Token, credentials.Secret))
             .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok("f") : Results.Problem(task.Exception?.Message));
     }
 }
