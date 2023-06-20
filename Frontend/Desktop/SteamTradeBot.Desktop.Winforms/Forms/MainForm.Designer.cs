@@ -172,7 +172,7 @@
             LogInButton.FlatStyle = FlatStyle.Flat;
             LogInButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             LogInButton.ForeColor = Color.White;
-            LogInButton.Location = new Point(1417, 0);
+            LogInButton.Location = new Point(1416, -3);
             LogInButton.Name = "LogInButton";
             LogInButton.Size = new Size(108, 50);
             LogInButton.TabIndex = 0;
@@ -186,7 +186,7 @@
             LogOutButton.FlatStyle = FlatStyle.Flat;
             LogOutButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             LogOutButton.ForeColor = Color.White;
-            LogOutButton.Location = new Point(1417, 0);
+            LogOutButton.Location = new Point(1418, 0);
             LogOutButton.Name = "LogOutButton";
             LogOutButton.Size = new Size(108, 50);
             LogOutButton.TabIndex = 1;
