@@ -69,9 +69,9 @@ public class TradeBot
         _worker.StartWork();
     }
 
-    public void LogIn(string login, string password, string token)
+    public void LogIn(string login, string password, string token, string secret)
     {
-        _steamApi.LogIn(login, password, token);
+        _steamApi.LogIn(login, password, token, secret);
     }
 
     public void LogOut()

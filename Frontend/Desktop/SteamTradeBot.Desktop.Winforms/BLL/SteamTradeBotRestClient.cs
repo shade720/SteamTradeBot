@@ -20,6 +20,7 @@ public class SteamTradeBotRestClient : IDisposable
     public async Task LogIn(Credentials credentials)
     {
         var response = await _restClient.PostAsync("login", new StringContent(JsonConvert.SerializeObject(credentials), Encoding.UTF8, "application/json"));
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task LogOut()
