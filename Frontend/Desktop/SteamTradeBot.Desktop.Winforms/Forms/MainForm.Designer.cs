@@ -86,7 +86,7 @@
             StatsNavButton.FlatStyle = FlatStyle.Flat;
             StatsNavButton.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold, GraphicsUnit.Point);
             StatsNavButton.ForeColor = Color.White;
-            StatsNavButton.Location = new Point(0, 297);
+            StatsNavButton.Location = new Point(0, 254);
             StatsNavButton.Name = "StatsNavButton";
             StatsNavButton.Size = new Size(250, 69);
             StatsNavButton.TabIndex = 3;
@@ -99,7 +99,7 @@
             SettingsNavButton.FlatStyle = FlatStyle.Flat;
             SettingsNavButton.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold, GraphicsUnit.Point);
             SettingsNavButton.ForeColor = Color.White;
-            SettingsNavButton.Location = new Point(0, 222);
+            SettingsNavButton.Location = new Point(0, 179);
             SettingsNavButton.Name = "SettingsNavButton";
             SettingsNavButton.Size = new Size(250, 69);
             SettingsNavButton.TabIndex = 2;
@@ -111,7 +111,7 @@
             // 
             panel6.Location = new Point(0, 0);
             panel6.Name = "panel6";
-            panel6.Size = new Size(250, 148);
+            panel6.Size = new Size(250, 98);
             panel6.TabIndex = 1;
             // 
             // WorkerNavButton
@@ -120,7 +120,7 @@
             WorkerNavButton.FlatStyle = FlatStyle.Flat;
             WorkerNavButton.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold, GraphicsUnit.Point);
             WorkerNavButton.ForeColor = Color.White;
-            WorkerNavButton.Location = new Point(0, 147);
+            WorkerNavButton.Location = new Point(0, 104);
             WorkerNavButton.Name = "WorkerNavButton";
             WorkerNavButton.Size = new Size(250, 69);
             WorkerNavButton.TabIndex = 0;

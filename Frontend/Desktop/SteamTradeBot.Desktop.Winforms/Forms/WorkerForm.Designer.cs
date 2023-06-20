@@ -54,6 +54,8 @@
             Profit = new DataGridViewTextBoxColumn();
             groupBox2 = new GroupBox();
             groupBox3 = new GroupBox();
+            CheckConnectionButton = new Button();
+            CancelOrdersButtons = new Button();
             StartButton = new Button();
             StopButton = new Button();
             groupBox1.SuspendLayout();
@@ -82,9 +84,9 @@
             groupBox1.Controls.Add(label1);
             groupBox1.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
             groupBox1.ForeColor = Color.Red;
-            groupBox1.Location = new Point(932, 12);
+            groupBox1.Location = new Point(1051, 12);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(583, 505);
+            groupBox1.Size = new Size(464, 505);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "State";
@@ -94,7 +96,7 @@
             label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label9.ForeColor = Color.Black;
-            label9.Location = new Point(306, 382);
+            label9.Location = new Point(239, 383);
             label9.Name = "label9";
             label9.Padding = new Padding(5);
             label9.Size = new Size(96, 38);
@@ -106,7 +108,7 @@
             WarningsLabel.AutoSize = true;
             WarningsLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             WarningsLabel.ForeColor = Color.Black;
-            WarningsLabel.Location = new Point(306, 344);
+            WarningsLabel.Location = new Point(239, 345);
             WarningsLabel.Name = "WarningsLabel";
             WarningsLabel.Padding = new Padding(5);
             WarningsLabel.Size = new Size(33, 38);
@@ -118,7 +120,7 @@
             ErrorsLabel.AutoSize = true;
             ErrorsLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ErrorsLabel.ForeColor = Color.Black;
-            ErrorsLabel.Location = new Point(306, 306);
+            ErrorsLabel.Location = new Point(239, 307);
             ErrorsLabel.Name = "ErrorsLabel";
             ErrorsLabel.Padding = new Padding(5);
             ErrorsLabel.Size = new Size(33, 38);
@@ -130,7 +132,7 @@
             ItemsSoldLabel.AutoSize = true;
             ItemsSoldLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ItemsSoldLabel.ForeColor = Color.Black;
-            ItemsSoldLabel.Location = new Point(306, 268);
+            ItemsSoldLabel.Location = new Point(239, 269);
             ItemsSoldLabel.Name = "ItemsSoldLabel";
             ItemsSoldLabel.Padding = new Padding(5);
             ItemsSoldLabel.Size = new Size(55, 38);
@@ -142,7 +144,7 @@
             ItemsBoughtLabel.AutoSize = true;
             ItemsBoughtLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ItemsBoughtLabel.ForeColor = Color.Black;
-            ItemsBoughtLabel.Location = new Point(306, 230);
+            ItemsBoughtLabel.Location = new Point(239, 231);
             ItemsBoughtLabel.Name = "ItemsBoughtLabel";
             ItemsBoughtLabel.Padding = new Padding(5);
             ItemsBoughtLabel.Size = new Size(33, 38);
@@ -154,7 +156,7 @@
             ItemsAnalyzedLabel.AutoSize = true;
             ItemsAnalyzedLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ItemsAnalyzedLabel.ForeColor = Color.Black;
-            ItemsAnalyzedLabel.Location = new Point(306, 192);
+            ItemsAnalyzedLabel.Location = new Point(239, 193);
             ItemsAnalyzedLabel.Name = "ItemsAnalyzedLabel";
             ItemsAnalyzedLabel.Padding = new Padding(5);
             ItemsAnalyzedLabel.Size = new Size(44, 38);
@@ -166,7 +168,7 @@
             ServiceStateLabel.AutoSize = true;
             ServiceStateLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ServiceStateLabel.ForeColor = Color.Black;
-            ServiceStateLabel.Location = new Point(306, 154);
+            ServiceStateLabel.Location = new Point(239, 155);
             ServiceStateLabel.Name = "ServiceStateLabel";
             ServiceStateLabel.Padding = new Padding(5);
             ServiceStateLabel.Size = new Size(48, 38);
@@ -178,7 +180,7 @@
             ConnectionStateLabel.AutoSize = true;
             ConnectionStateLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ConnectionStateLabel.ForeColor = Color.Black;
-            ConnectionStateLabel.Location = new Point(306, 116);
+            ConnectionStateLabel.Location = new Point(239, 117);
             ConnectionStateLabel.Name = "ConnectionStateLabel";
             ConnectionStateLabel.Padding = new Padding(5);
             ConnectionStateLabel.Size = new Size(116, 38);
@@ -189,7 +191,7 @@
             // 
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label8.Location = new Point(209, 382);
+            label8.Location = new Point(142, 383);
             label8.Name = "label8";
             label8.Padding = new Padding(5);
             label8.Size = new Size(91, 38);
@@ -200,7 +202,7 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label7.Location = new Point(192, 344);
+            label7.Location = new Point(125, 345);
             label7.Name = "label7";
             label7.Padding = new Padding(5);
             label7.Size = new Size(108, 38);
@@ -211,7 +213,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label6.Location = new Point(223, 306);
+            label6.Location = new Point(156, 307);
             label6.Name = "label6";
             label6.Padding = new Padding(5);
             label6.Size = new Size(77, 38);
@@ -222,7 +224,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label5.Location = new Point(185, 268);
+            label5.Location = new Point(118, 269);
             label5.Name = "label5";
             label5.Padding = new Padding(5);
             label5.Size = new Size(115, 38);
@@ -233,7 +235,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(157, 230);
+            label4.Location = new Point(90, 231);
             label4.Name = "label4";
             label4.Padding = new Padding(5);
             label4.Size = new Size(143, 38);
@@ -244,7 +246,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(145, 192);
+            label3.Location = new Point(78, 193);
             label3.Name = "label3";
             label3.Padding = new Padding(5);
             label3.Size = new Size(155, 38);
@@ -255,7 +257,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(165, 154);
+            label2.Location = new Point(98, 155);
             label2.Name = "label2";
             label2.Padding = new Padding(5);
             label2.Size = new Size(135, 38);
@@ -266,7 +268,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(127, 116);
+            label1.Location = new Point(60, 117);
             label1.Name = "label1";
             label1.Padding = new Padding(5);
             label1.Size = new Size(173, 38);
@@ -278,6 +280,7 @@
             LogsDataGridView.AllowUserToAddRows = false;
             LogsDataGridView.AllowUserToDeleteRows = false;
             LogsDataGridView.BackgroundColor = Color.White;
+            LogsDataGridView.BorderStyle = BorderStyle.None;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.Control;
             dataGridViewCellStyle1.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point);
@@ -288,13 +291,13 @@
             LogsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             LogsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             LogsDataGridView.Columns.AddRange(new DataGridViewColumn[] { Time, ItemName, BuyPrice, SellPrice, Profit });
-            LogsDataGridView.Location = new Point(6, 42);
+            LogsDataGridView.Location = new Point(6, 60);
             LogsDataGridView.Name = "LogsDataGridView";
             LogsDataGridView.ReadOnly = true;
             LogsDataGridView.RowHeadersVisible = false;
             LogsDataGridView.RowHeadersWidth = 51;
             LogsDataGridView.RowTemplate.Height = 29;
-            LogsDataGridView.Size = new Size(902, 708);
+            LogsDataGridView.Size = new Size(1021, 690);
             LogsDataGridView.TabIndex = 1;
             // 
             // Time
@@ -311,7 +314,7 @@
             ItemName.MinimumWidth = 6;
             ItemName.Name = "ItemName";
             ItemName.ReadOnly = true;
-            ItemName.Width = 400;
+            ItemName.Width = 500;
             // 
             // BuyPrice
             // 
@@ -344,23 +347,51 @@
             groupBox2.ForeColor = Color.Red;
             groupBox2.Location = new Point(12, 12);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(914, 756);
+            groupBox2.Size = new Size(1033, 756);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Log";
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(CheckConnectionButton);
+            groupBox3.Controls.Add(CancelOrdersButtons);
             groupBox3.Controls.Add(StartButton);
             groupBox3.Controls.Add(StopButton);
             groupBox3.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
             groupBox3.ForeColor = Color.Red;
-            groupBox3.Location = new Point(932, 523);
+            groupBox3.Location = new Point(1051, 523);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(583, 245);
+            groupBox3.Size = new Size(464, 245);
             groupBox3.TabIndex = 3;
             groupBox3.TabStop = false;
             groupBox3.Text = "Control";
+            // 
+            // CheckConnectionButton
+            // 
+            CheckConnectionButton.BackColor = Color.Red;
+            CheckConnectionButton.FlatStyle = FlatStyle.Flat;
+            CheckConnectionButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            CheckConnectionButton.ForeColor = Color.White;
+            CheckConnectionButton.Location = new Point(6, 113);
+            CheckConnectionButton.Name = "CheckConnectionButton";
+            CheckConnectionButton.Size = new Size(200, 60);
+            CheckConnectionButton.TabIndex = 3;
+            CheckConnectionButton.Text = "Check";
+            CheckConnectionButton.UseVisualStyleBackColor = false;
+            // 
+            // CancelOrdersButtons
+            // 
+            CancelOrdersButtons.BackColor = Color.Red;
+            CancelOrdersButtons.FlatStyle = FlatStyle.Flat;
+            CancelOrdersButtons.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            CancelOrdersButtons.ForeColor = Color.White;
+            CancelOrdersButtons.Location = new Point(6, 179);
+            CancelOrdersButtons.Name = "CancelOrdersButtons";
+            CancelOrdersButtons.Size = new Size(200, 60);
+            CancelOrdersButtons.TabIndex = 2;
+            CancelOrdersButtons.Text = "Cancel Orders";
+            CancelOrdersButtons.UseVisualStyleBackColor = false;
             // 
             // StartButton
             // 
@@ -368,7 +399,7 @@
             StartButton.FlatStyle = FlatStyle.Flat;
             StartButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
             StartButton.ForeColor = Color.White;
-            StartButton.Location = new Point(377, 179);
+            StartButton.Location = new Point(258, 179);
             StartButton.Name = "StartButton";
             StartButton.Size = new Size(200, 60);
             StartButton.TabIndex = 0;
@@ -382,7 +413,7 @@
             StopButton.FlatStyle = FlatStyle.Flat;
             StopButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
             StopButton.ForeColor = Color.White;
-            StopButton.Location = new Point(377, 113);
+            StopButton.Location = new Point(258, 179);
             StopButton.Name = "StopButton";
             StopButton.Size = new Size(200, 60);
             StopButton.TabIndex = 1;
@@ -433,6 +464,8 @@
         private Label ItemsAnalyzedLabel;
         private Label ServiceStateLabel;
         private Label ConnectionStateLabel;
+        private Button CheckConnectionButton;
+        private Button CancelOrdersButtons;
         private DataGridViewTextBoxColumn Time;
         private DataGridViewTextBoxColumn ItemName;
         private DataGridViewTextBoxColumn BuyPrice;
