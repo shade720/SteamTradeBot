@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -37,7 +38,12 @@ public class SteamTradeBotRestClient : IDisposable
     {
         await _restClient.PostAsync("deactivation", null);
     }
-    
+
+    public async Task UploadSettings(string configurationJson)
+    {
+        await _restClient.PostAsync("configuration", new StringContent(configurationJson, Encoding.UTF8, "application/json"));
+    }
+
     public void Dispose()
     {
         _restClient.Dispose();

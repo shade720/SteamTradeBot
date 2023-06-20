@@ -76,7 +76,7 @@
             ResetButton.FlatStyle = FlatStyle.Flat;
             ResetButton.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
             ResetButton.ForeColor = Color.White;
-            ResetButton.Location = new Point(504, 16);
+            ResetButton.Location = new Point(505, 15);
             ResetButton.Name = "ResetButton";
             ResetButton.Size = new Size(111, 31);
             ResetButton.TabIndex = 12;
@@ -90,7 +90,7 @@
             ChooseMaFileButton.FlatStyle = FlatStyle.Flat;
             ChooseMaFileButton.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
             ChooseMaFileButton.ForeColor = Color.White;
-            ChooseMaFileButton.Location = new Point(482, 310);
+            ChooseMaFileButton.Location = new Point(505, 310);
             ChooseMaFileButton.Name = "ChooseMaFileButton";
             ChooseMaFileButton.Size = new Size(111, 31);
             ChooseMaFileButton.TabIndex = 11;

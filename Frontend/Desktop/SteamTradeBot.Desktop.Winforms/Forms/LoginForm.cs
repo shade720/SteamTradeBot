@@ -15,8 +15,8 @@ public partial class LogInForm : Form
 
     public LogInForm(SteamTradeBotRestClient steamTradeBotRestClient)
     {
-        _steamTradeBotRestClient = steamTradeBotRestClient;
         InitializeComponent();
+        _steamTradeBotRestClient = steamTradeBotRestClient;
         var savedCredentials = Program.LoadCredentials() ?? new Credentials();
         _credentials = savedCredentials;
         LogInTextBox.Text = savedCredentials.Login;
