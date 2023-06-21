@@ -13,9 +13,12 @@ public class Item
 {
     [Key]
     public int Id { get; set; }
-    public string EngItemName { get; set; }
-    public string RusItemName { get; set; }
-    private string ItemUrl { get; set; }
+    [Required(AllowEmptyStrings = true)]
+    public string EngItemName { get; set; } = string.Empty;
+    [Required(AllowEmptyStrings = true)]
+    public string RusItemName { get; set; } = string.Empty;
+    [Required(AllowEmptyStrings = true)]
+    private string ItemUrl { get; set; } = string.Empty;
     public double BuyPrice { get; set; }
     public double SellPrice { get; set; }
     public double AvgPrice { get; set; }
@@ -51,9 +54,11 @@ public class Item
     public double CollectItemData()
     {
         Log.Information("Collect item data...");
-        ItemUrl ??= _steamApi.GetItemUrl(EngItemName);
-        RusItemName ??= _steamApi.GetRusItemName(ItemUrl);
-        var graphAnalysisPeriod = int.Parse(_configuration["AnalysisPeriod"]!);
+        if (string.IsNullOrEmpty(ItemUrl))
+            ItemUrl = _steamApi.GetItemUrl(EngItemName);
+        if (string.IsNullOrEmpty(RusItemName))
+            RusItemName = _steamApi.GetRusItemName(ItemUrl);
+        var graphAnalysisPeriod = int.Parse(_configuration["AnalysisIntervalDays"]!);
         var fromDate = DateTime.Now.AddDays(-graphAnalysisPeriod);
         var graph = _steamApi
             .GetGraph(ItemUrl)
@@ -75,13 +80,13 @@ public class Item
     public bool IsProfitable(double balance)
     {
         Log.Information("Checking item profit...");
-        if (Sales < int.Parse(_configuration["Sales"]!))
+        if (Sales < int.Parse(_configuration["SalesPerWeek"]!))
         {
             Log.Information("Item is not profitable. Reason: sales volume is lower than needed.");
             return false;
         }
 
-        var avgPriceRange = double.Parse(_configuration["AvgPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
+        var avgPriceRange = double.Parse(_configuration["AveragePrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
         if (SellOrderBook.All(sellOrder => sellOrder.Price < AvgPrice + avgPriceRange))
         {
             Log.Information("Item is not profitable. Reason: average price is higher than needed.");
@@ -132,12 +137,12 @@ public class Item
         Log.Information("Checking if order obsolete...");
         const int listingPageSize = 1;
         var sellOrderBook = _steamApi.GetSellOrdersBook(ItemUrl, listingPageSize);
-        return sellOrderBook.Any(x => Math.Abs(x.Price - BuyPrice) < double.Parse(_configuration["PriceRangeToCancel"]!, NumberStyles.Any, CultureInfo.InvariantCulture));
+        return sellOrderBook.Any(x => Math.Abs(x.Price - BuyPrice) < double.Parse(_configuration["FitPriceRange"]!, NumberStyles.Any, CultureInfo.InvariantCulture));
     }
 
     public void Buy()
     {
-        var quantity = int.Parse(_configuration["BuyQuantity"]!);
+        var quantity = int.Parse(_configuration["OrderQuantity"]!);
         Log.Information($"Buy {quantity} {RusItemName} at price {BuyPrice}");
         _steamApi.PlaceBuyOrder(ItemUrl, BuyPrice, quantity);
         BuyOrderQuantity = quantity;
