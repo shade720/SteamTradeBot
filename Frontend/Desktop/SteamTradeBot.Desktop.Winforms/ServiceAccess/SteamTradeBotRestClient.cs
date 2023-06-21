@@ -1,10 +1,9 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
 using SteamTradeBot.Desktop.Winforms.Models;
 
-namespace SteamTradeBot.Desktop.Winforms.BLL;
+namespace SteamTradeBot.Desktop.Winforms.ServiceAccess;
 
 public class SteamTradeBotRestClient : IDisposable
 {
@@ -27,22 +26,50 @@ public class SteamTradeBotRestClient : IDisposable
 
     public async Task LogOut()
     {
-        await _restClient.PostAsync("logout", null);
+        var response = await _restClient.PostAsync("logout", null);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task Start()
     {
-        await _restClient.PostAsync("activation", null);
+        var response = await _restClient.PostAsync("activation", null);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task Stop()
     {
-        await _restClient.PostAsync("deactivation", null);
+        var response = await _restClient.PostAsync("deactivation", null);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task UploadSettings(string configurationJson)
     {
-        await _restClient.PostAsync("configuration", new StringContent(configurationJson, Encoding.UTF8, "application/json"));
+        var response = await _restClient.PostAsync("configuration", new StringContent(configurationJson, Encoding.UTF8, "application/json"));
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task CancelOrders()
+    {
+        var response = await _restClient.PostAsync("orderscanceling", null);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task<StateInfo> CheckState()
+    {
+        try
+        {
+            var response = await _restClient.GetAsync("state");
+            var stateInfoJson = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<StateInfo>(stateInfoJson)!;
+        }
+        catch
+        {
+            return new StateInfo
+            {
+                Connection = StateInfo.ConnectionState.Disconnected,
+                Service = StateInfo.ServiceState.Down
+            };
+        }
     }
 
     public void Dispose()
