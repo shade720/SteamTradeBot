@@ -18,14 +18,14 @@ public class DbAccess
 
     #region HistoryData
 
-    public void AddNewStateInfo(StateInfo stateInfo)
+    public void AddNewStateInfo(StateChangingEvent stateChangingEvent)
     {
         using var context = _historyDataContextFactory.CreateDbContext();
-        context.States.Add(stateInfo);
+        context.States.Add(stateChangingEvent);
         context.SaveChanges();
     }
 
-    public List<StateInfo> GetHistory()
+    public List<StateChangingEvent> GetHistory()
     {
         using var context = _historyDataContextFactory.CreateDbContext();
         return context.States.ToList();

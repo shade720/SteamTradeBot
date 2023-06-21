@@ -39,6 +39,7 @@ builder.Services.AddDbContextFactory<MarketDataContext>(options => options.UseNp
 builder.Services.AddDbContextFactory<HistoryDataContext>(options => options.UseNpgsql(builder.Configuration["ConnectionString"]));
 
 builder.Services.AddSingleton<TradeBot>();
+builder.Services.AddSingleton<ServiceState>();
 
 var app = builder.Build();
 
