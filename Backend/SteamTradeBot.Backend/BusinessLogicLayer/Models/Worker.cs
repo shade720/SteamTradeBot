@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,8 +10,23 @@ public class Worker
 {
     #region Public
 
-    public delegate void UpdateItem(Item item);
-    public event UpdateItem? OnItemUpdate;
+    public delegate void OnItemAnalyzed(Item item, double balance);
+    public event OnItemAnalyzed? OnItemAnalyzedEvent;
+
+    public delegate void OnItemBought(Item item);
+    public event OnItemBought? OnItemBoughtEvent;
+
+    public delegate void OnItemSold(Item item);
+    public event OnItemSold? OnItemSoldEvent;
+
+    public delegate void OnItemCanceled(Item item);
+    public event OnItemCanceled? OnItemCanceledEvent;
+
+    public delegate void OnError(Exception exception);
+    public event OnError? OnErrorEvent;
+
+    public delegate void OnWarning(Exception exception);
+    public event OnWarning? OnWarningEvent;
 
     public Worker(List<Item> workingSet)
     {
@@ -79,7 +93,6 @@ public class Worker
             if (analyzedItem is null)
                 continue;
             _processedItems.Add((analyzedItem, analyzedItem.ItemPriority));
-            OnItemUpdate?.Invoke(analyzedItem);
 
             if (_itemsPipeline.Count == 0)
                 RestartPipeline();
@@ -87,24 +100,32 @@ public class Worker
         Log.Information("Pipeline processing has ended");
     }
 
-    private static Item? AnalyzeItem(Item item)
+    private Item? AnalyzeItem(Item item)
     {
         try
         {
-            item.CollectItemData();
-
-            if (item.IsProfitable())
+            var balance = item.CollectItemData();
+            OnItemAnalyzedEvent?.Invoke(item, balance);
+            if (item.IsProfitable(balance))
+            {
                 item.Buy();
-
+                OnItemBoughtEvent?.Invoke(item);
+            }
             if (item.IsBuyOrderObsolete())
+            {
                 item.CancelBuyOrder();
-
+                OnItemCanceledEvent?.Invoke(item);
+            }
             if (item.IsBuyOrderSatisfied())
+            {
                 item.Sell();
+                OnItemSoldEvent?.Invoke(item);
+            }
         }
         catch (Exception e)
         {
             Log.Error($"The item was skipped due to an error ->\r\nMessage: {e.Message}\r\nStack trace: {e.StackTrace}");
+            OnErrorEvent?.Invoke(e);
             return null;
         }
         return item;

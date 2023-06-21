@@ -18,7 +18,8 @@ public enum InfoType
 {
     ItemAnalyzed,
     ItemBought,
-    ItemsSold,
+    ItemSold,
+    ItemCanceled,
     Error,
     Warning
 }

@@ -23,7 +23,6 @@ public class Item
     public double Sales { get; set; }
     public bool IsTherePurchaseOrder { get; private set; }
     public int BuyOrderQuantity { get; set; }
-    public static double Balance { get; set; }
     public Priority ItemPriority { get; private set; } = Priority.ForReview;
 
     #region NotMapped
@@ -49,13 +48,11 @@ public class Item
         return this;
     }
 
-    public void CollectItemData()
+    public double CollectItemData()
     {
         Log.Information("Collect item data...");
         ItemUrl ??= _steamApi.GetItemUrl(EngItemName);
         RusItemName ??= _steamApi.GetRusItemName(ItemUrl);
-        Balance = _steamApi.GetBalance(ItemUrl);
-
         var graphAnalysisPeriod = int.Parse(_configuration["AnalysisPeriod"]!);
         var fromDate = DateTime.Now.AddDays(-graphAnalysisPeriod);
         var graph = _steamApi
@@ -70,10 +67,12 @@ public class Item
         BuyOrderBook = _steamApi.GetBuyOrdersBook(ItemUrl);
         SellOrderBook = _steamApi.GetSellOrdersBook(ItemUrl, int.Parse(_configuration["ListingFindRange"]!));
 
-        Log.Information($"Collected item data:\r\nEngItemName: {EngItemName}; \r\nBalance: {Balance}; \r\nSales: {Sales}; \r\nAvgPrice: {AvgPrice}; \r\nTrend: {Trend}; \r\nBestSellPrice: {SellOrderBook[0].Price}; \r\nBestBuyPrice: {BuyOrderBook[0].Price};");
+        Log.Information($"Collected item data:\r\nEngItemName: {EngItemName}; \r\nSales: {Sales}; \r\nAvgPrice: {AvgPrice}; \r\nTrend: {Trend}; \r\nBestSellPrice: {SellOrderBook[0].Price}; \r\nBestBuyPrice: {BuyOrderBook[0].Price};");
+
+        return _steamApi.GetBalance(ItemUrl);
     }
 
-    public bool IsProfitable()
+    public bool IsProfitable(double balance)
     {
         Log.Information("Checking item profit...");
         if (Sales < int.Parse(_configuration["Sales"]!))
@@ -105,7 +104,7 @@ public class Item
             Log.Information("Item is not profitable. Reason: profitable sell order is not found");
             return false;
         }
-        if (Balance < profitableBuyOrder.Price)
+        if (balance < profitableBuyOrder.Price)
         {
             Log.Information("Item is not profitable. Reason: no money for this item");
             return false;
