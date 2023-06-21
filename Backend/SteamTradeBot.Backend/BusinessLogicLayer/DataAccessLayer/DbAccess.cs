@@ -5,11 +5,11 @@ using SteamTradeBot.Backend.BusinessLogicLayer.Models;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
 
-public class DatabaseClient
+public class DbAccess
 {
     private readonly IDbContextFactory<MarketDataContext> _contextFactory;
 
-    public DatabaseClient(IDbContextFactory<MarketDataContext> contextFactory)
+    public DbAccess(IDbContextFactory<MarketDataContext> contextFactory)
     {
         _contextFactory = contextFactory;
     }
