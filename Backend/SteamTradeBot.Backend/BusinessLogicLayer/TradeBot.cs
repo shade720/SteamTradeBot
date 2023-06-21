@@ -24,7 +24,7 @@ public class TradeBot
         IDbContextFactory<MarketDataContext> factory)
     {
         _configuration = configuration;
-        _database = new DatabaseClient(factory);
+        _database = new DbAccess(factory);
         _steamApi = new SteamAPI();
     }
 
@@ -122,7 +122,7 @@ public class TradeBot
 
     private readonly SteamAPI _steamApi;
     private readonly IConfiguration _configuration;
-    private readonly DatabaseClient _database;
+    private readonly DbAccess _database;
 
     private Worker _worker;
 
