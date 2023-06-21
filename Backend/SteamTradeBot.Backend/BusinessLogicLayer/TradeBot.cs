@@ -195,22 +195,22 @@ public class TradeBot
     {
         Log.Information("Load pipeline from skins-table.xyz...");
         return _steamApi.GetItemNamesList(
-            double.Parse(_configuration["StartPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
-            double.Parse(_configuration["EndPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
-            int.Parse(_configuration["Sales"]!) * 7,
-            int.Parse(_configuration["PipelineSize"]!));
+            double.Parse(_configuration["MinPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
+            double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
+            int.Parse(_configuration["SalesPerWeek"]!) * 7,
+            int.Parse(_configuration["ItemListSize"]!));
     }
 
     private bool CheckConfigurationIntegrity()
     {
         Log.Information("Check configuration integrity...");
-        if (int.TryParse(_configuration["BuyQuantity"], out _) &&
-            int.TryParse(_configuration["Sales"], out _) &&
+        if (int.TryParse(_configuration["OrderQuantity"], out _) &&
+            int.TryParse(_configuration["SalesPerWeek"], out _) &&
             _configuration["SteamUserId"] is not null &&
             int.TryParse(_configuration["ListingFindRange"], out _) &&
-            int.TryParse(_configuration["AnalysisPeriod"], out _) &&
-            double.TryParse(_configuration["PriceRangeToCancel"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
-            double.TryParse(_configuration["AvgPrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
+            int.TryParse(_configuration["AnalysisIntervalDays"], out _) &&
+            double.TryParse(_configuration["FitPriceRange"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
+            double.TryParse(_configuration["AveragePrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
             double.TryParse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
             double.TryParse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
             double.TryParse(_configuration["RequiredProfit"], NumberStyles.Any, CultureInfo.InvariantCulture, out _))
@@ -231,7 +231,7 @@ public class TradeBot
         {
             Type = InfoType.ItemAnalyzed,
             CurrentBalance = balance,
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Info = item.EngItemName
         });
     }
@@ -241,7 +241,7 @@ public class TradeBot
         _db.AddNewStateInfo(new StateInfo
         {
             Type = InfoType.Error,
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Info = $"Message: {exception.Message}, StackTrace: {exception.StackTrace}"
         });
     }
@@ -252,7 +252,7 @@ public class TradeBot
         _db.AddNewStateInfo(new StateInfo
         {
             Type = InfoType.ItemSold,
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Info = item.EngItemName,
             SellPrice = item.SellPrice
         });
@@ -264,7 +264,7 @@ public class TradeBot
         _db.AddNewStateInfo(new StateInfo
         {
             Type = InfoType.ItemBought,
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Info = item.EngItemName,
             BuyPrice = item.BuyPrice
         });
@@ -276,7 +276,7 @@ public class TradeBot
         _db.AddNewStateInfo(new StateInfo
         {
             Type = InfoType.ItemCanceled,
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Info = item.EngItemName
         });
     }

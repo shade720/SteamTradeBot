@@ -29,7 +29,7 @@ public class SteamAPI : IDisposable
         driverService.HideCommandPromptWindow = true;
         var options = new ChromeOptions();
         options.AddArgument("--disable-gpu");
-        //options.AddArgument("--headless");
+        options.AddArgument("--headless");
         options.AddArgument("--window-size=1920,1080");
         _chromeBrowser = new ChromeDriver(driverService, options);
     }
