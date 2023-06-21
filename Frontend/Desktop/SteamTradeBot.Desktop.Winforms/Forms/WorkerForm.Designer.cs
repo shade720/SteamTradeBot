@@ -47,17 +47,19 @@
             label2 = new Label();
             label1 = new Label();
             LogsDataGridView = new DataGridView();
-            Time = new DataGridViewTextBoxColumn();
-            ItemName = new DataGridViewTextBoxColumn();
-            BuyPrice = new DataGridViewTextBoxColumn();
-            SellPrice = new DataGridViewTextBoxColumn();
-            Profit = new DataGridViewTextBoxColumn();
             groupBox2 = new GroupBox();
             groupBox3 = new GroupBox();
+            ViewLogsButton = new Button();
             CheckConnectionButton = new Button();
             CancelOrdersButtons = new Button();
             StartButton = new Button();
             StopButton = new Button();
+            Time = new DataGridViewTextBoxColumn();
+            ItemName = new DataGridViewTextBoxColumn();
+            OrderType = new DataGridViewTextBoxColumn();
+            BuyPrice = new DataGridViewTextBoxColumn();
+            SellPrice = new DataGridViewTextBoxColumn();
+            Profit = new DataGridViewTextBoxColumn();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)LogsDataGridView).BeginInit();
             groupBox2.SuspendLayout();
@@ -290,7 +292,7 @@
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             LogsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             LogsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            LogsDataGridView.Columns.AddRange(new DataGridViewColumn[] { Time, ItemName, BuyPrice, SellPrice, Profit });
+            LogsDataGridView.Columns.AddRange(new DataGridViewColumn[] { Time, ItemName, OrderType, BuyPrice, SellPrice, Profit });
             LogsDataGridView.Location = new Point(6, 60);
             LogsDataGridView.Name = "LogsDataGridView";
             LogsDataGridView.ReadOnly = true;
@@ -299,6 +301,101 @@
             LogsDataGridView.RowTemplate.Height = 29;
             LogsDataGridView.Size = new Size(1021, 690);
             LogsDataGridView.TabIndex = 1;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(LogsDataGridView);
+            groupBox2.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
+            groupBox2.ForeColor = Color.Red;
+            groupBox2.Location = new Point(12, 12);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(1033, 756);
+            groupBox2.TabIndex = 2;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Trade history";
+            // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(ViewLogsButton);
+            groupBox3.Controls.Add(CheckConnectionButton);
+            groupBox3.Controls.Add(CancelOrdersButtons);
+            groupBox3.Controls.Add(StartButton);
+            groupBox3.Controls.Add(StopButton);
+            groupBox3.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
+            groupBox3.ForeColor = Color.Red;
+            groupBox3.Location = new Point(1051, 523);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(464, 245);
+            groupBox3.TabIndex = 3;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Control";
+            // 
+            // ViewLogsButton
+            // 
+            ViewLogsButton.BackColor = Color.Red;
+            ViewLogsButton.FlatStyle = FlatStyle.Flat;
+            ViewLogsButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            ViewLogsButton.ForeColor = Color.White;
+            ViewLogsButton.Location = new Point(239, 79);
+            ViewLogsButton.Name = "ViewLogsButton";
+            ViewLogsButton.Size = new Size(200, 60);
+            ViewLogsButton.TabIndex = 4;
+            ViewLogsButton.Text = "Logs";
+            ViewLogsButton.UseVisualStyleBackColor = false;
+            // 
+            // CheckConnectionButton
+            // 
+            CheckConnectionButton.BackColor = Color.Red;
+            CheckConnectionButton.FlatStyle = FlatStyle.Flat;
+            CheckConnectionButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            CheckConnectionButton.ForeColor = Color.White;
+            CheckConnectionButton.Location = new Point(33, 79);
+            CheckConnectionButton.Name = "CheckConnectionButton";
+            CheckConnectionButton.Size = new Size(200, 60);
+            CheckConnectionButton.TabIndex = 3;
+            CheckConnectionButton.Text = "Check";
+            CheckConnectionButton.UseVisualStyleBackColor = false;
+            // 
+            // CancelOrdersButtons
+            // 
+            CancelOrdersButtons.BackColor = Color.Red;
+            CancelOrdersButtons.FlatStyle = FlatStyle.Flat;
+            CancelOrdersButtons.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            CancelOrdersButtons.ForeColor = Color.White;
+            CancelOrdersButtons.Location = new Point(33, 145);
+            CancelOrdersButtons.Name = "CancelOrdersButtons";
+            CancelOrdersButtons.Size = new Size(200, 60);
+            CancelOrdersButtons.TabIndex = 2;
+            CancelOrdersButtons.Text = "Cancel Orders";
+            CancelOrdersButtons.UseVisualStyleBackColor = false;
+            // 
+            // StartButton
+            // 
+            StartButton.BackColor = Color.Red;
+            StartButton.FlatStyle = FlatStyle.Flat;
+            StartButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            StartButton.ForeColor = Color.White;
+            StartButton.Location = new Point(239, 145);
+            StartButton.Name = "StartButton";
+            StartButton.Size = new Size(200, 60);
+            StartButton.TabIndex = 0;
+            StartButton.Text = "Start";
+            StartButton.UseVisualStyleBackColor = false;
+            StartButton.Click += StartButton_Click;
+            // 
+            // StopButton
+            // 
+            StopButton.BackColor = Color.Red;
+            StopButton.FlatStyle = FlatStyle.Flat;
+            StopButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            StopButton.ForeColor = Color.White;
+            StopButton.Location = new Point(239, 145);
+            StopButton.Name = "StopButton";
+            StopButton.Size = new Size(200, 60);
+            StopButton.TabIndex = 1;
+            StopButton.Text = "Stop";
+            StopButton.UseVisualStyleBackColor = false;
+            StopButton.Click += StopButton_Click;
             // 
             // Time
             // 
@@ -314,7 +411,15 @@
             ItemName.MinimumWidth = 6;
             ItemName.Name = "ItemName";
             ItemName.ReadOnly = true;
-            ItemName.Width = 500;
+            ItemName.Width = 370;
+            // 
+            // OrderType
+            // 
+            OrderType.HeaderText = "OrderType";
+            OrderType.MinimumWidth = 6;
+            OrderType.Name = "OrderType";
+            OrderType.ReadOnly = true;
+            OrderType.Width = 130;
             // 
             // BuyPrice
             // 
@@ -339,87 +444,6 @@
             Profit.Name = "Profit";
             Profit.ReadOnly = true;
             Profit.Width = 120;
-            // 
-            // groupBox2
-            // 
-            groupBox2.Controls.Add(LogsDataGridView);
-            groupBox2.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
-            groupBox2.ForeColor = Color.Red;
-            groupBox2.Location = new Point(12, 12);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1033, 756);
-            groupBox2.TabIndex = 2;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Log";
-            // 
-            // groupBox3
-            // 
-            groupBox3.Controls.Add(CheckConnectionButton);
-            groupBox3.Controls.Add(CancelOrdersButtons);
-            groupBox3.Controls.Add(StartButton);
-            groupBox3.Controls.Add(StopButton);
-            groupBox3.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
-            groupBox3.ForeColor = Color.Red;
-            groupBox3.Location = new Point(1051, 523);
-            groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(464, 245);
-            groupBox3.TabIndex = 3;
-            groupBox3.TabStop = false;
-            groupBox3.Text = "Control";
-            // 
-            // CheckConnectionButton
-            // 
-            CheckConnectionButton.BackColor = Color.Red;
-            CheckConnectionButton.FlatStyle = FlatStyle.Flat;
-            CheckConnectionButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
-            CheckConnectionButton.ForeColor = Color.White;
-            CheckConnectionButton.Location = new Point(6, 113);
-            CheckConnectionButton.Name = "CheckConnectionButton";
-            CheckConnectionButton.Size = new Size(200, 60);
-            CheckConnectionButton.TabIndex = 3;
-            CheckConnectionButton.Text = "Check";
-            CheckConnectionButton.UseVisualStyleBackColor = false;
-            // 
-            // CancelOrdersButtons
-            // 
-            CancelOrdersButtons.BackColor = Color.Red;
-            CancelOrdersButtons.FlatStyle = FlatStyle.Flat;
-            CancelOrdersButtons.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
-            CancelOrdersButtons.ForeColor = Color.White;
-            CancelOrdersButtons.Location = new Point(6, 179);
-            CancelOrdersButtons.Name = "CancelOrdersButtons";
-            CancelOrdersButtons.Size = new Size(200, 60);
-            CancelOrdersButtons.TabIndex = 2;
-            CancelOrdersButtons.Text = "Cancel Orders";
-            CancelOrdersButtons.UseVisualStyleBackColor = false;
-            // 
-            // StartButton
-            // 
-            StartButton.BackColor = Color.Red;
-            StartButton.FlatStyle = FlatStyle.Flat;
-            StartButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
-            StartButton.ForeColor = Color.White;
-            StartButton.Location = new Point(258, 179);
-            StartButton.Name = "StartButton";
-            StartButton.Size = new Size(200, 60);
-            StartButton.TabIndex = 0;
-            StartButton.Text = "Start";
-            StartButton.UseVisualStyleBackColor = false;
-            StartButton.Click += StartButton_Click;
-            // 
-            // StopButton
-            // 
-            StopButton.BackColor = Color.Red;
-            StopButton.FlatStyle = FlatStyle.Flat;
-            StopButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
-            StopButton.ForeColor = Color.White;
-            StopButton.Location = new Point(258, 179);
-            StopButton.Name = "StopButton";
-            StopButton.Size = new Size(200, 60);
-            StopButton.TabIndex = 1;
-            StopButton.Text = "Stop";
-            StopButton.UseVisualStyleBackColor = false;
-            StopButton.Click += StopButton_Click;
             // 
             // WorkerForm
             // 
@@ -466,8 +490,10 @@
         private Label ConnectionStateLabel;
         private Button CheckConnectionButton;
         private Button CancelOrdersButtons;
+        private Button ViewLogsButton;
         private DataGridViewTextBoxColumn Time;
         private DataGridViewTextBoxColumn ItemName;
+        private DataGridViewTextBoxColumn OrderType;
         private DataGridViewTextBoxColumn BuyPrice;
         private DataGridViewTextBoxColumn SellPrice;
         private DataGridViewTextBoxColumn Profit;

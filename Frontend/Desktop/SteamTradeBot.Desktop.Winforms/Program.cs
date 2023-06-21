@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SteamTradeBot.Desktop.Winforms.Forms;
+using SteamTradeBot.Desktop.Winforms.Models;
 
 namespace SteamTradeBot.Desktop.Winforms;
 

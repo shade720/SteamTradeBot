@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
+using SteamTradeBot.Desktop.Winforms.Models;
 
 namespace SteamTradeBot.Desktop.Winforms.BLL;
 

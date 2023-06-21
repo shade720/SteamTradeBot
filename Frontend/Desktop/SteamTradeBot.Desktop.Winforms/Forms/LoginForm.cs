@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using SteamTradeBot.Desktop.Winforms.BLL;
+using SteamTradeBot.Desktop.Winforms.Models;
 using System.Dynamic;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
