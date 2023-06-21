@@ -12,7 +12,6 @@ using Newtonsoft.Json.Converters;
 using Serilog;
 using SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models.DTOs;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
@@ -24,9 +23,11 @@ public class TradeBot
     (
         IConfiguration configuration,
         IDbContextFactory<MarketDataContext> marketContextFactory,
-        IDbContextFactory<HistoryDataContext> historyContextFactory)
+        IDbContextFactory<HistoryDataContext> historyContextFactory,
+        ServiceState state)
     {
         _configuration = configuration;
+        _state = state;
         _db = new DbAccess(marketContextFactory, historyContextFactory);
         _steamApi = new SteamAPI();
         _stopwatch = new Stopwatch();
@@ -50,6 +51,7 @@ public class TradeBot
         _worker.OnErrorEvent += OnError;
         _worker.StartWork();
         _stopwatch.Start();
+        _state.WorkingState = ServiceWorkingState.Up;
     }
 
     public void StopTrading()
@@ -64,6 +66,7 @@ public class TradeBot
         _worker?.StopWork();
         _stopwatch.Stop();
         _stopwatch.Reset();
+        _state.WorkingState = ServiceWorkingState.Down;
     }
 
     public void ClearBuyOrders()
@@ -145,16 +148,19 @@ public class TradeBot
 
     public ServiceState GetServiceState()
     {
-        var history = _db.GetHistory();
-        return new ServiceState
+        var serviceStateCopy = new ServiceState
         {
-            Errors = history.Count(x => x.Type == InfoType.Error),
-            Warnings = history.Count(x => x.Type == InfoType.Warning),
-            ItemsAnalyzed = history.Count(x => x.Type == InfoType.ItemAnalyzed),
-            ItemsBought = history.Count(x => x.Type == InfoType.ItemBought),
-            ItemsSold = history.Count(x => x.Type == InfoType.ItemSold),
-            Uptime = _stopwatch.Elapsed
+            ItemsAnalyzed = _state.ItemsAnalyzed,
+            ItemsBought = _state.ItemsBought,
+            ItemsSold = _state.ItemsSold,
+            ItemCanceled = _state.ItemCanceled,
+            Errors = _state.Errors,
+            Warnings = _state.Warnings,
+            Events = new List<string>(_state.Events),
+            Uptime = _stopwatch.Elapsed,
         };
+        _state.Events.Clear();
+        return serviceStateCopy;
     }
 
     #endregion
@@ -163,6 +169,7 @@ public class TradeBot
 
     private readonly SteamAPI _steamApi;
     private readonly IConfiguration _configuration;
+    private readonly ServiceState _state;
     private readonly DbAccess _db;
     private readonly Stopwatch _stopwatch;
 
@@ -227,58 +234,66 @@ public class TradeBot
     private void OnItemAnalyzed(Item item, double balance)
     {
         _db.UpdateItem(item);
-        _db.AddNewStateInfo(new StateInfo
+        _db.AddNewStateInfo(new StateChangingEvent
         {
             Type = InfoType.ItemAnalyzed,
             CurrentBalance = balance,
             Time = DateTime.UtcNow,
             Info = item.EngItemName
         });
+        _state.ItemsAnalyzed++;
     }
 
     private void OnError(Exception exception)
     {
-        _db.AddNewStateInfo(new StateInfo
+        _db.AddNewStateInfo(new StateChangingEvent
         {
             Type = InfoType.Error,
             Time = DateTime.UtcNow,
             Info = $"Message: {exception.Message}, StackTrace: {exception.StackTrace}"
         });
+        _state.Errors++;
     }
 
     private void OnItemSold(Item item)
     {
         _db.UpdateItem(item);
-        _db.AddNewStateInfo(new StateInfo
+        _db.AddNewStateInfo(new StateChangingEvent
         {
             Type = InfoType.ItemSold,
             Time = DateTime.UtcNow,
             Info = item.EngItemName,
             SellPrice = item.SellPrice
         });
+        _state.ItemsSold++;
+        _state.Events.Add($"{DateTime.UtcNow}-{item.EngItemName}-Sold-{item.BuyPrice}-{item.SellPrice}");
     }
 
     private void OnItemBought(Item item)
     {
         _db.UpdateItem(item);
-        _db.AddNewStateInfo(new StateInfo
+        _db.AddNewStateInfo(new StateChangingEvent
         {
             Type = InfoType.ItemBought,
             Time = DateTime.UtcNow,
             Info = item.EngItemName,
             BuyPrice = item.BuyPrice
         });
+        _state.ItemsBought++;
+        _state.Events.Add($"{DateTime.UtcNow}-{item.EngItemName}-Bought-{item.BuyPrice}");
     }
 
     private void OnItemCanceled(Item item)
     {
         _db.UpdateItem(item);
-        _db.AddNewStateInfo(new StateInfo
+        _db.AddNewStateInfo(new StateChangingEvent
         {
             Type = InfoType.ItemCanceled,
             Time = DateTime.UtcNow,
             Info = item.EngItemName
         });
+        _state.ItemCanceled++;
+        _state.Events.Add($"{DateTime.UtcNow}-{item.EngItemName}-Canceled-{item.BuyPrice}");
     }
 
     #endregion
