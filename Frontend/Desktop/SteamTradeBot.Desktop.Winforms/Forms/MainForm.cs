@@ -1,4 +1,4 @@
-﻿using SteamTradeBot.Desktop.Winforms.BLL;
+﻿using SteamTradeBot.Desktop.Winforms.ServiceAccess;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 

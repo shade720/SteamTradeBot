@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
-            label9 = new Label();
+            UptimeLabel = new Label();
             WarningsLabel = new Label();
             ErrorsLabel = new Label();
             ItemsSoldLabel = new Label();
@@ -47,6 +47,12 @@
             label2 = new Label();
             label1 = new Label();
             LogsDataGridView = new DataGridView();
+            Time = new DataGridViewTextBoxColumn();
+            ItemName = new DataGridViewTextBoxColumn();
+            OrderType = new DataGridViewTextBoxColumn();
+            BuyPrice = new DataGridViewTextBoxColumn();
+            SellPrice = new DataGridViewTextBoxColumn();
+            Profit = new DataGridViewTextBoxColumn();
             groupBox2 = new GroupBox();
             groupBox3 = new GroupBox();
             ViewLogsButton = new Button();
@@ -54,12 +60,6 @@
             CancelOrdersButtons = new Button();
             StartButton = new Button();
             StopButton = new Button();
-            Time = new DataGridViewTextBoxColumn();
-            ItemName = new DataGridViewTextBoxColumn();
-            OrderType = new DataGridViewTextBoxColumn();
-            BuyPrice = new DataGridViewTextBoxColumn();
-            SellPrice = new DataGridViewTextBoxColumn();
-            Profit = new DataGridViewTextBoxColumn();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)LogsDataGridView).BeginInit();
             groupBox2.SuspendLayout();
@@ -68,7 +68,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(label9);
+            groupBox1.Controls.Add(UptimeLabel);
             groupBox1.Controls.Add(WarningsLabel);
             groupBox1.Controls.Add(ErrorsLabel);
             groupBox1.Controls.Add(ItemsSoldLabel);
@@ -93,17 +93,16 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "State";
             // 
-            // label9
+            // UptimeLabel
             // 
-            label9.AutoSize = true;
-            label9.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label9.ForeColor = Color.Black;
-            label9.Location = new Point(239, 383);
-            label9.Name = "label9";
-            label9.Padding = new Padding(5);
-            label9.Size = new Size(96, 38);
-            label9.TabIndex = 15;
-            label9.Text = "01:52:51";
+            UptimeLabel.AutoSize = true;
+            UptimeLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            UptimeLabel.ForeColor = Color.Black;
+            UptimeLabel.Location = new Point(239, 383);
+            UptimeLabel.Name = "UptimeLabel";
+            UptimeLabel.Padding = new Padding(5);
+            UptimeLabel.Size = new Size(10, 38);
+            UptimeLabel.TabIndex = 15;
             // 
             // WarningsLabel
             // 
@@ -113,9 +112,8 @@
             WarningsLabel.Location = new Point(239, 345);
             WarningsLabel.Name = "WarningsLabel";
             WarningsLabel.Padding = new Padding(5);
-            WarningsLabel.Size = new Size(33, 38);
+            WarningsLabel.Size = new Size(10, 38);
             WarningsLabel.TabIndex = 14;
-            WarningsLabel.Text = "1";
             // 
             // ErrorsLabel
             // 
@@ -125,9 +123,8 @@
             ErrorsLabel.Location = new Point(239, 307);
             ErrorsLabel.Name = "ErrorsLabel";
             ErrorsLabel.Padding = new Padding(5);
-            ErrorsLabel.Size = new Size(33, 38);
+            ErrorsLabel.Size = new Size(10, 38);
             ErrorsLabel.TabIndex = 13;
-            ErrorsLabel.Text = "0";
             // 
             // ItemsSoldLabel
             // 
@@ -137,9 +134,8 @@
             ItemsSoldLabel.Location = new Point(239, 269);
             ItemsSoldLabel.Name = "ItemsSoldLabel";
             ItemsSoldLabel.Padding = new Padding(5);
-            ItemsSoldLabel.Size = new Size(55, 38);
+            ItemsSoldLabel.Size = new Size(10, 38);
             ItemsSoldLabel.TabIndex = 12;
-            ItemsSoldLabel.Text = "120";
             // 
             // ItemsBoughtLabel
             // 
@@ -149,9 +145,8 @@
             ItemsBoughtLabel.Location = new Point(239, 231);
             ItemsBoughtLabel.Name = "ItemsBoughtLabel";
             ItemsBoughtLabel.Padding = new Padding(5);
-            ItemsBoughtLabel.Size = new Size(33, 38);
+            ItemsBoughtLabel.Size = new Size(10, 38);
             ItemsBoughtLabel.TabIndex = 11;
-            ItemsBoughtLabel.Text = "3";
             // 
             // ItemsAnalyzedLabel
             // 
@@ -161,9 +156,8 @@
             ItemsAnalyzedLabel.Location = new Point(239, 193);
             ItemsAnalyzedLabel.Name = "ItemsAnalyzedLabel";
             ItemsAnalyzedLabel.Padding = new Padding(5);
-            ItemsAnalyzedLabel.Size = new Size(44, 38);
+            ItemsAnalyzedLabel.Size = new Size(10, 38);
             ItemsAnalyzedLabel.TabIndex = 10;
-            ItemsAnalyzedLabel.Text = "10";
             // 
             // ServiceStateLabel
             // 
@@ -173,9 +167,8 @@
             ServiceStateLabel.Location = new Point(239, 155);
             ServiceStateLabel.Name = "ServiceStateLabel";
             ServiceStateLabel.Padding = new Padding(5);
-            ServiceStateLabel.Size = new Size(48, 38);
+            ServiceStateLabel.Size = new Size(10, 38);
             ServiceStateLabel.TabIndex = 9;
-            ServiceStateLabel.Text = "Up";
             // 
             // ConnectionStateLabel
             // 
@@ -185,9 +178,8 @@
             ConnectionStateLabel.Location = new Point(239, 117);
             ConnectionStateLabel.Name = "ConnectionStateLabel";
             ConnectionStateLabel.Padding = new Padding(5);
-            ConnectionStateLabel.Size = new Size(116, 38);
+            ConnectionStateLabel.Size = new Size(10, 38);
             ConnectionStateLabel.TabIndex = 8;
-            ConnectionStateLabel.Text = "Connected";
             // 
             // label8
             // 
@@ -283,14 +275,14 @@
             LogsDataGridView.AllowUserToDeleteRows = false;
             LogsDataGridView.BackgroundColor = Color.White;
             LogsDataGridView.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            LogsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            LogsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             LogsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             LogsDataGridView.Columns.AddRange(new DataGridViewColumn[] { Time, ItemName, OrderType, BuyPrice, SellPrice, Profit });
             LogsDataGridView.Location = new Point(6, 60);
@@ -301,6 +293,54 @@
             LogsDataGridView.RowTemplate.Height = 29;
             LogsDataGridView.Size = new Size(1021, 690);
             LogsDataGridView.TabIndex = 1;
+            // 
+            // Time
+            // 
+            Time.HeaderText = "Time";
+            Time.MinimumWidth = 6;
+            Time.Name = "Time";
+            Time.ReadOnly = true;
+            Time.Width = 125;
+            // 
+            // ItemName
+            // 
+            ItemName.HeaderText = "ItemName";
+            ItemName.MinimumWidth = 6;
+            ItemName.Name = "ItemName";
+            ItemName.ReadOnly = true;
+            ItemName.Width = 370;
+            // 
+            // OrderType
+            // 
+            OrderType.HeaderText = "OrderType";
+            OrderType.MinimumWidth = 6;
+            OrderType.Name = "OrderType";
+            OrderType.ReadOnly = true;
+            OrderType.Width = 130;
+            // 
+            // BuyPrice
+            // 
+            BuyPrice.HeaderText = "BuyPrice";
+            BuyPrice.MinimumWidth = 6;
+            BuyPrice.Name = "BuyPrice";
+            BuyPrice.ReadOnly = true;
+            BuyPrice.Width = 125;
+            // 
+            // SellPrice
+            // 
+            SellPrice.HeaderText = "SellPrice";
+            SellPrice.MinimumWidth = 6;
+            SellPrice.Name = "SellPrice";
+            SellPrice.ReadOnly = true;
+            SellPrice.Width = 125;
+            // 
+            // Profit
+            // 
+            Profit.HeaderText = "Profit";
+            Profit.MinimumWidth = 6;
+            Profit.Name = "Profit";
+            Profit.ReadOnly = true;
+            Profit.Width = 120;
             // 
             // groupBox2
             // 
@@ -355,6 +395,7 @@
             CheckConnectionButton.TabIndex = 3;
             CheckConnectionButton.Text = "Check";
             CheckConnectionButton.UseVisualStyleBackColor = false;
+            CheckConnectionButton.Click += CheckConnectionButton_Click;
             // 
             // CancelOrdersButtons
             // 
@@ -368,6 +409,7 @@
             CancelOrdersButtons.TabIndex = 2;
             CancelOrdersButtons.Text = "Cancel Orders";
             CancelOrdersButtons.UseVisualStyleBackColor = false;
+            CancelOrdersButtons.Click += CancelOrdersButtons_Click;
             // 
             // StartButton
             // 
@@ -397,54 +439,6 @@
             StopButton.UseVisualStyleBackColor = false;
             StopButton.Click += StopButton_Click;
             // 
-            // Time
-            // 
-            Time.HeaderText = "Time";
-            Time.MinimumWidth = 6;
-            Time.Name = "Time";
-            Time.ReadOnly = true;
-            Time.Width = 125;
-            // 
-            // ItemName
-            // 
-            ItemName.HeaderText = "ItemName";
-            ItemName.MinimumWidth = 6;
-            ItemName.Name = "ItemName";
-            ItemName.ReadOnly = true;
-            ItemName.Width = 370;
-            // 
-            // OrderType
-            // 
-            OrderType.HeaderText = "OrderType";
-            OrderType.MinimumWidth = 6;
-            OrderType.Name = "OrderType";
-            OrderType.ReadOnly = true;
-            OrderType.Width = 130;
-            // 
-            // BuyPrice
-            // 
-            BuyPrice.HeaderText = "BuyPrice";
-            BuyPrice.MinimumWidth = 6;
-            BuyPrice.Name = "BuyPrice";
-            BuyPrice.ReadOnly = true;
-            BuyPrice.Width = 125;
-            // 
-            // SellPrice
-            // 
-            SellPrice.HeaderText = "SellPrice";
-            SellPrice.MinimumWidth = 6;
-            SellPrice.Name = "SellPrice";
-            SellPrice.ReadOnly = true;
-            SellPrice.Width = 125;
-            // 
-            // Profit
-            // 
-            Profit.HeaderText = "Profit";
-            Profit.MinimumWidth = 6;
-            Profit.Name = "Profit";
-            Profit.ReadOnly = true;
-            Profit.Width = 120;
-            // 
             // WorkerForm
             // 
             AutoScaleDimensions = new SizeF(120F, 120F);
@@ -456,6 +450,7 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "WorkerForm";
             Text = "Worker";
+            FormClosing += WorkerForm_FormClosing;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)LogsDataGridView).EndInit();
@@ -480,7 +475,7 @@
         private Label label4;
         private Label label3;
         private Label label2;
-        private Label label9;
+        private Label UptimeLabel;
         private Label WarningsLabel;
         private Label ErrorsLabel;
         private Label ItemsSoldLabel;
