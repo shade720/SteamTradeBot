@@ -16,7 +16,9 @@ public static class API
         app.MapPost("api/activation", ([FromServices] TradeBot tradeBot) => tradeBot.StartTrading());
         app.MapPost("api/deactivation", ([FromServices] TradeBot tradeBot) => tradeBot.StopTrading());
         app.MapPost("api/configuration", ([FromServices] TradeBot tradeBot, [FromBody] string configurationJson) => tradeBot.SetConfiguration(configurationJson));
-        app.MapPost("api/itemlist", ([FromServices] TradeBot tradeBot) => tradeBot.RefreshWorkingSet());
+        app.MapPost("api/itemslistrefreshing", ([FromServices] TradeBot tradeBot) => tradeBot.RefreshWorkingSet());
+        app.MapPost("api/orderscanceling", ([FromServices] TradeBot tradeBot) => tradeBot.ClearBuyOrders());
+        app.MapGet("api/state", ([FromServices] TradeBot tradeBot) => tradeBot.GetServiceState());
     }
 
     private static async Task<IResult> LogIn(TradeBot tradeBot, Credentials credentials)

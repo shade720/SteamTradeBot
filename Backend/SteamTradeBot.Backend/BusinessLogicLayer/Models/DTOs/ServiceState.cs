@@ -9,5 +9,5 @@ public class ServiceState
     public int ItemsSold { get; set; }
     public int Errors { get; set; }
     public int Warnings { get; set; }
-    public DateTime Uptime { get; set; }
+    public TimeSpan Uptime { get; set; }
 }
