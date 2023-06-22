@@ -65,6 +65,7 @@ public class Worker
             return;
         }
         _cancellationTokenSource?.Cancel();
+        Log.Information("Worker stopped!");
     }
 
     #endregion
