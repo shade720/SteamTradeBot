@@ -13,7 +13,7 @@ public partial class WorkerForm : Form
         InitializeComponent();
         _steamTradeBotServiceClient = steamTradeBotServiceClient;
         _cancellationTokenSource = new CancellationTokenSource();
-        Task.Run(async () => await PollingLoop(), _cancellationTokenSource.Token);
+        Task.Run(async () => await RefreshServiceStateLoop(), _cancellationTokenSource.Token);
     }
 
     private async void StartButton_Click(object sender, EventArgs e)
@@ -60,7 +60,7 @@ public partial class WorkerForm : Form
         }
     }
 
-    private async Task PollingLoop()
+    private async Task RefreshServiceStateLoop()
     {
         if (_cancellationTokenSource is null)
             throw new ApplicationException("CancellationToken was null!");
@@ -87,14 +87,19 @@ public partial class WorkerForm : Form
         ThreadHelperClass.SetText(this, UptimeLabel, state.Uptime.ToString(@"dd\.hh\:mm\:ss"));
         ThreadHelperClass.SetText(this, ConnectionStateLabel, state.Connection.ToString());
         ThreadHelperClass.SetText(this, ServiceStateLabel, state.WorkingState.ToString());
-        foreach (var @event in state.Events)
+        foreach (var eventInfo in state.Events)
         {
-            ThreadHelperClass.AddRow(this, HistoryDataGridView, @event.Split('-'));
+            ThreadHelperClass.AddRow(this, HistoryDataGridView, eventInfo.Split('-'));
         }
     }
 
     private void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)
     {
         _cancellationTokenSource.Cancel();
+    }
+
+    private void ViewLogsButton_Click(object sender, EventArgs e)
+    {
+
     }
 }
