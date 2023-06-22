@@ -81,12 +81,16 @@ public partial class WorkerForm : Form
         var state = await _steamTradeBotServiceClient.CheckState();
         ThreadHelperClass.SetText(this, ItemsAnalyzedLabel, state.ItemsAnalyzed.ToString());
         ThreadHelperClass.SetText(this, ItemsBoughtLabel, state.ItemsBought.ToString());
-        ThreadHelperClass.SetText(this, ItemsSoldLabel ,state.ItemsSold.ToString());
+        ThreadHelperClass.SetText(this, ItemsSoldLabel, state.ItemsSold.ToString());
         ThreadHelperClass.SetText(this, ErrorsLabel, state.Errors.ToString());
         ThreadHelperClass.SetText(this, WarningsLabel, state.Warnings.ToString());
-        ThreadHelperClass.SetText(this, UptimeLabel, state.Uptime.ToString());
+        ThreadHelperClass.SetText(this, UptimeLabel, state.Uptime.ToString(@"dd\.hh\:mm\:ss"));
         ThreadHelperClass.SetText(this, ConnectionStateLabel, state.Connection.ToString());
-        ThreadHelperClass.SetText(this, ServiceStateLabel, state.Service.ToString());
+        ThreadHelperClass.SetText(this, ServiceStateLabel, state.WorkingState.ToString());
+        foreach (var @event in state.Events)
+        {
+            ThreadHelperClass.AddRow(this, HistoryDataGridView, @event.Split('-'));
+        }
     }
 
     private void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)

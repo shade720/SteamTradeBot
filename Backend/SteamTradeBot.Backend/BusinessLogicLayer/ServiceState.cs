@@ -5,7 +5,7 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
 public class ServiceState
 {
-    public ServiceWorkingState WorkingState { get; set; }
+    public ServiceWorkingState WorkingState { get; set; } = ServiceWorkingState.Down;
     public int ItemsAnalyzed { get; set; }
     public int ItemsBought { get; set; }
     public int ItemsSold { get; set; }

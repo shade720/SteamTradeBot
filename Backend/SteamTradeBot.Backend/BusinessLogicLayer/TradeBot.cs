@@ -31,6 +31,8 @@ public class TradeBot
         _db = new DbAccess(marketContextFactory, historyContextFactory);
         _steamApi = new SteamAPI();
         _stopwatch = new Stopwatch();
+        _state.Events.Add($"{DateTime.UtcNow}-EngItemName-Sold-{45.1244}-{60.31}");
+        _state.Events.Add($"{DateTime.UtcNow}-EngItemName-Bought-{45.1244}");
     }
 
     public void StartTrading()
@@ -150,6 +152,7 @@ public class TradeBot
     {
         var serviceStateCopy = new ServiceState
         {
+            WorkingState = _state.WorkingState,
             ItemsAnalyzed = _state.ItemsAnalyzed,
             ItemsBought = _state.ItemsBought,
             ItemsSold = _state.ItemsSold,
