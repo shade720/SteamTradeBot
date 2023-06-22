@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -15,13 +16,13 @@ using SteamTradeBot.Backend.BusinessLogicLayer.Models;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
-public class TradeBot
+public class TradeBot : IDisposable
 {
     #region Public
 
     public TradeBot
     (
-        IConfiguration configuration,
+        IConfiguration configuration, 
         IDbContextFactory<MarketDataContext> marketContextFactory,
         IDbContextFactory<HistoryDataContext> historyContextFactory,
         ServiceState state)
@@ -31,9 +32,12 @@ public class TradeBot
         _db = new DbAccess(marketContextFactory, historyContextFactory);
         _steamApi = new SteamAPI();
         _stopwatch = new Stopwatch();
+        Log.Logger.Information("TradeBotSingleton created!");
         _state.Events.Add($"{DateTime.UtcNow}-EngItemName-Sold-{45.1244}-{60.31}");
         _state.Events.Add($"{DateTime.UtcNow}-EngItemName-Bought-{45.1244}");
     }
+
+    #region Trading
 
     public void StartTrading()
     {
@@ -42,7 +46,7 @@ public class TradeBot
             Log.Error("Configuration is corrupted. Trading not started!");
             return;
         }
-        if (_worker is not null) 
+        if (_worker is not null)
             return;
         var workingSet = InitializePipeline();
         _worker = new Worker(workingSet);
@@ -101,6 +105,10 @@ public class TradeBot
         _worker.StartWork();
     }
 
+    #endregion
+
+    #region Auth
+
     public void LogIn(string login, string password, string token, string secret)
     {
         _steamApi.LogIn(login, password, token, secret);
@@ -111,19 +119,25 @@ public class TradeBot
         _steamApi.LogOut();
     }
 
-    public bool SetConfiguration(string settingsJsonString)
+    #endregion
+
+    #region Configuration
+
+    private const string SettingsFileName = "appsettings.json";
+    private static readonly string ConfigurationPath = Path.Combine(Environment.CurrentDirectory, SettingsFileName);
+
+    public static bool SetConfiguration(string newSettings)
     {
-        var appSettingsPath = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
-        var appSettingsJson = File.ReadAllText(appSettingsPath);
+        var currentSettings = File.ReadAllText(ConfigurationPath);
 
         var jsonSettings = new JsonSerializerSettings();
         jsonSettings.Converters.Add(new ExpandoObjectConverter());
         jsonSettings.Converters.Add(new StringEnumConverter());
 
-        dynamic? oldConfig = JsonConvert.DeserializeObject<ExpandoObject>(appSettingsJson, jsonSettings);
-        dynamic? newConfig = JsonConvert.DeserializeObject<ExpandoObject>(settingsJsonString, jsonSettings);
+        dynamic? currentConfig = JsonConvert.DeserializeObject<ExpandoObject>(currentSettings, jsonSettings);
+        dynamic? newConfig = JsonConvert.DeserializeObject<ExpandoObject>(newSettings, jsonSettings);
 
-        if (oldConfig is null)
+        if (currentConfig is null)
         {
             Log.Logger.Error("Cannot deserialize appsettings.json file");
             return false;
@@ -135,18 +149,40 @@ public class TradeBot
         }
 
         var newConfigDict = (IDictionary<string, object>)newConfig;
-        var oldConfigDict = (IDictionary<string, object>)oldConfig;
+        var currentConfigDict = (IDictionary<string, object>)currentConfig;
 
         foreach (var pair in newConfigDict)
         {
-            if (oldConfigDict.ContainsKey(pair.Key))
-                oldConfigDict[pair.Key] = pair.Value;
+            if (currentConfigDict.ContainsKey(pair.Key))
+                currentConfigDict[pair.Key] = pair.Value;
         }
 
-        var newAppSettingsJson = JsonConvert.SerializeObject(oldConfig, Formatting.Indented, jsonSettings);
-        File.WriteAllText(appSettingsPath, newAppSettingsJson);
+        var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
+        File.WriteAllText(ConfigurationPath, updatedSettings);
         return true;
     }
+
+    #endregion
+
+    #region Logs
+
+    private static readonly string LogsPath = Path.Combine(Environment.CurrentDirectory, "Logs");
+
+    public static string GetLogs()
+    {
+        var logFiles = Directory.GetFiles(LogsPath);
+        var sb = new StringBuilder();
+        foreach (var file in logFiles)
+        {
+            using var sr = new StreamReader(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+            sb.Append(sr.ReadToEnd());
+        }
+        return sb.ToString();
+    }
+
+    #endregion
+
+    #region State
 
     public ServiceState GetServiceState()
     {
@@ -166,6 +202,14 @@ public class TradeBot
         return serviceStateCopy;
     }
 
+    #endregion
+
+    public void Dispose()
+    {
+        Log.Logger.Information("Disposing trade bot singleton...");
+        _steamApi?.Dispose();
+        Log.Logger.Information("Trade bot singleton disposed!");
+    }
     #endregion
 
     #region Private

@@ -32,6 +32,7 @@ public class SteamAPI : IDisposable
         options.AddArgument("--headless");
         options.AddArgument("--window-size=1920,1080");
         _chromeBrowser = new ChromeDriver(driverService, options);
+        Log.Logger.Information("Steam Api created!");
     }
 
     #region GetToken
@@ -491,6 +492,9 @@ public class SteamAPI : IDisposable
 
     public void Dispose()
     {
+        Log.Logger.Information("Disposing steam Api...");
         _chromeBrowser?.Quit();
+        _chromeBrowser?.Dispose();
+        Log.Logger.Information("Steam Api disposed!");
     }
 }

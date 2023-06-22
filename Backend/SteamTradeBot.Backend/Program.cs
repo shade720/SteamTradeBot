@@ -4,12 +4,9 @@ using Serilog;
 using Serilog.Events;
 using System;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.IO;
 using SteamTradeBot.Backend;
 using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
@@ -35,6 +32,7 @@ builder.Configuration.SetBasePath(Environment.CurrentDirectory)
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{Environment.UserDomainName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
+
 builder.Services.AddDbContextFactory<MarketDataContext>(options => options.UseNpgsql(builder.Configuration["ConnectionString"]));
 builder.Services.AddDbContextFactory<HistoryDataContext>(options => options.UseNpgsql(builder.Configuration["ConnectionString"]));
 
