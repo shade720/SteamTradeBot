@@ -77,15 +77,19 @@ public class TradeBot : IDisposable
 
     public void ClearBuyOrders()
     {
+        Log.Logger.Information("Start buy orders canceling...");
         var itemsWithPurchaseOrders = _db.GetItems().Where(item => item.IsTherePurchaseOrder || item.ItemPriority == Priority.BuyOrder);
         foreach (var item in itemsWithPurchaseOrders)
         {
             item.CancelBuyOrder();
+            Log.Logger.Information("Item {0} with buy price {1} was canceled", item.EngItemName, item.BuyPrice);
         }
+        Log.Logger.Information("All buy orders have been canceled!");
     }
 
     public void RefreshWorkingSet()
     {
+        Log.Logger.Information("Start working set refreshing...");
         if (_worker is null)
             throw new ApplicationException("Worker was null (RefreshWorkingSet)");
         _worker.OnItemAnalyzedEvent -= OnItemAnalyzed;
@@ -103,6 +107,7 @@ public class TradeBot : IDisposable
         _worker.OnItemSoldEvent += OnItemSold;
         _worker.OnErrorEvent += OnError;
         _worker.StartWork();
+        Log.Logger.Information("Working set have been refreshed!");
     }
 
     #endregion
@@ -126,8 +131,9 @@ public class TradeBot : IDisposable
     private const string SettingsFileName = "appsettings.json";
     private static readonly string ConfigurationPath = Path.Combine(Environment.CurrentDirectory, SettingsFileName);
 
-    public static bool SetConfiguration(string newSettings)
+    public void SetConfiguration(string newSettings)
     {
+        Log.Logger.Information("Start settings update...");
         var currentSettings = File.ReadAllText(ConfigurationPath);
 
         var jsonSettings = new JsonSerializerSettings();
@@ -140,12 +146,12 @@ public class TradeBot : IDisposable
         if (currentConfig is null)
         {
             Log.Logger.Error("Cannot deserialize appsettings.json file");
-            return false;
+            return;
         }
         if (newConfig is null)
         {
             Log.Logger.Error("Cannot deserialize new settings file");
-            return false;
+            return;
         }
 
         var newConfigDict = (IDictionary<string, object>)newConfig;
@@ -159,7 +165,7 @@ public class TradeBot : IDisposable
 
         var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
         File.WriteAllText(ConfigurationPath, updatedSettings);
-        return true;
+        Log.Logger.Information("Settings have been updated!");
     }
 
     #endregion
@@ -168,8 +174,9 @@ public class TradeBot : IDisposable
 
     private static readonly string LogsPath = Path.Combine(Environment.CurrentDirectory, "Logs");
 
-    public static string GetLogs()
+    public string GetLogs()
     {
+        Log.Logger.Information("Provide server logs...");
         var logFiles = Directory.GetFiles(LogsPath);
         var sb = new StringBuilder();
         foreach (var file in logFiles)
@@ -177,6 +184,7 @@ public class TradeBot : IDisposable
             using var sr = new StreamReader(new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
             sb.Append(sr.ReadToEnd());
         }
+        Log.Logger.Information("Server logs have been provided!");
         return sb.ToString();
     }
 
@@ -207,7 +215,7 @@ public class TradeBot : IDisposable
     public void Dispose()
     {
         Log.Logger.Information("Disposing trade bot singleton...");
-        _steamApi?.Dispose();
+        _steamApi.Dispose();
         Log.Logger.Information("Trade bot singleton disposed!");
     }
     #endregion
@@ -226,20 +234,18 @@ public class TradeBot : IDisposable
     {
         Log.Information("Initializing pipeline...");
         var pipeline = new List<Item>();
-        var savedItems = _db.GetItems();
-        if (savedItems.Any())
+        var cachedItems = _db.GetItems();
+        if (cachedItems.Any())
         {
             Log.Information("Local pipeline loaded");
-            pipeline.AddRange(savedItems.Select(savedItem => savedItem.ConfigureServiceProperties(_configuration, _steamApi)));
+            pipeline.AddRange(cachedItems.Select(item => item.ConfigureServiceProperties(_configuration, _steamApi)));
+            return pipeline;
         }
-        else
+        Log.Information("Local pipeline not found");
+        foreach (var newItem in GetItemNames().Select(itemName => new Item { EngItemName = itemName }.ConfigureServiceProperties(_configuration, _steamApi)))
         {
-            Log.Information("Local pipeline not found");
-            foreach (var newItem in GetItemNames().Select(itemName => new Item { EngItemName = itemName }.ConfigureServiceProperties(_configuration, _steamApi)))
-            {
-                _db.AddItem(newItem);
-                pipeline.Add(newItem);
-            }
+            _db.AddItem(newItem);
+            pipeline.Add(newItem);
         }
         Log.Information("Pipeline initialized");
         return pipeline;
