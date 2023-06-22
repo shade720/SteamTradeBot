@@ -67,7 +67,7 @@ public class SteamTradeBotRestClient : IDisposable
             return new StateInfo
             {
                 Connection = StateInfo.ConnectionState.Disconnected,
-                Service = StateInfo.ServiceState.Down
+                WorkingState = StateInfo.ServiceWorkingState.Down
             };
         }
     }

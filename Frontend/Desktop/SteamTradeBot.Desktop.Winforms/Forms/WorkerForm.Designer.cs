@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             UptimeLabel = new Label();
             WarningsLabel = new Label();
@@ -46,14 +48,14 @@
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
-            LogsDataGridView = new DataGridView();
-            Time = new DataGridViewTextBoxColumn();
-            ItemName = new DataGridViewTextBoxColumn();
-            OrderType = new DataGridViewTextBoxColumn();
+            groupBox2 = new GroupBox();
+            HistoryDataGridView = new DataGridView();
+            TimeColumn = new DataGridViewTextBoxColumn();
+            Item = new DataGridViewTextBoxColumn();
+            OrderTypeColumn = new DataGridViewTextBoxColumn();
             BuyPrice = new DataGridViewTextBoxColumn();
             SellPrice = new DataGridViewTextBoxColumn();
             Profit = new DataGridViewTextBoxColumn();
-            groupBox2 = new GroupBox();
             groupBox3 = new GroupBox();
             ViewLogsButton = new Button();
             CheckConnectionButton = new Button();
@@ -61,8 +63,8 @@
             StartButton = new Button();
             StopButton = new Button();
             groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)LogsDataGridView).BeginInit();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)HistoryDataGridView).BeginInit();
             groupBox3.SuspendLayout();
             SuspendLayout();
             // 
@@ -269,82 +271,9 @@
             label1.TabIndex = 0;
             label1.Text = "Connection state:";
             // 
-            // LogsDataGridView
-            // 
-            LogsDataGridView.AllowUserToAddRows = false;
-            LogsDataGridView.AllowUserToDeleteRows = false;
-            LogsDataGridView.BackgroundColor = Color.White;
-            LogsDataGridView.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            LogsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            LogsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            LogsDataGridView.Columns.AddRange(new DataGridViewColumn[] { Time, ItemName, OrderType, BuyPrice, SellPrice, Profit });
-            LogsDataGridView.Location = new Point(6, 60);
-            LogsDataGridView.Name = "LogsDataGridView";
-            LogsDataGridView.ReadOnly = true;
-            LogsDataGridView.RowHeadersVisible = false;
-            LogsDataGridView.RowHeadersWidth = 51;
-            LogsDataGridView.RowTemplate.Height = 29;
-            LogsDataGridView.Size = new Size(1021, 690);
-            LogsDataGridView.TabIndex = 1;
-            // 
-            // Time
-            // 
-            Time.HeaderText = "Time";
-            Time.MinimumWidth = 6;
-            Time.Name = "Time";
-            Time.ReadOnly = true;
-            Time.Width = 125;
-            // 
-            // ItemName
-            // 
-            ItemName.HeaderText = "ItemName";
-            ItemName.MinimumWidth = 6;
-            ItemName.Name = "ItemName";
-            ItemName.ReadOnly = true;
-            ItemName.Width = 370;
-            // 
-            // OrderType
-            // 
-            OrderType.HeaderText = "OrderType";
-            OrderType.MinimumWidth = 6;
-            OrderType.Name = "OrderType";
-            OrderType.ReadOnly = true;
-            OrderType.Width = 130;
-            // 
-            // BuyPrice
-            // 
-            BuyPrice.HeaderText = "BuyPrice";
-            BuyPrice.MinimumWidth = 6;
-            BuyPrice.Name = "BuyPrice";
-            BuyPrice.ReadOnly = true;
-            BuyPrice.Width = 125;
-            // 
-            // SellPrice
-            // 
-            SellPrice.HeaderText = "SellPrice";
-            SellPrice.MinimumWidth = 6;
-            SellPrice.Name = "SellPrice";
-            SellPrice.ReadOnly = true;
-            SellPrice.Width = 125;
-            // 
-            // Profit
-            // 
-            Profit.HeaderText = "Profit";
-            Profit.MinimumWidth = 6;
-            Profit.Name = "Profit";
-            Profit.ReadOnly = true;
-            Profit.Width = 120;
-            // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(LogsDataGridView);
+            groupBox2.Controls.Add(HistoryDataGridView);
             groupBox2.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
             groupBox2.ForeColor = Color.Red;
             groupBox2.Location = new Point(12, 12);
@@ -353,6 +282,98 @@
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Trade history";
+            // 
+            // HistoryDataGridView
+            // 
+            HistoryDataGridView.AllowUserToAddRows = false;
+            HistoryDataGridView.AllowUserToDeleteRows = false;
+            HistoryDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
+            HistoryDataGridView.BackgroundColor = Color.White;
+            HistoryDataGridView.BorderStyle = BorderStyle.None;
+            HistoryDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleVertical;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.Red;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = Color.White;
+            dataGridViewCellStyle1.SelectionForeColor = Color.Red;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            HistoryDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            HistoryDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            HistoryDataGridView.Columns.AddRange(new DataGridViewColumn[] { TimeColumn, Item, OrderTypeColumn, BuyPrice, SellPrice, Profit });
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.White;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = Color.Red;
+            dataGridViewCellStyle2.SelectionBackColor = Color.Red;
+            dataGridViewCellStyle2.SelectionForeColor = Color.White;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            HistoryDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            HistoryDataGridView.EnableHeadersVisualStyles = false;
+            HistoryDataGridView.Location = new Point(6, 81);
+            HistoryDataGridView.Name = "HistoryDataGridView";
+            HistoryDataGridView.ReadOnly = true;
+            HistoryDataGridView.RowHeadersVisible = false;
+            HistoryDataGridView.RowHeadersWidth = 51;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.White;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle3.ForeColor = Color.Black;
+            dataGridViewCellStyle3.SelectionBackColor = Color.Red;
+            dataGridViewCellStyle3.SelectionForeColor = Color.White;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            HistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            HistoryDataGridView.RowTemplate.Height = 29;
+            HistoryDataGridView.Size = new Size(1021, 669);
+            HistoryDataGridView.TabIndex = 0;
+            // 
+            // TimeColumn
+            // 
+            TimeColumn.HeaderText = "Time";
+            TimeColumn.MinimumWidth = 6;
+            TimeColumn.Name = "TimeColumn";
+            TimeColumn.ReadOnly = true;
+            TimeColumn.Width = 110;
+            // 
+            // Item
+            // 
+            Item.HeaderText = "Item";
+            Item.MinimumWidth = 6;
+            Item.Name = "Item";
+            Item.ReadOnly = true;
+            Item.Width = 460;
+            // 
+            // OrderTypeColumn
+            // 
+            OrderTypeColumn.HeaderText = "OrderType";
+            OrderTypeColumn.MinimumWidth = 6;
+            OrderTypeColumn.Name = "OrderTypeColumn";
+            OrderTypeColumn.ReadOnly = true;
+            OrderTypeColumn.Width = 110;
+            // 
+            // BuyPrice
+            // 
+            BuyPrice.HeaderText = "BuyPrice";
+            BuyPrice.MinimumWidth = 6;
+            BuyPrice.Name = "BuyPrice";
+            BuyPrice.ReadOnly = true;
+            BuyPrice.Width = 110;
+            // 
+            // SellPrice
+            // 
+            SellPrice.HeaderText = "SellPrice";
+            SellPrice.MinimumWidth = 6;
+            SellPrice.Name = "SellPrice";
+            SellPrice.ReadOnly = true;
+            SellPrice.Width = 110;
+            // 
+            // Profit
+            // 
+            Profit.HeaderText = "Profit";
+            Profit.MinimumWidth = 6;
+            Profit.Name = "Profit";
+            Profit.ReadOnly = true;
+            Profit.Width = 110;
             // 
             // groupBox3
             // 
@@ -453,8 +474,8 @@
             FormClosing += WorkerForm_FormClosing;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)LogsDataGridView).EndInit();
             groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)HistoryDataGridView).EndInit();
             groupBox3.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -462,7 +483,6 @@
         #endregion
 
         private GroupBox groupBox1;
-        private DataGridView LogsDataGridView;
         private GroupBox groupBox2;
         private GroupBox groupBox3;
         private Button StopButton;
@@ -486,9 +506,10 @@
         private Button CheckConnectionButton;
         private Button CancelOrdersButtons;
         private Button ViewLogsButton;
-        private DataGridViewTextBoxColumn Time;
-        private DataGridViewTextBoxColumn ItemName;
-        private DataGridViewTextBoxColumn OrderType;
+        private DataGridView HistoryDataGridView;
+        private DataGridViewTextBoxColumn TimeColumn;
+        private DataGridViewTextBoxColumn Item;
+        private DataGridViewTextBoxColumn OrderTypeColumn;
         private DataGridViewTextBoxColumn BuyPrice;
         private DataGridViewTextBoxColumn SellPrice;
         private DataGridViewTextBoxColumn Profit;
