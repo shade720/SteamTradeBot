@@ -1,4 +1,5 @@
 ﻿using SteamTradeBot.Desktop.Winforms.ServiceAccess;
+using System.ComponentModel;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -13,7 +14,8 @@ public partial class WorkerForm : Form
         InitializeComponent();
         _steamTradeBotServiceClient = steamTradeBotServiceClient;
         _cancellationTokenSource = new CancellationTokenSource();
-        Task.Run(async () => await RefreshServiceStateLoop(), _cancellationTokenSource.Token);
+        if (StateRefresher.IsBusy != true)
+            StateRefresher.RunWorkerAsync();
     }
 
     private async void StartButton_Click(object sender, EventArgs e)
@@ -60,15 +62,14 @@ public partial class WorkerForm : Form
         }
     }
 
-    private async Task RefreshServiceStateLoop()
+    private async void StateRefresher_DoWork(object sender, DoWorkEventArgs e)
     {
-        if (_cancellationTokenSource is null)
-            throw new ApplicationException("CancellationToken was null!");
-        while (!_cancellationTokenSource.IsCancellationRequested)
+        while (!StateRefresher.CancellationPending)
         {
             await RefreshServiceStatePanel();
             await Task.Delay(PollingDelayMs);
         }
+        e.Cancel = true;
     }
 
     private async void CheckConnectionButton_Click(object sender, EventArgs e)
@@ -95,7 +96,7 @@ public partial class WorkerForm : Form
 
     private void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        _cancellationTokenSource.Cancel();
+        StateRefresher.CancelAsync();
     }
 
     private void ViewLogsButton_Click(object sender, EventArgs e)

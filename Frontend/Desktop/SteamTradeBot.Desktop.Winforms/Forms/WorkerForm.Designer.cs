@@ -50,18 +50,19 @@
             label1 = new Label();
             groupBox2 = new GroupBox();
             HistoryDataGridView = new DataGridView();
-            groupBox3 = new GroupBox();
-            ViewLogsButton = new Button();
-            CheckConnectionButton = new Button();
-            CancelOrdersButtons = new Button();
-            StartButton = new Button();
-            StopButton = new Button();
             TimeColumn = new DataGridViewTextBoxColumn();
             Item = new DataGridViewTextBoxColumn();
             OrderTypeColumn = new DataGridViewTextBoxColumn();
             BuyPrice = new DataGridViewTextBoxColumn();
             SellPrice = new DataGridViewTextBoxColumn();
             Profit = new DataGridViewTextBoxColumn();
+            groupBox3 = new GroupBox();
+            ViewLogsButton = new Button();
+            CheckConnectionButton = new Button();
+            CancelOrdersButtons = new Button();
+            StartButton = new Button();
+            StopButton = new Button();
+            StateRefresher = new System.ComponentModel.BackgroundWorker();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)HistoryDataGridView).BeginInit();
@@ -328,6 +329,54 @@
             HistoryDataGridView.Size = new Size(974, 703);
             HistoryDataGridView.TabIndex = 0;
             // 
+            // TimeColumn
+            // 
+            TimeColumn.HeaderText = "Time";
+            TimeColumn.MinimumWidth = 6;
+            TimeColumn.Name = "TimeColumn";
+            TimeColumn.ReadOnly = true;
+            TimeColumn.Width = 110;
+            // 
+            // Item
+            // 
+            Item.HeaderText = "Item";
+            Item.MinimumWidth = 6;
+            Item.Name = "Item";
+            Item.ReadOnly = true;
+            Item.Width = 400;
+            // 
+            // OrderTypeColumn
+            // 
+            OrderTypeColumn.HeaderText = "Type";
+            OrderTypeColumn.MinimumWidth = 6;
+            OrderTypeColumn.Name = "OrderTypeColumn";
+            OrderTypeColumn.ReadOnly = true;
+            OrderTypeColumn.Width = 125;
+            // 
+            // BuyPrice
+            // 
+            BuyPrice.HeaderText = "Buy price";
+            BuyPrice.MinimumWidth = 6;
+            BuyPrice.Name = "BuyPrice";
+            BuyPrice.ReadOnly = true;
+            BuyPrice.Width = 125;
+            // 
+            // SellPrice
+            // 
+            SellPrice.HeaderText = "Sell price";
+            SellPrice.MinimumWidth = 6;
+            SellPrice.Name = "SellPrice";
+            SellPrice.ReadOnly = true;
+            SellPrice.Width = 125;
+            // 
+            // Profit
+            // 
+            Profit.HeaderText = "Profit";
+            Profit.MinimumWidth = 6;
+            Profit.Name = "Profit";
+            Profit.ReadOnly = true;
+            Profit.Width = 125;
+            // 
             // groupBox3
             // 
             groupBox3.Controls.Add(ViewLogsButton);
@@ -414,51 +463,9 @@
             StopButton.UseVisualStyleBackColor = false;
             StopButton.Click += StopButton_Click;
             // 
-            // TimeColumn
+            // StateRefresher
             // 
-            TimeColumn.HeaderText = "Time";
-            TimeColumn.MinimumWidth = 6;
-            TimeColumn.Name = "TimeColumn";
-            TimeColumn.ReadOnly = true;
-            TimeColumn.Width = 110;
-            // 
-            // Item
-            // 
-            Item.HeaderText = "Item";
-            Item.MinimumWidth = 6;
-            Item.Name = "Item";
-            Item.ReadOnly = true;
-            Item.Width = 400;
-            // 
-            // OrderTypeColumn
-            // 
-            OrderTypeColumn.HeaderText = "Type";
-            OrderTypeColumn.MinimumWidth = 6;
-            OrderTypeColumn.Name = "OrderTypeColumn";
-            OrderTypeColumn.ReadOnly = true;
-            // 
-            // BuyPrice
-            // 
-            BuyPrice.HeaderText = "Buy price";
-            BuyPrice.MinimumWidth = 6;
-            BuyPrice.Name = "BuyPrice";
-            BuyPrice.ReadOnly = true;
-            BuyPrice.Width = 125;
-            // 
-            // SellPrice
-            // 
-            SellPrice.HeaderText = "Sell price";
-            SellPrice.MinimumWidth = 6;
-            SellPrice.Name = "SellPrice";
-            SellPrice.ReadOnly = true;
-            SellPrice.Width = 125;
-            // 
-            // Profit
-            // 
-            Profit.HeaderText = "Profit";
-            Profit.MinimumWidth = 6;
-            Profit.Name = "Profit";
-            Profit.ReadOnly = true;
+            StateRefresher.DoWork += StateRefresher_DoWork;
             // 
             // WorkerForm
             // 
@@ -513,5 +520,6 @@
         private DataGridViewTextBoxColumn BuyPrice;
         private DataGridViewTextBoxColumn SellPrice;
         private DataGridViewTextBoxColumn Profit;
+        private System.ComponentModel.BackgroundWorker StateRefresher;
     }
 }
