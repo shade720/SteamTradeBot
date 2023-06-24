@@ -30,44 +30,40 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             panel1 = new Panel();
-            panel5 = new Panel();
             panel4 = new Panel();
             StatsNavButton = new Button();
             SettingsNavButton = new Button();
             panel6 = new Panel();
             WorkerNavButton = new Button();
             panel3 = new Panel();
-            panel8 = new Panel();
             label13 = new Label();
+            panel8 = new Panel();
+            ServiceStatePanel = new Panel();
+            SteamLogoPictureBox = new PictureBox();
             panel2 = new Panel();
             LogInButton = new Button();
             LogOutButton = new Button();
-            panel7 = new Panel();
+            LoadingPictureBox = new PictureBox();
             Frame = new Panel();
+            CurrentWorkLabel = new Label();
             panel1.SuspendLayout();
             panel4.SuspendLayout();
             panel3.SuspendLayout();
+            ServiceStatePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)SteamLogoPictureBox).BeginInit();
             panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)LoadingPictureBox).BeginInit();
             SuspendLayout();
             // 
             // panel1
             // 
             panel1.BackColor = Color.Red;
-            panel1.Controls.Add(panel5);
             panel1.Controls.Add(panel4);
             panel1.Controls.Add(panel3);
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(250, 880);
+            panel1.Size = new Size(250, 829);
             panel1.TabIndex = 54;
-            // 
-            // panel5
-            // 
-            panel5.BackColor = Color.PaleGreen;
-            panel5.Location = new Point(0, 829);
-            panel5.Name = "panel5";
-            panel5.Size = new Size(250, 51);
-            panel5.TabIndex = 2;
             // 
             // panel4
             // 
@@ -77,7 +73,7 @@
             panel4.Controls.Add(WorkerNavButton);
             panel4.Location = new Point(0, 129);
             panel4.Name = "panel4";
-            panel4.Size = new Size(250, 751);
+            panel4.Size = new Size(250, 700);
             panel4.TabIndex = 1;
             // 
             // StatsNavButton
@@ -130,19 +126,12 @@
             // 
             // panel3
             // 
-            panel3.Controls.Add(panel8);
             panel3.Controls.Add(label13);
+            panel3.Controls.Add(panel8);
             panel3.Location = new Point(0, 1);
             panel3.Name = "panel3";
             panel3.Size = new Size(250, 125);
             panel3.TabIndex = 0;
-            // 
-            // panel8
-            // 
-            panel8.Location = new Point(252, 49);
-            panel8.Name = "panel8";
-            panel8.Size = new Size(1524, 941);
-            panel8.TabIndex = 57;
             // 
             // label13
             // 
@@ -154,6 +143,32 @@
             label13.TabIndex = 0;
             label13.Text = "SteamTradeBot";
             label13.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // panel8
+            // 
+            panel8.Location = new Point(252, 49);
+            panel8.Name = "panel8";
+            panel8.Size = new Size(1524, 941);
+            panel8.TabIndex = 57;
+            // 
+            // ServiceStatePanel
+            // 
+            ServiceStatePanel.BackColor = Color.Orange;
+            ServiceStatePanel.Controls.Add(SteamLogoPictureBox);
+            ServiceStatePanel.Location = new Point(-1, 829);
+            ServiceStatePanel.Name = "ServiceStatePanel";
+            ServiceStatePanel.Size = new Size(250, 52);
+            ServiceStatePanel.TabIndex = 2;
+            // 
+            // SteamLogoPictureBox
+            // 
+            SteamLogoPictureBox.Image = Properties.Resources.SteamLogo;
+            SteamLogoPictureBox.Location = new Point(108, 11);
+            SteamLogoPictureBox.Name = "SteamLogoPictureBox";
+            SteamLogoPictureBox.Size = new Size(30, 30);
+            SteamLogoPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            SteamLogoPictureBox.TabIndex = 0;
+            SteamLogoPictureBox.TabStop = false;
             // 
             // panel2
             // 
@@ -172,9 +187,9 @@
             LogInButton.FlatStyle = FlatStyle.Flat;
             LogInButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             LogInButton.ForeColor = Color.White;
-            LogInButton.Location = new Point(1416, -3);
+            LogInButton.Location = new Point(1415, -3);
             LogInButton.Name = "LogInButton";
-            LogInButton.Size = new Size(108, 50);
+            LogInButton.Size = new Size(100, 50);
             LogInButton.TabIndex = 0;
             LogInButton.Text = "Log In";
             LogInButton.UseVisualStyleBackColor = true;
@@ -186,23 +201,26 @@
             LogOutButton.FlatStyle = FlatStyle.Flat;
             LogOutButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             LogOutButton.ForeColor = Color.White;
-            LogOutButton.Location = new Point(1418, 0);
+            LogOutButton.Location = new Point(1415, -3);
             LogOutButton.Name = "LogOutButton";
-            LogOutButton.Size = new Size(108, 50);
+            LogOutButton.Size = new Size(100, 50);
             LogOutButton.TabIndex = 1;
             LogOutButton.Text = "Log Out";
             LogOutButton.UseVisualStyleBackColor = true;
             LogOutButton.Visible = false;
             LogOutButton.Click += LogOutButton_Click;
             // 
-            // panel7
+            // LoadingPictureBox
             // 
-            panel7.BackColor = Color.DarkRed;
-            panel7.ForeColor = Color.DarkRed;
-            panel7.Location = new Point(250, 829);
-            panel7.Name = "panel7";
-            panel7.Size = new Size(1526, 51);
-            panel7.TabIndex = 56;
+            LoadingPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
+            LoadingPictureBox.Image = (Image)resources.GetObject("LoadingPictureBox.Image");
+            LoadingPictureBox.Location = new Point(1724, 830);
+            LoadingPictureBox.Name = "LoadingPictureBox";
+            LoadingPictureBox.Size = new Size(50, 50);
+            LoadingPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            LoadingPictureBox.TabIndex = 0;
+            LoadingPictureBox.TabStop = false;
+            LoadingPictureBox.Visible = false;
             // 
             // Frame
             // 
@@ -210,6 +228,18 @@
             Frame.Name = "Frame";
             Frame.Size = new Size(1525, 780);
             Frame.TabIndex = 57;
+            // 
+            // CurrentWorkLabel
+            // 
+            CurrentWorkLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            CurrentWorkLabel.ForeColor = Color.Black;
+            CurrentWorkLabel.Location = new Point(1174, 830);
+            CurrentWorkLabel.Name = "CurrentWorkLabel";
+            CurrentWorkLabel.RightToLeft = RightToLeft.No;
+            CurrentWorkLabel.Size = new Size(544, 51);
+            CurrentWorkLabel.TabIndex = 58;
+            CurrentWorkLabel.TextAlign = ContentAlignment.MiddleRight;
+            CurrentWorkLabel.Visible = false;
             // 
             // MainForm
             // 
@@ -219,8 +249,10 @@
             BackColor = Color.White;
             BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(1776, 881);
+            Controls.Add(ServiceStatePanel);
+            Controls.Add(LoadingPictureBox);
+            Controls.Add(CurrentWorkLabel);
             Controls.Add(Frame);
-            Controls.Add(panel7);
             Controls.Add(panel2);
             Controls.Add(panel1);
             DoubleBuffered = true;
@@ -233,7 +265,10 @@
             panel1.ResumeLayout(false);
             panel4.ResumeLayout(false);
             panel3.ResumeLayout(false);
+            ServiceStatePanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)SteamLogoPictureBox).EndInit();
             panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)LoadingPictureBox).EndInit();
             ResumeLayout(false);
         }
 
@@ -248,16 +283,18 @@
         private Panel panel4;
         private Panel panel3;
         private Label label13;
-        private Panel panel5;
+        private Panel ServiceStatePanel;
         private Button StatsNavButton;
         private Button SettingsNavButton;
         private Panel panel6;
         private Button WorkerNavButton;
-        private Panel panel7;
         private Panel panel8;
         private Button LogInButton;
         private Panel Frame;
         private Button LogOutButton;
+        private PictureBox LoadingPictureBox;
+        private PictureBox SteamLogoPictureBox;
+        private Label CurrentWorkLabel;
     }
 }
 

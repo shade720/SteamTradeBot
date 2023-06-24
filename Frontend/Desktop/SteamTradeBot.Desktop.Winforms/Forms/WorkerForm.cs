@@ -1,19 +1,21 @@
 ﻿using SteamTradeBot.Desktop.Winforms.ServiceAccess;
 using System.ComponentModel;
+using SteamTradeBot.Desktop.Winforms.Models;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
 public partial class WorkerForm : Form
 {
     private readonly SteamTradeBotRestClient _steamTradeBotServiceClient;
-    private readonly CancellationTokenSource _cancellationTokenSource;
     private const int PollingDelayMs = 1000;
+
+    public delegate void OnWorkingStateChanged(StateInfo.ServiceWorkingState state);
+    public event OnWorkingStateChanged? OnWorkingStateChangedEvent;
 
     public WorkerForm(SteamTradeBotRestClient steamTradeBotServiceClient)
     {
         InitializeComponent();
         _steamTradeBotServiceClient = steamTradeBotServiceClient;
-        _cancellationTokenSource = new CancellationTokenSource();
         if (StateRefresher.IsBusy != true)
             StateRefresher.RunWorkerAsync();
     }
@@ -80,6 +82,7 @@ public partial class WorkerForm : Form
     private async Task RefreshServiceStatePanel()
     {
         var state = await _steamTradeBotServiceClient.CheckState();
+        OnWorkingStateChangedEvent?.Invoke(state.WorkingState);
         ThreadHelperClass.SetText(this, ItemsAnalyzedLabel, state.ItemsAnalyzed.ToString());
         ThreadHelperClass.SetText(this, ItemsBoughtLabel, state.ItemsBought.ToString());
         ThreadHelperClass.SetText(this, ItemsSoldLabel, state.ItemsSold.ToString());

@@ -9,10 +9,14 @@ namespace SteamTradeBot.Desktop.Winforms.Forms;
 public partial class LogInForm : Form
 {
     private readonly SteamTradeBotRestClient _steamTradeBotRestClient;
-    private readonly Credentials _credentials;
 
-    public delegate void OnLoggedIn();
-    public event OnLoggedIn? OnLoggedInEvent;
+    public delegate void OnAuthenticationStart(string message);
+    public event OnAuthenticationStart? OnAuthenticationStartEvent;
+
+    public delegate void OnAuthenticationEnd(string message);
+    public event OnAuthenticationEnd? OnAuthenticationEndEvent;
+
+    private readonly Credentials _credentials;
 
     public LogInForm(SteamTradeBotRestClient steamTradeBotRestClient)
     {
@@ -29,9 +33,12 @@ public partial class LogInForm : Form
 
     private async void LogInButton_Click(object sender, EventArgs e)
     {
+        LogInButton.Enabled = false;
+        OnAuthenticationStartEvent?.Invoke("Connecting to steam API...");
         if (string.IsNullOrEmpty(LogInTextBox.Text) || string.IsNullOrEmpty(PasswordTextBox.Text))
         {
             MessageBox.Show(@"Enter the login and the password!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            LogInButton.Enabled = false;
             return;
         }
 
@@ -50,6 +57,7 @@ public partial class LogInForm : Form
                 if (secret is null)
                 {
                     MessageBox.Show(@"Can't extract the secret from this maFile", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    LogInButton.Enabled = false;
                     return;
                 }
                 _credentials.Secret = secret;
@@ -57,11 +65,11 @@ public partial class LogInForm : Form
             else
             {
                 MessageBox.Show(@"Enter the token or maFilePath!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogInButton.Enabled = false;
+                return;
             }
         }
 
-        if (!RememberMeCheckBox.Checked) return;
-        Program.SaveCredentials(_credentials);
         try
         {
             await _steamTradeBotRestClient.LogIn(_credentials);
@@ -69,9 +77,13 @@ public partial class LogInForm : Form
         catch (Exception exception)
         {
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            LogInButton.Enabled = false;
             return;
         }
-        OnLoggedInEvent?.Invoke();
+
+        if (RememberMeCheckBox.Checked) 
+            Program.SaveCredentials(_credentials);
+        OnAuthenticationEndEvent?.Invoke("Successfully authenticated!");
     }
 
     private void ChooseMaFileButton_Click(object sender, EventArgs e)
