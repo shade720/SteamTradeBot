@@ -91,6 +91,15 @@ public partial class MainForm : Form
 
     #endregion
 
+    #region Worker
+
+    private void WorkerNavButton_Click(object sender, EventArgs e)
+    {
+        _settingsForm.Hide();
+        _workerForm.Show();
+        _logInForm.Hide();
+    }
+
     private void OnWorkingStateChanged(StateInfo.ServiceWorkingState state)
     {
         ServiceStatePanel.BackColor = state switch
@@ -100,6 +109,8 @@ public partial class MainForm : Form
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };
     }
+
+    #endregion
 
     private void StartDisplayLoadingIcon(string startActionText)
     {
@@ -113,13 +124,6 @@ public partial class MainForm : Form
         LoadingPictureBox.Visible = false;
         CurrentWorkLabel.Text = string.Empty;
         CurrentWorkLabel.Visible = false;
-    }
-
-    private void WorkerNavButton_Click(object sender, EventArgs e)
-    {
-        _settingsForm.Hide();
-        _workerForm.Show();
-        _logInForm.Hide();
     }
 
     private void SettingsNavButton_Click(object sender, EventArgs e)
