@@ -115,8 +115,7 @@ public class Item
         var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
 
         Log.Information("Finding profitable order...");
-        var profitableBuyOrder = SellOrderBook
-            .FirstOrDefault(sellOrder => BuyOrderBook.Take(5).Any(buyOrder => buyOrder.Price < sellOrder.Price * (1 - steamCommission)));
+        var profitableBuyOrder = SellOrderBook.FirstOrDefault(sellOrder => BuyOrderBook.Take(5).Any(buyOrder => buyOrder.Price < sellOrder.Price * (1 - steamCommission)));
 
         if (profitableBuyOrder is null)
         {
@@ -202,9 +201,9 @@ public class Item
 
     #region GraphAnalyze
 
-    private static double AveragePrice(IEnumerable<SteamAPI.PointInfo> graph)
+    private static double AveragePrice(List<SteamAPI.PointInfo> graph)
     {
-        return graph.Average(x => x.Price);
+        return graph.Sum(x => x.Price * x.Quantity) / graph.Sum(x => x.Quantity);
     }
 
     private static double SalesPerDay(IEnumerable<SteamAPI.PointInfo> graph)
