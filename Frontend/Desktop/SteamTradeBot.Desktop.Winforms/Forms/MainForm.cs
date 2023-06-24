@@ -1,4 +1,5 @@
-﻿using SteamTradeBot.Desktop.Winforms.ServiceAccess;
+﻿using SteamTradeBot.Desktop.Winforms.Models;
+using SteamTradeBot.Desktop.Winforms.ServiceAccess;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -16,9 +17,12 @@ public partial class MainForm : Form
         _steamTradeBotRestClient = new SteamTradeBotRestClient();
 
         _workerForm = new WorkerForm(_steamTradeBotRestClient);
+        _workerForm.OnWorkingStateChangedEvent += OnWorkingStateChanged;
+
         _settingsForm = new SettingsForm(_steamTradeBotRestClient);
         _logInForm = new LogInForm(_steamTradeBotRestClient);
-        _logInForm.OnLoggedInEvent += OnLoggedInEvent;
+        _logInForm.OnAuthenticationStartEvent += OnAuthenticationStart;
+        _logInForm.OnAuthenticationEndEvent += OnAuthenticationEnd;
 
         _settingsForm.TopLevel = false;
         _workerForm.TopLevel = false;
@@ -30,8 +34,40 @@ public partial class MainForm : Form
         _workerForm.Show();
     }
 
-    private void OnLoggedInEvent()
+    private void OnWorkingStateChanged(StateInfo.ServiceWorkingState state)
     {
+        ServiceStatePanel.BackColor = state switch
+        {
+            StateInfo.ServiceWorkingState.Up => Color.PaleGreen,
+            StateInfo.ServiceWorkingState.Down => Color.Orange,
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
+        };
+    }
+
+    private void StartDisplayLoadingIcon(string startActionText)
+    {
+        LoadingPictureBox.Visible = true;
+        CurrentWorkLabel.Text = startActionText;
+        CurrentWorkLabel.Visible = true;
+    }
+
+    private void StopDisplayLoadingIcon(string endActionText)
+    {
+        LoadingPictureBox.Visible = false;
+        CurrentWorkLabel.Text = endActionText;
+        Thread.Sleep(3000);
+        CurrentWorkLabel.Text = string.Empty;
+        CurrentWorkLabel.Visible = false;
+    }
+
+    private void OnAuthenticationStart(string message)
+    {
+        StartDisplayLoadingIcon(message);
+    }
+
+    private void OnAuthenticationEnd(string message)
+    {
+        StopDisplayLoadingIcon(message);
         LogInButton.Visible = false;
         LogOutButton.Visible = true;
         _settingsForm.Hide();
@@ -69,7 +105,8 @@ public partial class MainForm : Form
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        _logInForm.OnLoggedInEvent -= OnLoggedInEvent;
+        _logInForm.OnAuthenticationStartEvent -= OnAuthenticationStart;
+        _logInForm.OnAuthenticationEndEvent -= OnAuthenticationEnd;
         _workerForm.Dispose();
         _settingsForm.Dispose();
         _logInForm.Dispose();
