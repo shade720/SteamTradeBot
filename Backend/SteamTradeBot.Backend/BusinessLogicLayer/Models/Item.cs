@@ -99,7 +99,7 @@ public class Item
 
         Log.Information("Checking average price...");
         var avgPriceRange = double.Parse(_configuration["AveragePrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
-        if (SellOrderBook.All(sellOrder => sellOrder.Price < AvgPrice + avgPriceRange))
+        if (SellOrderBook.All(sellOrder => sellOrder.Price > AvgPrice + avgPriceRange))
         {
             Log.Information("Item is not profitable. Reason: average price is higher than needed.");
             return false;
