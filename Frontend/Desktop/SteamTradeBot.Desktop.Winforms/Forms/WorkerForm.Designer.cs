@@ -312,7 +312,7 @@
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             HistoryDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             HistoryDataGridView.EnableHeadersVisualStyles = false;
-            HistoryDataGridView.Location = new Point(31, 47);
+            HistoryDataGridView.Location = new Point(6, 47);
             HistoryDataGridView.Name = "HistoryDataGridView";
             HistoryDataGridView.ReadOnly = true;
             HistoryDataGridView.RowHeadersVisible = false;
@@ -326,7 +326,7 @@
             dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
             HistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
             HistoryDataGridView.RowTemplate.Height = 29;
-            HistoryDataGridView.Size = new Size(974, 703);
+            HistoryDataGridView.Size = new Size(1021, 703);
             HistoryDataGridView.TabIndex = 0;
             // 
             // TimeColumn
@@ -335,7 +335,7 @@
             TimeColumn.MinimumWidth = 6;
             TimeColumn.Name = "TimeColumn";
             TimeColumn.ReadOnly = true;
-            TimeColumn.Width = 110;
+            TimeColumn.Width = 125;
             // 
             // Item
             // 
@@ -343,7 +343,7 @@
             Item.MinimumWidth = 6;
             Item.Name = "Item";
             Item.ReadOnly = true;
-            Item.Width = 400;
+            Item.Width = 380;
             // 
             // OrderTypeColumn
             // 
@@ -514,12 +514,12 @@
         private Button CancelOrdersButtons;
         private Button ViewLogsButton;
         private DataGridView HistoryDataGridView;
+        private System.ComponentModel.BackgroundWorker StateRefresher;
         private DataGridViewTextBoxColumn TimeColumn;
         private DataGridViewTextBoxColumn Item;
         private DataGridViewTextBoxColumn OrderTypeColumn;
         private DataGridViewTextBoxColumn BuyPrice;
         private DataGridViewTextBoxColumn SellPrice;
         private DataGridViewTextBoxColumn Profit;
-        private System.ComponentModel.BackgroundWorker StateRefresher;
     }
 }

@@ -102,8 +102,10 @@ public partial class WorkerForm : Form
         StateRefresher.CancelAsync();
     }
 
-    private void ViewLogsButton_Click(object sender, EventArgs e)
+    private async void ViewLogsButton_Click(object sender, EventArgs e)
     {
-
+        var logs = await _steamTradeBotServiceClient.GetLogFile();
+        var logsForm = new LogForm(logs);
+        logsForm.Show();
     }
 }
