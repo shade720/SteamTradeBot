@@ -10,7 +10,6 @@ public partial class MainForm : Form
     private readonly LogInForm _logInForm;
 
     private readonly SteamTradeBotRestClient _steamTradeBotRestClient;
-
     public MainForm()
     {
         InitializeComponent();
@@ -34,6 +33,64 @@ public partial class MainForm : Form
         _workerForm.Show();
     }
 
+    #region LogIn
+
+    private void LogInButton_Click(object sender, EventArgs e)
+    {
+        ShowLogInForm();
+    }
+
+    private void SignInLabel_Click(object sender, EventArgs e)
+    {
+        ShowLogInForm();
+    }
+
+    private async void LogOutButton_Click(object sender, EventArgs e)
+    {
+        await LogOutAndRecover();
+    }
+
+    private async void LogOutLabel_Click(object sender, EventArgs e)
+    {
+        await LogOutAndRecover();
+    }
+
+    private async Task LogOutAndRecover()
+    {
+        await _steamTradeBotRestClient.LogOut();
+        LogInButton.Visible = true;
+        LogOutButton.Visible = false;
+        SignInLabel.Visible = true;
+        LogOutLabel.Visible = false;
+    }
+
+    private void ShowLogInForm()
+    {
+        _settingsForm.Hide();
+        _workerForm.Hide();
+        _logInForm.Show();
+    }
+
+    private void OnAuthenticationStart(string message)
+    {
+        StartDisplayLoadingIcon(message);
+    }
+
+    private void OnAuthenticationEnd(string message)
+    {
+        StopDisplayLoadingIcon();
+        LogInButton.Visible = false;
+        LogOutButton.Visible = true;
+        _settingsForm.Hide();
+        _workerForm.Show();
+        _logInForm.Hide();
+        SignInLabel.Visible = false;
+        LogOutLabel.Visible = true;
+        LogOutLabel.Text = message;
+    }
+
+    #endregion
+
     private void OnWorkingStateChanged(StateInfo.ServiceWorkingState state)
     {
         ServiceStatePanel.BackColor = state switch
@@ -51,28 +108,11 @@ public partial class MainForm : Form
         CurrentWorkLabel.Visible = true;
     }
 
-    private void StopDisplayLoadingIcon(string endActionText)
+    private void StopDisplayLoadingIcon()
     {
         LoadingPictureBox.Visible = false;
-        CurrentWorkLabel.Text = endActionText;
-        Thread.Sleep(3000);
         CurrentWorkLabel.Text = string.Empty;
         CurrentWorkLabel.Visible = false;
-    }
-
-    private void OnAuthenticationStart(string message)
-    {
-        StartDisplayLoadingIcon(message);
-    }
-
-    private void OnAuthenticationEnd(string message)
-    {
-        StopDisplayLoadingIcon(message);
-        LogInButton.Visible = false;
-        LogOutButton.Visible = true;
-        _settingsForm.Hide();
-        _workerForm.Show();
-        _logInForm.Hide();
     }
 
     private void WorkerNavButton_Click(object sender, EventArgs e)
@@ -87,20 +127,6 @@ public partial class MainForm : Form
         _settingsForm.Show();
         _workerForm.Hide();
         _logInForm.Hide();
-    }
-
-    private void LogInButton_Click(object sender, EventArgs e)
-    {
-        _settingsForm.Hide();
-        _workerForm.Hide();
-        _logInForm.Show();
-    }
-
-    private async void LogOutButton_Click(object sender, EventArgs e)
-    {
-        await _steamTradeBotRestClient.LogOut();
-        LogInButton.Visible = true;
-        LogOutButton.Visible = false;
     }
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e)

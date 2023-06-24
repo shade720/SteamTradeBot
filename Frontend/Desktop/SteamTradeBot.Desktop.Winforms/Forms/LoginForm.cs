@@ -83,7 +83,8 @@ public partial class LogInForm : Form
 
         if (RememberMeCheckBox.Checked) 
             Program.SaveCredentials(_credentials);
-        OnAuthenticationEndEvent?.Invoke("Successfully authenticated!");
+        OnAuthenticationEndEvent?.Invoke($"Account: {LogInTextBox.Text}");
+        LogInButton.Enabled = true;
     }
 
     private void ChooseMaFileButton_Click(object sender, EventArgs e)
