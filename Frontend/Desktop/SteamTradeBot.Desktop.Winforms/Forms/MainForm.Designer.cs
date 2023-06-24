@@ -41,8 +41,10 @@
             ServiceStatePanel = new Panel();
             SteamLogoPictureBox = new PictureBox();
             panel2 = new Panel();
+            SignInLabel = new Label();
             LogInButton = new Button();
             LogOutButton = new Button();
+            LogOutLabel = new Label();
             LoadingPictureBox = new PictureBox();
             Frame = new Panel();
             CurrentWorkLabel = new Label();
@@ -173,13 +175,27 @@
             // panel2
             // 
             panel2.BackColor = Color.DarkRed;
+            panel2.Controls.Add(SignInLabel);
             panel2.Controls.Add(LogInButton);
             panel2.Controls.Add(LogOutButton);
+            panel2.Controls.Add(LogOutLabel);
             panel2.ForeColor = Color.DarkRed;
             panel2.Location = new Point(250, 0);
             panel2.Name = "panel2";
             panel2.Size = new Size(1526, 50);
             panel2.TabIndex = 55;
+            // 
+            // SignInLabel
+            // 
+            SignInLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            SignInLabel.ForeColor = Color.White;
+            SignInLabel.Location = new Point(1154, 4);
+            SignInLabel.Name = "SignInLabel";
+            SignInLabel.Size = new Size(306, 40);
+            SignInLabel.TabIndex = 2;
+            SignInLabel.Text = "Sign In";
+            SignInLabel.TextAlign = ContentAlignment.MiddleRight;
+            SignInLabel.Click += SignInLabel_Click;
             // 
             // LogInButton
             // 
@@ -189,9 +205,9 @@
             LogInButton.FlatStyle = FlatStyle.Flat;
             LogInButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             LogInButton.ForeColor = Color.White;
-            LogInButton.Location = new Point(1470, 2);
+            LogInButton.Location = new Point(1470, 4);
             LogInButton.Name = "LogInButton";
-            LogInButton.Size = new Size(45, 45);
+            LogInButton.Size = new Size(40, 40);
             LogInButton.TabIndex = 0;
             LogInButton.UseVisualStyleBackColor = true;
             LogInButton.Click += LogInButton_Click;
@@ -204,13 +220,25 @@
             LogOutButton.FlatStyle = FlatStyle.Flat;
             LogOutButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             LogOutButton.ForeColor = Color.White;
-            LogOutButton.Location = new Point(1470, 2);
+            LogOutButton.Location = new Point(1470, 4);
             LogOutButton.Name = "LogOutButton";
-            LogOutButton.Size = new Size(45, 45);
+            LogOutButton.Size = new Size(40, 40);
             LogOutButton.TabIndex = 1;
             LogOutButton.UseVisualStyleBackColor = true;
             LogOutButton.Visible = false;
             LogOutButton.Click += LogOutButton_Click;
+            // 
+            // LogOutLabel
+            // 
+            LogOutLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            LogOutLabel.ForeColor = Color.White;
+            LogOutLabel.Location = new Point(1162, 4);
+            LogOutLabel.Name = "LogOutLabel";
+            LogOutLabel.Size = new Size(306, 40);
+            LogOutLabel.TabIndex = 3;
+            LogOutLabel.TextAlign = ContentAlignment.MiddleRight;
+            LogOutLabel.Visible = false;
+            LogOutLabel.Click += LogOutLabel_Click;
             // 
             // LoadingPictureBox
             // 
@@ -297,6 +325,8 @@
         private PictureBox LoadingPictureBox;
         private PictureBox SteamLogoPictureBox;
         private Label CurrentWorkLabel;
+        private Label SignInLabel;
+        private Label LogOutLabel;
     }
 }
 
