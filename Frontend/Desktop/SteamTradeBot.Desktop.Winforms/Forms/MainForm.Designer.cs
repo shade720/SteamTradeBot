@@ -183,29 +183,31 @@
             // 
             // LogInButton
             // 
+            LogInButton.BackgroundImage = (Image)resources.GetObject("LogInButton.BackgroundImage");
+            LogInButton.BackgroundImageLayout = ImageLayout.Zoom;
             LogInButton.FlatAppearance.BorderSize = 0;
             LogInButton.FlatStyle = FlatStyle.Flat;
             LogInButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             LogInButton.ForeColor = Color.White;
-            LogInButton.Location = new Point(1415, -3);
+            LogInButton.Location = new Point(1470, 2);
             LogInButton.Name = "LogInButton";
-            LogInButton.Size = new Size(100, 50);
+            LogInButton.Size = new Size(45, 45);
             LogInButton.TabIndex = 0;
-            LogInButton.Text = "Log In";
             LogInButton.UseVisualStyleBackColor = true;
             LogInButton.Click += LogInButton_Click;
             // 
             // LogOutButton
             // 
+            LogOutButton.BackgroundImage = Properties.Resources.LogoutIcon;
+            LogOutButton.BackgroundImageLayout = ImageLayout.Zoom;
             LogOutButton.FlatAppearance.BorderSize = 0;
             LogOutButton.FlatStyle = FlatStyle.Flat;
             LogOutButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             LogOutButton.ForeColor = Color.White;
-            LogOutButton.Location = new Point(1415, -3);
+            LogOutButton.Location = new Point(1470, 2);
             LogOutButton.Name = "LogOutButton";
-            LogOutButton.Size = new Size(100, 50);
+            LogOutButton.Size = new Size(45, 45);
             LogOutButton.TabIndex = 1;
-            LogOutButton.Text = "Log Out";
             LogOutButton.UseVisualStyleBackColor = true;
             LogOutButton.Visible = false;
             LogOutButton.Click += LogOutButton_Click;

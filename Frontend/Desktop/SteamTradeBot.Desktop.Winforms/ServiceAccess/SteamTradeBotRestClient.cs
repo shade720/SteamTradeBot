@@ -72,6 +72,12 @@ public class SteamTradeBotRestClient : IDisposable
         }
     }
 
+    public async Task<string> GetLogFile()
+    {
+        var response = await _restClient.GetAsync("logs");
+        return await response.Content.ReadAsStringAsync();
+    }
+
     public void Dispose()
     {
         _restClient.Dispose();
