@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
+    <UserSecretsId>2988f8fe-5ad0-4acc-805d-f33560488832</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -16,32 +19,21 @@
 
   <ItemGroup>
 	  <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.23.0" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.53.0" />
-    <PackageReference Include="Grpc.Core" Version="2.46.6" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.54.0">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql" Version="7.0.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.9.1" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="113.0.5672.6300" />
-    <PackageReference Include="Serilog" Version="2.12.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.10.0" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="114.0.5735.9000" />
+    <PackageReference Include="Serilog" Version="3.0.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Protos\Protos\Protos.csproj" />
   </ItemGroup>
 
 </Project>

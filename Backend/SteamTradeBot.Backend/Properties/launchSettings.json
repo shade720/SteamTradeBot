@@ -3,11 +3,16 @@
     "SteamTradeBotService": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "POSTGRES_CONNECTION_STRING": "Host=localhost;Port=5432;Database=steamtradebotdb;Username=postgres;Password=password"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",
-      "applicationUrl": "http://localhost:5050;https://localhost:5051"
+      "applicationUrl": "http://localhost:5050;https://localhost:5060"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true,
+      "useSSL": true
     }
   }
 }
