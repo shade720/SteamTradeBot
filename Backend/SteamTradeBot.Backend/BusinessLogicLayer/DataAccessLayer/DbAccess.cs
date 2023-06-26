@@ -8,32 +8,30 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
 public class DbAccess
 {
     private readonly IDbContextFactory<MarketDataContext> _marketDataContextFactory;
-    private readonly IDbContextFactory<HistoryDataContext> _historyDataContextFactory;
 
-    public DbAccess(IDbContextFactory<MarketDataContext> marketDataContextFactory, IDbContextFactory<HistoryDataContext> historyDataContextFactory)
+    public DbAccess(IDbContextFactory<MarketDataContext> marketDataContextFactory)
     {
         _marketDataContextFactory = marketDataContextFactory;
-        _historyDataContextFactory = historyDataContextFactory;
     }
 
     #region HistoryData
 
     public void AddNewStateInfo(StateChangingEvent stateChangingEvent)
     {
-        using var context = _historyDataContextFactory.CreateDbContext();
+        using var context = _marketDataContextFactory.CreateDbContext();
         context.States.Add(stateChangingEvent);
         context.SaveChanges();
     }
 
     public List<StateChangingEvent> GetHistory()
     {
-        using var context = _historyDataContextFactory.CreateDbContext();
+        using var context = _marketDataContextFactory.CreateDbContext();
         return context.States.ToList();
     }
 
     public void ClearHistory()
     {
-        using var context = _historyDataContextFactory.CreateDbContext();
+        using var context = _marketDataContextFactory.CreateDbContext();
         context.States.ExecuteDelete();
         context.SaveChanges();
     }

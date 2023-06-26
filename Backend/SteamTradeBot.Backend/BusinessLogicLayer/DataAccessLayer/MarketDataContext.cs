@@ -6,6 +6,7 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
 public sealed class MarketDataContext : DbContext
 {
     public DbSet<Item> Items { get; set; }
+    public DbSet<StateChangingEvent> States { get; set; }
 
     public MarketDataContext(DbContextOptions<MarketDataContext> options) : base(options)
     {
