@@ -24,12 +24,11 @@ public class TradeBot : IDisposable
     (
         IConfiguration configuration, 
         IDbContextFactory<MarketDataContext> marketContextFactory,
-        IDbContextFactory<HistoryDataContext> historyContextFactory,
         ServiceState state)
     {
         _configuration = configuration;
         _state = state;
-        _db = new DbAccess(marketContextFactory, historyContextFactory);
+        _db = new DbAccess(marketContextFactory);
         _steamApi = new SteamAPI();
         _stopwatch = new Stopwatch();
         Log.Logger.Information("TradeBotSingleton created!");
