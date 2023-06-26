@@ -38,7 +38,7 @@ public partial class LogInForm : Form
         if (string.IsNullOrEmpty(LogInTextBox.Text) || string.IsNullOrEmpty(PasswordTextBox.Text))
         {
             MessageBox.Show(@"Enter the login and the password!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            LogInButton.Enabled = false;
+            LogInButton.Enabled = true;
             return;
         }
 
@@ -57,7 +57,7 @@ public partial class LogInForm : Form
                 if (secret is null)
                 {
                     MessageBox.Show(@"Can't extract the secret from this maFile", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    LogInButton.Enabled = false;
+                    LogInButton.Enabled = true;
                     return;
                 }
                 _credentials.Secret = secret;
@@ -65,7 +65,7 @@ public partial class LogInForm : Form
             else
             {
                 MessageBox.Show(@"Enter the token or maFilePath!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LogInButton.Enabled = false;
+                LogInButton.Enabled = true;
                 return;
             }
         }
@@ -77,7 +77,7 @@ public partial class LogInForm : Form
         catch (Exception exception)
         {
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            LogInButton.Enabled = false;
+            LogInButton.Enabled = true;
             return;
         }
 

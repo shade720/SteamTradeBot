@@ -8,6 +8,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Connections;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Serilog;
@@ -22,16 +23,19 @@ public class SteamAPI : IDisposable
     private const int RequestDelayMs = 5000;
     private const int RetryWaitTimeMs = 2000;
     private const int RetriesCount = 5;
+    private readonly string _webDriverHost = Environment.GetEnvironmentVariable("SELENIUM_HOST") ?? "http://localhost:5051";
 
     public SteamAPI()
     {
-        var driverService = ChromeDriverService.CreateDefaultService();
-        driverService.HideCommandPromptWindow = true;
-        var options = new ChromeOptions();
-        options.AddArgument("--disable-gpu");
-        options.AddArgument("--headless");
-        options.AddArgument("--window-size=1920,1080");
-        _chromeBrowser = new ChromeDriver(driverService, options);
+        var chromeOptions = new ChromeOptions();
+        chromeOptions.AddArgument("--disable-gpu");
+        chromeOptions.AddArgument("--no-sandbox");
+        chromeOptions.AddArgument("--disable-setuid-sandbox");
+        chromeOptions.AddArgument("--disable-dev-shm-usage");
+        chromeOptions.AddArgument("--start-maximized");
+        chromeOptions.AddArgument("--window-size=1920,1080");
+        chromeOptions.AddArgument("--headless");
+        _chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
         Log.Logger.Information("Steam Api created!");
     }
 
@@ -494,7 +498,6 @@ public class SteamAPI : IDisposable
     {
         Log.Logger.Information("Disposing steam Api...");
         _chromeBrowser?.Quit();
-        _chromeBrowser?.Dispose();
         Log.Logger.Information("Steam Api disposed!");
     }
 }
