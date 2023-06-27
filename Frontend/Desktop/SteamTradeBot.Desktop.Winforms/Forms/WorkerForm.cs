@@ -9,7 +9,7 @@ public partial class WorkerForm : Form
     private readonly SteamTradeBotRestClient _steamTradeBotServiceClient;
     private const int PollingDelayMs = 1000;
 
-    public delegate void OnWorkingStateChanged(StateInfo.ServiceWorkingState state);
+    public delegate void OnWorkingStateChanged(StateInfo state);
     public event OnWorkingStateChanged? OnWorkingStateChangedEvent;
 
     public WorkerForm(SteamTradeBotRestClient steamTradeBotServiceClient)
@@ -24,14 +24,12 @@ public partial class WorkerForm : Form
     {
         try
         {
-            StartButton.Visible = false;
-            StopButton.Visible = true;
+            OnServiceWorkingControlsVisibility();
             await _steamTradeBotServiceClient.Start();
         }
         catch (Exception exception)
         {
-            StartButton.Visible = true;
-            StopButton.Visible = false;
+            OnServiceNotWorkingControlsVisibility();
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
@@ -40,14 +38,12 @@ public partial class WorkerForm : Form
     {
         try
         {
-            StartButton.Visible = true;
-            StopButton.Visible = false;
+            OnServiceNotWorkingControlsVisibility();
             await _steamTradeBotServiceClient.Stop();
         }
         catch (Exception exception)
         {
-            StartButton.Visible = false;
-            StopButton.Visible = true;
+            OnServiceWorkingControlsVisibility();
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
@@ -82,7 +78,7 @@ public partial class WorkerForm : Form
     private async Task RefreshServiceStatePanel()
     {
         var state = await _steamTradeBotServiceClient.CheckState();
-        OnWorkingStateChangedEvent?.Invoke(state.WorkingState);
+        OnWorkingStateChangedEvent?.Invoke(state);
         ThreadHelperClass.SetText(this, ItemsAnalyzedLabel, state.ItemsAnalyzed.ToString());
         ThreadHelperClass.SetText(this, ItemsBoughtLabel, state.ItemsBought.ToString());
         ThreadHelperClass.SetText(this, ItemsSoldLabel, state.ItemsSold.ToString());
@@ -96,6 +92,19 @@ public partial class WorkerForm : Form
             ThreadHelperClass.AddRow(this, HistoryDataGridView, eventInfo.Split('-'));
         }
     }
+
+    private void OnServiceWorkingControlsVisibility()
+    {
+        StartButton.Visible = false;
+        StopButton.Visible = true;
+    }
+
+    private void OnServiceNotWorkingControlsVisibility()
+    {
+        StartButton.Visible = true;
+        StopButton.Visible = false;
+    }
+
 
     private void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)
     {

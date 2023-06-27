@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -54,7 +55,7 @@ public class TradeBot : IDisposable
         _worker.OnErrorEvent += OnError;
         _worker.StartWork();
         _stopwatch.Start();
-        _state.WorkingState = ServiceWorkingState.Up;
+        _state.WorkingState = ServiceState.ServiceWorkingState.Up;
     }
 
     public void StopTrading()
@@ -69,7 +70,7 @@ public class TradeBot : IDisposable
         _worker?.StopWork();
         _stopwatch.Stop();
         _stopwatch.Reset();
-        _state.WorkingState = ServiceWorkingState.Down;
+        _state.WorkingState = ServiceState.ServiceWorkingState.Down;
     }
 
     public void ClearBuyOrders()
@@ -114,11 +115,13 @@ public class TradeBot : IDisposable
     public void LogIn(string login, string password, string token, string secret)
     {
         _steamApi.LogIn(login, password, token, secret);
+        _state.CurrentUser = login;
     }
 
     public void LogOut()
     {
         _steamApi.LogOut();
+        _state.CurrentUser = string.Empty;
     }
 
     #endregion

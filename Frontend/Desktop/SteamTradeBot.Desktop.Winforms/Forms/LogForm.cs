@@ -1,4 +1,5 @@
 ﻿using SteamTradeBot.Desktop.Winforms.Models;
+using System;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -8,7 +9,14 @@ public partial class LogForm : Form
     public LogForm(string logFile)
     {
         InitializeComponent();
-        _logs = LogFileParser(logFile);
+        try
+        {
+            _logs = LogFileParser(logFile);
+        }
+        catch (Exception exception)
+        {
+            MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     private static IEnumerable<LogInfo> LogFileParser(string logFile)
