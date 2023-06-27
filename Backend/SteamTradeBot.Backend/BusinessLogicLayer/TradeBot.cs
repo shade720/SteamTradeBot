@@ -59,7 +59,7 @@ public class TradeBot : IDisposable
     public void StopTrading()
     {
         if (_worker is null)
-            throw new ApplicationException("Worker was null (StopTrading)");
+            throw new ApplicationException("Worker was null (StopTrading). {}");
         _worker.OnItemAnalyzedEvent -= OnItemAnalyzed;
         _worker.OnItemCanceledEvent -= OnItemCanceled;
         _worker.OnItemBoughtEvent -= OnItemBought;
@@ -112,7 +112,9 @@ public class TradeBot : IDisposable
 
     public void LogIn(string login, string password, string token, string secret)
     {
+        _state.IsLoggedIn = ServiceState.LogInState.Pending;
         _steamApi.LogIn(login, password, token, secret);
+        _state.IsLoggedIn = ServiceState.LogInState.LoggedIn;
         _state.CurrentUser = login;
     }
 
@@ -120,6 +122,7 @@ public class TradeBot : IDisposable
     {
         _steamApi.LogOut();
         _state.CurrentUser = string.Empty;
+        _state.IsLoggedIn = ServiceState.LogInState.NotLoggedIn;
     }
 
     #endregion
@@ -192,6 +195,8 @@ public class TradeBot : IDisposable
 
     public ServiceState GetServiceState()
     {
+        _state.WorkingState =
+            _worker is null ? ServiceState.ServiceWorkingState.Down : ServiceState.ServiceWorkingState.Up;
         var serviceStateCopy = new ServiceState
         {
             WorkingState = _state.WorkingState,
@@ -204,6 +209,7 @@ public class TradeBot : IDisposable
             Events = new List<string>(_state.Events),
             Uptime = _stopwatch.Elapsed,
             CurrentUser = _state.CurrentUser,
+            IsLoggedIn = _state.IsLoggedIn,
         };
         _state.Events.Clear();
         return serviceStateCopy;

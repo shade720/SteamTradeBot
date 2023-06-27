@@ -24,12 +24,10 @@ public partial class WorkerForm : Form
     {
         try
         {
-            OnServiceWorkingControlsVisibility();
             await _steamTradeBotServiceClient.Start();
         }
         catch (Exception exception)
         {
-            OnServiceNotWorkingControlsVisibility();
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
@@ -38,12 +36,10 @@ public partial class WorkerForm : Form
     {
         try
         {
-            OnServiceNotWorkingControlsVisibility();
             await _steamTradeBotServiceClient.Stop();
         }
         catch (Exception exception)
         {
-            OnServiceWorkingControlsVisibility();
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
@@ -94,18 +90,13 @@ public partial class WorkerForm : Form
                 HistoryDataGridView.Rows.Add(eventInfo.Split('-'));
             }
         });
+        ThreadHelperClass.ExecOnForm(this, () => WorkingStateControlsVisibility(state.WorkingState == StateInfo.ServiceWorkingState.Up));
     }
 
-    private void OnServiceWorkingControlsVisibility()
+    private void WorkingStateControlsVisibility(bool isWorking)
     {
-        StartButton.Visible = false;
-        StopButton.Visible = true;
-    }
-
-    private void OnServiceNotWorkingControlsVisibility()
-    {
-        StartButton.Visible = true;
-        StopButton.Visible = false;
+        StartButton.Visible = !isWorking;
+        StopButton.Visible = isWorking;
     }
 
 
