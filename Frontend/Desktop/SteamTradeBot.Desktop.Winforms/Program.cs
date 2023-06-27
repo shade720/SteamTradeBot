@@ -29,7 +29,14 @@ internal static class Program
         if (!File.Exists(SettingsPath))
             return null;
         var configurationJson = File.ReadAllText(SettingsPath);
-        return JsonConvert.DeserializeObject<Configuration>(configurationJson);
+        try
+        {
+            return JsonConvert.DeserializeObject<Configuration>(configurationJson);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public static void SaveConfiguration(Configuration configuration)

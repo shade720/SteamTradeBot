@@ -2,32 +2,11 @@
 
 public static class ThreadHelperClass
 {
-    private delegate void SetTextCallback(Form f, Control ctrl, string text);
-    private delegate void SetGridCallback(Form f, DataGridView ctrl, params object[] row);
-
-    public static void SetText(Form form, Control ctrl, string text)
+    public static void ExecOnForm(Form form, Action action, bool parentForm = true)
     {
-        if (ctrl.InvokeRequired)
-        {
-            var d = new SetTextCallback(SetText);
-            form.Invoke(d, form, ctrl, text);
-        }
+        if (parentForm)
+            form.BeginInvoke(new MethodInvoker(action));
         else
-        {
-            ctrl.Text = text;
-        }
-    }
-
-    public static void AddRow(Form form, DataGridView ctrl, params object[] row)
-    {
-        if (ctrl.InvokeRequired)
-        {
-            var d = new SetGridCallback(AddRow);
-            form.Invoke(d, form, ctrl, row);
-        }
-        else
-        {
-            ctrl.Rows.Add(row);
-        }
+            action();
     }
 }

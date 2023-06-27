@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -41,8 +40,7 @@ public class TradeBot : IDisposable
     {
         if (!CheckConfigurationIntegrity())
         {
-            Log.Error("Configuration is corrupted. Trading not started!");
-            return;
+            throw new ApplicationException("Configuration is corrupted. Trading not started!");
         }
         if (_worker is not null)
             return;
@@ -205,6 +203,7 @@ public class TradeBot : IDisposable
             Warnings = _state.Warnings,
             Events = new List<string>(_state.Events),
             Uptime = _stopwatch.Elapsed,
+            CurrentUser = _state.CurrentUser,
         };
         _state.Events.Clear();
         return serviceStateCopy;

@@ -79,18 +79,21 @@ public partial class WorkerForm : Form
     {
         var state = await _steamTradeBotServiceClient.CheckState();
         OnWorkingStateChangedEvent?.Invoke(state);
-        ThreadHelperClass.SetText(this, ItemsAnalyzedLabel, state.ItemsAnalyzed.ToString());
-        ThreadHelperClass.SetText(this, ItemsBoughtLabel, state.ItemsBought.ToString());
-        ThreadHelperClass.SetText(this, ItemsSoldLabel, state.ItemsSold.ToString());
-        ThreadHelperClass.SetText(this, ErrorsLabel, state.Errors.ToString());
-        ThreadHelperClass.SetText(this, WarningsLabel, state.Warnings.ToString());
-        ThreadHelperClass.SetText(this, UptimeLabel, state.Uptime.ToString(@"dd\.hh\:mm\:ss"));
-        ThreadHelperClass.SetText(this, ConnectionStateLabel, state.Connection.ToString());
-        ThreadHelperClass.SetText(this, ServiceStateLabel, state.WorkingState.ToString());
-        foreach (var eventInfo in state.Events)
+        ThreadHelperClass.ExecOnForm(this, () => ItemsAnalyzedLabel.Text = state.ItemsAnalyzed.ToString());
+        ThreadHelperClass.ExecOnForm(this, () => ItemsBoughtLabel.Text = state.ItemsBought.ToString());
+        ThreadHelperClass.ExecOnForm(this, () => ItemsSoldLabel.Text = state.ItemsSold.ToString());
+        ThreadHelperClass.ExecOnForm(this, () => ErrorsLabel.Text = state.Errors.ToString());
+        ThreadHelperClass.ExecOnForm(this, () => WarningsLabel.Text = state.Warnings.ToString());
+        ThreadHelperClass.ExecOnForm(this, () => UptimeLabel.Text = state.Uptime.ToString(@"dd\.hh\:mm\:ss"));
+        ThreadHelperClass.ExecOnForm(this, () => ConnectionStateLabel.Text = state.Connection.ToString());
+        ThreadHelperClass.ExecOnForm(this, () => ServiceStateLabel.Text = state.WorkingState.ToString());
+        ThreadHelperClass.ExecOnForm(this, () =>
         {
-            ThreadHelperClass.AddRow(this, HistoryDataGridView, eventInfo.Split('-'));
-        }
+            foreach (var eventInfo in state.Events)
+            {
+                HistoryDataGridView.Rows.Add(eventInfo.Split('-'));
+            }
+        });
     }
 
     private void OnServiceWorkingControlsVisibility()

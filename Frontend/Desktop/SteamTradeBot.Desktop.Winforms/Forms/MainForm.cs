@@ -55,6 +55,13 @@ public partial class MainForm : Form
         await LogOutAndRecover();
     }
 
+    private void ShowLogInForm()
+    {
+        _settingsForm.Hide();
+        _workerForm.Hide();
+        _logInForm.Show();
+    }
+
     private async Task LogOutAndRecover()
     {
         await _steamTradeBotRestClient.LogOut();
@@ -62,13 +69,6 @@ public partial class MainForm : Form
         LogOutButton.Visible = false;
         SignInLabel.Visible = true;
         LogOutLabel.Visible = false;
-    }
-
-    private void ShowLogInForm()
-    {
-        _settingsForm.Hide();
-        _workerForm.Hide();
-        _logInForm.Show();
     }
 
     private void OnAuthenticationStart(string message)
@@ -109,8 +109,11 @@ public partial class MainForm : Form
         };
 
         if (string.IsNullOrEmpty(state.CurrentUser)) return;
-        OnAuthenticationEnd(state.CurrentUser);
-        LogOutLabel.Text = state.CurrentUser;
+        ThreadHelperClass.ExecOnForm(this, () =>
+        {
+            OnAuthenticationEnd(state.CurrentUser);
+            LogOutLabel.Text = state.CurrentUser;
+        });
     }
 
     #endregion
