@@ -82,6 +82,37 @@ public class Item
         return _steamApi.GetBalance(ItemUrl);
     }
 
+    private bool IsSalesPerWeekBad(int salesPerWeekForCompare)
+    {
+        Log.Information("Checking sales per week...");
+        return Sales < salesPerWeekForCompare;
+    }
+
+    private bool IsAveragePriceBad(double averagePriceForCompare)
+    {
+        Log.Information("Checking average price...");
+        return SellOrderBook.All(sellOrder => sellOrder.Price > AvgPrice + averagePriceForCompare);
+    }
+
+    private bool IsTrendBad(double trendForCompare)
+    {
+        Log.Information("Checking trend...");
+        return Trend < trendForCompare;
+    }
+
+    private bool IsThereProfitableOrder(double steamCommission, double requiredProfit, out SteamAPI.OrderBookItem? orderBookItem)
+    {
+        Log.Information("Finding profitable order...");
+        orderBookItem = SellOrderBook.FirstOrDefault(sellOrder => BuyOrderBook.Take(5).Any(buyOrder => buyOrder.Price < sellOrder.Price * (1 - steamCommission)));
+        return orderBookItem is null;
+    }
+
+    private bool IsAvailableBalanceRight(double currentBalance, double price)
+    {
+        Log.Information("Checking available balance...");
+        return currentBalance < price;
+    }
+
     public bool IsProfitable(double balance)
     {
         Log.Information("Checking item profit...");
@@ -90,22 +121,20 @@ public class Item
         if (_configuration is null)
             throw new NullReferenceException($"Configuration was null {nameof(IsProfitable)}");
 
-        Log.Information("Checking sales per week...");
-        if (Sales < int.Parse(_configuration["SalesPerWeek"]!))
+        if (IsSalesPerWeekBad(int.Parse(_configuration["SalesPerWeek"]!)))
         {
             Log.Information("Item is not profitable. Reason: sales volume is lower than needed.");
             return false;
         }
 
-        Log.Information("Checking average price...");
         var avgPriceRange = double.Parse(_configuration["AveragePrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
-        if (SellOrderBook.All(sellOrder => sellOrder.Price > AvgPrice + avgPriceRange))
+        if (IsAveragePriceBad(avgPriceRange))
         {
             Log.Information("Item is not profitable. Reason: average price is higher than needed.");
             return false;
         }
-        Log.Information("Checking trend...");
-        if (Trend < double.Parse(_configuration["Trend"]!, NumberStyles.Any, CultureInfo.InvariantCulture))
+        
+        if (IsTrendBad(double.Parse(_configuration["Trend"]!, NumberStyles.Any, CultureInfo.InvariantCulture)))
         {
             Log.Information("Item is not profitable. Reason: trend is lower than needed.");
             return false;
@@ -114,17 +143,13 @@ public class Item
         var steamCommission = double.Parse(_configuration["SteamCommission"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
         var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
 
-        Log.Information("Finding profitable order...");
-        var profitableBuyOrder = SellOrderBook.FirstOrDefault(sellOrder => BuyOrderBook.Take(5).Any(buyOrder => buyOrder.Price < sellOrder.Price * (1 - steamCommission)));
-
-        if (profitableBuyOrder is null)
+        if (!IsThereProfitableOrder(steamCommission, requiredProfit, out var profitableBuyOrder))
         {
             Log.Information("Item is not profitable. Reason: profitable sell order is not found");
             return false;
         }
 
-        Log.Information("Checking available balance...");
-        if (balance < profitableBuyOrder.Price)
+        if (IsAvailableBalanceRight(balance, profitableBuyOrder.Price))
         {
             Log.Information("Item is not profitable. Reason: no money for this item");
             return false;
