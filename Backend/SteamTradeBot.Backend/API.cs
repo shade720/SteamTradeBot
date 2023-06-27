@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SteamTradeBot.Backend.BusinessLogicLayer;
+using SteamTradeBot.Backend.Models;
 
 namespace SteamTradeBot.Backend;
 

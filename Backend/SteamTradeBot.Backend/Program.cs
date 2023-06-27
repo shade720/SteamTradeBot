@@ -10,7 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SteamTradeBot.Backend;
 using SteamTradeBot.Backend.BusinessLogicLayer;
-using SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
+using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.DataAccessLayer;
 
 if (!Directory.Exists(@"Logs"))
     Directory.CreateDirectory(@"Logs");

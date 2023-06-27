@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer.Models;
+namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
 public class Worker
 {
@@ -34,7 +34,7 @@ public class Worker
         {
             throw new ArgumentException("Items list was empty!");
         }
-        _itemsPipeline = new PriorityQueue<Item, Priority>();
+        _itemsPipeline = new PriorityQueue<Item, Item.Priority>();
         foreach (var item in workingSet)
         {
             _itemsPipeline.Enqueue(item, item.ItemPriority);
@@ -51,7 +51,7 @@ public class Worker
         }
 
         _cancellationTokenSource = new CancellationTokenSource();
-        _processedItems = new List<(Item, Priority)>();
+        _processedItems = new List<(Item, Item.Priority)>();
 
         Task.Run(ProcessPipelineLoop, _cancellationTokenSource.Token);
         Log.Information("Worker started!");
@@ -73,8 +73,8 @@ public class Worker
     #region Private
     private bool IsWorking => _cancellationTokenSource is not null && !_cancellationTokenSource.IsCancellationRequested;
 
-    private PriorityQueue<Item, Priority> _itemsPipeline;
-    private List<(Item, Priority)>? _processedItems;
+    private PriorityQueue<Item, Item.Priority> _itemsPipeline;
+    private List<(Item, Item.Priority)>? _processedItems;
 
     private CancellationTokenSource? _cancellationTokenSource;
 
@@ -136,7 +136,7 @@ public class Worker
     {
         if (_processedItems is null)
             throw new ArgumentException("Processed items list was is null!");
-        _itemsPipeline = new PriorityQueue<Item, Priority>(_processedItems);
+        _itemsPipeline = new PriorityQueue<Item, Item.Priority>(_processedItems);
         _processedItems.Clear();
     }
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer;
+namespace SteamTradeBot.Backend.Models;
 
 public class ServiceState
 {

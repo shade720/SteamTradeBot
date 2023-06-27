@@ -11,8 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models;
+using SteamTradeBot.Backend.DataAccessLayer;
+using SteamTradeBot.Backend.Models;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
@@ -75,7 +75,7 @@ public class TradeBot : IDisposable
     public void ClearBuyOrders()
     {
         Log.Logger.Information("Start buy orders canceling...");
-        var itemsWithPurchaseOrders = _db.GetItems().Where(item => item.IsTherePurchaseOrder || item.ItemPriority == Priority.BuyOrder);
+        var itemsWithPurchaseOrders = _db.GetItems().Where(item => item.IsTherePurchaseOrder || item.ItemPriority == Item.Priority.BuyOrder);
         foreach (var item in itemsWithPurchaseOrders)
         {
             item.CancelBuyOrder();

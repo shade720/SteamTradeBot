@@ -13,7 +13,7 @@ using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Serilog;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer.Models;
+namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
 public class SteamAPI : IDisposable
 {
