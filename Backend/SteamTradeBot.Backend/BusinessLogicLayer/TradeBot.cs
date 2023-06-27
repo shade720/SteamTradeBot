@@ -195,8 +195,7 @@ public class TradeBot : IDisposable
 
     public ServiceState GetServiceState()
     {
-        _state.WorkingState =
-            _worker is null ? ServiceState.ServiceWorkingState.Down : ServiceState.ServiceWorkingState.Up;
+        _state.WorkingState = _worker is null ? ServiceState.ServiceWorkingState.Down : ServiceState.ServiceWorkingState.Up;
         var serviceStateCopy = new ServiceState
         {
             WorkingState = _state.WorkingState,
