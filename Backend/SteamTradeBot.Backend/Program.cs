@@ -13,14 +13,16 @@ using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.Models;
 using SteamTradeBot.Backend.DataAccessLayer;
 
-if (!Directory.Exists(@"Logs"))
-    Directory.CreateDirectory(@"Logs");
+var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+
+if (!Directory.Exists(logFolderPath))
+    Directory.CreateDirectory(logFolderPath);
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .WriteTo.Console()
     .WriteTo.RollingFile(
-        @"Logs\log{Date}.txt",
+        logFolderPath + @"\log-{Date}.txt",
         LogEventLevel.Information,
         outputTemplate: "`~{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message:lj}{NewLine}{Exception}",
         retainedFileCountLimit: 3)
