@@ -41,7 +41,7 @@
             ServiceStatePanel = new Panel();
             SteamLogoPictureBox = new PictureBox();
             panel2 = new Panel();
-            SignInLabel = new Label();
+            LogInLabel = new Label();
             LogInButton = new Button();
             LogOutButton = new Button();
             LogOutLabel = new Label();
@@ -175,7 +175,7 @@
             // panel2
             // 
             panel2.BackColor = Color.DarkRed;
-            panel2.Controls.Add(SignInLabel);
+            panel2.Controls.Add(LogInLabel);
             panel2.Controls.Add(LogInButton);
             panel2.Controls.Add(LogOutButton);
             panel2.Controls.Add(LogOutLabel);
@@ -185,17 +185,17 @@
             panel2.Size = new Size(1526, 50);
             panel2.TabIndex = 55;
             // 
-            // SignInLabel
+            // LogInLabel
             // 
-            SignInLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            SignInLabel.ForeColor = Color.White;
-            SignInLabel.Location = new Point(1154, 4);
-            SignInLabel.Name = "SignInLabel";
-            SignInLabel.Size = new Size(306, 40);
-            SignInLabel.TabIndex = 2;
-            SignInLabel.Text = "Sign In";
-            SignInLabel.TextAlign = ContentAlignment.MiddleRight;
-            SignInLabel.Click += SignInLabel_Click;
+            LogInLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            LogInLabel.ForeColor = Color.White;
+            LogInLabel.Location = new Point(1154, 4);
+            LogInLabel.Name = "LogInLabel";
+            LogInLabel.Size = new Size(306, 40);
+            LogInLabel.TabIndex = 2;
+            LogInLabel.Text = "Sign In";
+            LogInLabel.TextAlign = ContentAlignment.MiddleRight;
+            LogInLabel.Click += LogInLabel_Click;
             // 
             // LogInButton
             // 
@@ -325,7 +325,7 @@
         private PictureBox LoadingPictureBox;
         private PictureBox SteamLogoPictureBox;
         private Label CurrentWorkLabel;
-        private Label SignInLabel;
+        private Label LogInLabel;
         private Label LogOutLabel;
     }
 }

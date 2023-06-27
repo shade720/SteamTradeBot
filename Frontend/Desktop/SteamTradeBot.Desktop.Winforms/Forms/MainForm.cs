@@ -1,5 +1,6 @@
 ﻿using SteamTradeBot.Desktop.Winforms.Models;
 using SteamTradeBot.Desktop.Winforms.ServiceAccess;
+using System.Windows.Forms;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -16,12 +17,10 @@ public partial class MainForm : Form
         _steamTradeBotRestClient = new SteamTradeBotRestClient();
 
         _workerForm = new WorkerForm(_steamTradeBotRestClient);
-        _workerForm.OnWorkingStateChangedEvent += OnWorkingStateChanged;
+        _workerForm.OnWorkingStateChangedEvent += OnStateChanged;
 
         _settingsForm = new SettingsForm(_steamTradeBotRestClient);
         _logInForm = new LogInForm(_steamTradeBotRestClient);
-        _logInForm.OnAuthenticationStartEvent += OnAuthenticationStart;
-        _logInForm.OnAuthenticationEndEvent += OnAuthenticationEnd;
 
         _settingsForm.TopLevel = false;
         _workerForm.TopLevel = false;
@@ -35,26 +34,8 @@ public partial class MainForm : Form
 
     #region LogIn
 
-    private void LogInButton_Click(object sender, EventArgs e)
-    {
-        ShowLogInForm();
-    }
-
-    private void SignInLabel_Click(object sender, EventArgs e)
-    {
-        ShowLogInForm();
-    }
-
-    private async void LogOutButton_Click(object sender, EventArgs e)
-    {
-        await LogOutAndRecover();
-    }
-
-    private async void LogOutLabel_Click(object sender, EventArgs e)
-    {
-        await LogOutAndRecover();
-    }
-
+    private void LogInButton_Click(object sender, EventArgs e) => ShowLogInForm();
+    private void LogInLabel_Click(object sender, EventArgs e) => ShowLogInForm();
     private void ShowLogInForm()
     {
         _settingsForm.Hide();
@@ -62,30 +43,14 @@ public partial class MainForm : Form
         _logInForm.Show();
     }
 
-    private async Task LogOutAndRecover()
+    private async void LogOutButton_Click(object sender, EventArgs e)
     {
         await _steamTradeBotRestClient.LogOut();
-        LogInButton.Visible = true;
-        LogOutButton.Visible = false;
-        SignInLabel.Visible = true;
-        LogOutLabel.Visible = false;
     }
 
-    private void OnAuthenticationStart(string message)
+    private async void LogOutLabel_Click(object sender, EventArgs e)
     {
-        StartDisplayLoadingIcon(message);
-    }
-
-    private void OnAuthenticationEnd(string message)
-    {
-        StopDisplayLoadingIcon();
-        LogInButton.Visible = false;
-        LogOutButton.Visible = true;
-        _settingsForm.Hide();
-        _workerForm.Show();
-        _logInForm.Hide();
-        SignInLabel.Visible = false;
-        LogOutLabel.Visible = true;
+        await _steamTradeBotRestClient.LogOut();
     }
 
     #endregion
@@ -99,7 +64,7 @@ public partial class MainForm : Form
         _logInForm.Hide();
     }
 
-    private void OnWorkingStateChanged(StateInfo state)
+    private void OnStateChanged(StateInfo state)
     {
         ServiceStatePanel.BackColor = state.WorkingState switch
         {
@@ -108,12 +73,40 @@ public partial class MainForm : Form
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };
 
-        if (string.IsNullOrEmpty(state.CurrentUser)) return;
-        ThreadHelperClass.ExecOnForm(this, () =>
+        switch (state.IsLoggedIn)
         {
-            OnAuthenticationEnd(state.CurrentUser);
-            LogOutLabel.Text = state.CurrentUser;
-        });
+            case StateInfo.LogInState.Pending:
+                ThreadHelperClass.ExecOnForm(this, () =>
+                {
+                    StartDisplayLoadingIcon("Connecting to steam API...");
+                });
+                break;
+            case StateInfo.LogInState.LoggedIn:
+                ThreadHelperClass.ExecOnForm(this, () =>
+                {
+                    StopDisplayLoadingIcon();
+                    LogInButton.Visible = false;
+                    LogOutButton.Visible = true;
+                    LogInLabel.Visible = false;
+                    LogOutLabel.Visible = true;
+                    _settingsForm.Hide();
+                    _workerForm.Show();
+                    _logInForm.Hide();
+                    LogOutLabel.Text = state.CurrentUser;
+                });
+                break;
+            case StateInfo.LogInState.NotLoggedIn:
+                ThreadHelperClass.ExecOnForm(this, () =>
+                {
+                    LogInButton.Visible = true;
+                    LogOutButton.Visible = false;
+                    LogInLabel.Visible = true;
+                    LogOutLabel.Visible = false;
+                });
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     #endregion
@@ -141,8 +134,6 @@ public partial class MainForm : Form
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        _logInForm.OnAuthenticationStartEvent -= OnAuthenticationStart;
-        _logInForm.OnAuthenticationEndEvent -= OnAuthenticationEnd;
         _workerForm.Dispose();
         _settingsForm.Dispose();
         _logInForm.Dispose();

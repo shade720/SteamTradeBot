@@ -36,7 +36,8 @@ public class SteamAPI : IDisposable
         chromeOptions.AddArgument("--window-size=1920,1080");
         chromeOptions.AddArgument("--headless");
         //_chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
-        _chromeBrowser = new ChromeDriver(chromeOptions);
+        var driverService = ChromeDriverService.CreateDefaultService();
+        _chromeBrowser = new ChromeDriver(driverService, chromeOptions);
         Log.Logger.Information("Steam Api created!");
     }
 
@@ -128,10 +129,10 @@ public class SteamAPI : IDisposable
     {
         if (string.IsNullOrEmpty(priceStr))
             return 0;
-        if (!priceStr.Contains(CurrencyName))
-            return 0;
+        //if (!priceStr.Contains(CurrencyName))
+        //    return 0;
         priceStr = string.Join("", priceStr.SkipWhile(x => !char.IsDigit(x)).TakeWhile(x => !char.IsWhiteSpace(x)));
-        return double.TryParse(priceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0;
+        return double.TryParse(priceStr,NumberStyles.Number, CultureInfo.CurrentCulture, out var result) ? result : 0;
     }
 
     public class OrderBookItem

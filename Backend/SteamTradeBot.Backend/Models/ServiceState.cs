@@ -6,6 +6,7 @@ namespace SteamTradeBot.Backend.Models;
 public class ServiceState
 {
     public ServiceWorkingState WorkingState { get; set; } = ServiceWorkingState.Down;
+    public LogInState IsLoggedIn { get; set; }
     public string CurrentUser { get; set; } = string.Empty;
     public int ItemsAnalyzed { get; set; }
     public int ItemsBought { get; set; }
@@ -20,5 +21,12 @@ public class ServiceState
     {
         Up,
         Down
+    }
+
+    public enum LogInState
+    {
+        NotLoggedIn,
+        LoggedIn,
+        Pending
     }
 }

@@ -9,13 +9,6 @@ namespace SteamTradeBot.Desktop.Winforms.Forms;
 public partial class LogInForm : Form
 {
     private readonly SteamTradeBotRestClient _steamTradeBotRestClient;
-
-    public delegate void OnAuthenticationStart(string message);
-    public event OnAuthenticationStart? OnAuthenticationStartEvent;
-
-    public delegate void OnAuthenticationEnd(string message);
-    public event OnAuthenticationEnd? OnAuthenticationEndEvent;
-
     private readonly Credentials _credentials;
 
     public LogInForm(SteamTradeBotRestClient steamTradeBotRestClient)
@@ -34,7 +27,6 @@ public partial class LogInForm : Form
     private async void LogInButton_Click(object sender, EventArgs e)
     {
         LogInButton.Enabled = false;
-        OnAuthenticationStartEvent?.Invoke("Connecting to steam API...");
         if (string.IsNullOrEmpty(LogInTextBox.Text) || string.IsNullOrEmpty(PasswordTextBox.Text))
         {
             MessageBox.Show(@"Enter the login and the password!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -83,7 +75,6 @@ public partial class LogInForm : Form
 
         if (RememberMeCheckBox.Checked) 
             Program.SaveCredentials(_credentials);
-        OnAuthenticationEndEvent?.Invoke($"Account: {LogInTextBox.Text}");
         LogInButton.Enabled = true;
     }
 

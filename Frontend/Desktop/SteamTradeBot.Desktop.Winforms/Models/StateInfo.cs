@@ -4,6 +4,7 @@ public class StateInfo
 {
     public ConnectionState Connection { get; set; }
     public ServiceWorkingState WorkingState { get; set; }
+    public LogInState IsLoggedIn { get; set; }
     public string CurrentUser { get; set; }
     public int ItemsAnalyzed { get; set; }
     public int ItemsBought { get; set; }
@@ -23,5 +24,11 @@ public class StateInfo
     {
         Connected,
         Disconnected
+    }
+    public enum LogInState
+    {
+        NotLoggedIn,
+        LoggedIn,
+        Pending
     }
 }
