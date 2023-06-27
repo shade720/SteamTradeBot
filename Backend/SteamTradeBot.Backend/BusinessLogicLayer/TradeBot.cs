@@ -32,8 +32,6 @@ public class TradeBot : IDisposable
         _steamApi = new SteamAPI();
         _stopwatch = new Stopwatch();
         Log.Logger.Information("TradeBotSingleton created!");
-        _state.Events.Add($"{DateTime.UtcNow}-EngItemName-Sold-{45.1244}-{60.31}");
-        _state.Events.Add($"{DateTime.UtcNow}-EngItemName-Bought-{45.1244}");
     }
 
     #region Trading
@@ -171,7 +169,7 @@ public class TradeBot : IDisposable
 
     #region Logs
 
-    private static readonly string LogsPath = Path.Combine(Environment.CurrentDirectory, "Logs");
+    private const string LogsPath = "Logs";
 
     public string GetLogs()
     {
