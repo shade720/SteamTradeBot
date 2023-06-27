@@ -7,7 +7,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer.Models;
+namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
 public class Item
 {
@@ -195,6 +195,13 @@ public class Item
     public override string ToString()
     {
         return EngItemName;
+    }
+
+    public enum Priority
+    {
+        SellOrder = 1,
+        BuyOrder = 2,
+        ForReview = 3
     }
 
     #region Private

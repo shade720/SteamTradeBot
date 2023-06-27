@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models;
+using SteamTradeBot.Backend.BusinessLogicLayer;
+using SteamTradeBot.Backend.Models;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer.DataAccessLayer;
+namespace SteamTradeBot.Backend.DataAccessLayer;
 
 public sealed class MarketDataContext : DbContext
 {

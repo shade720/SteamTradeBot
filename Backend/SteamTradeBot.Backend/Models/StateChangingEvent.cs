@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer.Models;
+namespace SteamTradeBot.Backend.Models;
 
 public class StateChangingEvent
 {
