@@ -1,6 +1,6 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 # docker run --name SteamTradeBot -d --rm -it -p 5050:80 -p 5060:443 -e SELENIUM_HOST="http://host.docker.internal:5051" -e POSTGRES_CONNECTION_STRING="Host=host.docker.internal;Port=32768;Database=MarketDatabase;Username=postgres;Password=postgrespw" steam-trade-bot
-# docker build -t steam-trade-bot:latest .
+# docker build -t unh0ly/steam-trade-bot:latest .
+# docker push unh0ly/steam-trade-bot
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
