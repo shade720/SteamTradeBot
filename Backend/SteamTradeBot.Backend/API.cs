@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SteamTradeBot.Backend.BusinessLogicLayer;
@@ -18,8 +18,12 @@ public static class API
     {
         app.UseExceptionHandler(exceptionHandlerApp =>
         {
+            var exception = exceptionHandlerApp.ServerFeatures.Get<IExceptionHandlerPathFeature>();
+            if (exception?.Error is null) 
+                return;
             var obj = exceptionHandlerApp.ApplicationServices.GetService(typeof(ServiceState));
-            if (obj is not null) ((ServiceState)obj).Errors++;
+            if (obj is not null) 
+                ((ServiceState)obj).Errors++;
             exceptionHandlerApp.Run(async context => await Results.Problem().ExecuteAsync(context));
         });
         app.MapPost("api/login", LogIn);

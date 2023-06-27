@@ -123,13 +123,15 @@ public class SteamAPI : IDisposable
         return orderBook.OrderBy(x => x.Price).ToList();
     }
 
+    private const string CurrencyName = "руб";
     private static double ParsePrice(string priceStr)
     {
         if (string.IsNullOrEmpty(priceStr))
             return 0;
-        foreach (var x in priceStr.Where(x => !char.IsDigit(x) && x is not ','))
-            priceStr = priceStr.Replace(x.ToString(), "");
-        return double.TryParse(priceStr, out var result) ? result : 0;
+        if (!priceStr.Contains(CurrencyName))
+            return 0;
+        priceStr = string.Join("", priceStr.SkipWhile(x => !char.IsDigit(x)).TakeWhile(x => !char.IsWhiteSpace(x)));
+        return double.TryParse(priceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0;
     }
 
     public class OrderBookItem

@@ -56,7 +56,7 @@ public partial class LogForm : Form
         {
             if (LogDataGrid.Rows[i].Cells[1].EditedFormattedValue.ToString().Contains("Error") ||
                 LogDataGrid.Rows[i].Cells[1].EditedFormattedValue.ToString().Contains("Fatal"))
-                LogDataGrid.Rows[i].Cells[1].Style.BackColor = Color.Crimson;
+                LogDataGrid.Rows[i].Cells[1].Style.BackColor = Color.Red;
         }
     }
 
