@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +25,12 @@ public static class API
         app.MapPost("api/logout", ([FromServices] TradeBot tradeBot) => tradeBot.LogOut());
         app.MapPost("api/activation", ([FromServices] TradeBot tradeBot) => tradeBot.StartTrading());
         app.MapPost("api/deactivation", ([FromServices] TradeBot tradeBot) => tradeBot.StopTrading());
-        app.MapPost("api/configuration", ([FromServices] TradeBot tradeBot, [FromBody] string configurationJson) => tradeBot.SetConfiguration(configurationJson));
+        app.MapPost("api/configuration", async ([FromServices] TradeBot tradeBot, HttpContext context) =>
+        {
+            using var reader = new StreamReader(context.Request.Body);
+            var configurationJson = await reader.ReadToEndAsync();
+            tradeBot.SetConfiguration(configurationJson);
+        });
         app.MapPost("api/itemslistrefreshing", ([FromServices] TradeBot tradeBot) => tradeBot.RefreshWorkingSet());
         app.MapPost("api/orderscanceling", ([FromServices] TradeBot tradeBot) => tradeBot.ClearBuyOrders());
         app.MapGet("api/state", ([FromServices] TradeBot tradeBot) => tradeBot.GetServiceState());

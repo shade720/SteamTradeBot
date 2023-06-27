@@ -27,7 +27,7 @@ public partial class SettingsForm : Form
         RequiredProfitTextBox.Text = Configuration.RequiredProfit.ToString(CultureInfo.InvariantCulture);
         TrendTextBox.Text = Configuration.Trend.ToString(CultureInfo.InvariantCulture);
         SalesPerWeekTextBox.Text = Configuration.SalesPerWeek.ToString(CultureInfo.InvariantCulture);
-        SteamCommissionTextBox.Text = Configuration.SteamUserId;
+        SteamUserIdTextBox.Text = Configuration.SteamUserId;
         SteamCommissionTextBox.Text = Configuration.SteamCommission.ToString(CultureInfo.InvariantCulture);
     }
 
@@ -60,7 +60,7 @@ public partial class SettingsForm : Form
             RequiredProfit = double.Parse(RequiredProfitTextBox.Text, CultureInfo.InvariantCulture),
             Trend = double.Parse(TrendTextBox.Text, CultureInfo.InvariantCulture),
             SalesPerWeek = int.Parse(SalesPerWeekTextBox.Text),
-            SteamUserId = SteamCommissionTextBox.Text,
+            SteamUserId = SteamUserIdTextBox.Text,
             SteamCommission = double.Parse(SteamCommissionTextBox.Text, CultureInfo.InvariantCulture)
         };
     }

@@ -35,8 +35,8 @@ public class SteamAPI : IDisposable
         chromeOptions.AddArgument("--start-maximized");
         chromeOptions.AddArgument("--window-size=1920,1080");
         chromeOptions.AddArgument("--headless");
-        _chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
-        //_chromeBrowser = new ChromeDriver(chromeOptions);
+        //_chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
+        _chromeBrowser = new ChromeDriver(chromeOptions);
         Log.Logger.Information("Steam Api created!");
     }
 
