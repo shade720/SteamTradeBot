@@ -86,7 +86,6 @@ public partial class MainForm : Form
         _logInForm.Hide();
         SignInLabel.Visible = false;
         LogOutLabel.Visible = true;
-        LogOutLabel.Text = message;
     }
 
     #endregion
@@ -100,14 +99,18 @@ public partial class MainForm : Form
         _logInForm.Hide();
     }
 
-    private void OnWorkingStateChanged(StateInfo.ServiceWorkingState state)
+    private void OnWorkingStateChanged(StateInfo state)
     {
-        ServiceStatePanel.BackColor = state switch
+        ServiceStatePanel.BackColor = state.WorkingState switch
         {
             StateInfo.ServiceWorkingState.Up => Color.PaleGreen,
             StateInfo.ServiceWorkingState.Down => Color.Orange,
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };
+
+        if (string.IsNullOrEmpty(state.CurrentUser)) return;
+        OnAuthenticationEnd(state.CurrentUser);
+        LogOutLabel.Text = state.CurrentUser;
     }
 
     #endregion
