@@ -2,7 +2,7 @@
 
 namespace SteamTradeBot.Backend.Models;
 
-public class StateChangingEvent
+public class TradingEvent
 {
     public int Id { get; set; }
     public DateTime Time { get; set; }

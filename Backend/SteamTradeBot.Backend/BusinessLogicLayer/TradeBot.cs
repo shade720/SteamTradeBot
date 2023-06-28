@@ -45,12 +45,7 @@ public class TradeBot : IDisposable
         if (_worker is not null)
             return;
         var workingSet = InitializePipeline();
-        _worker = new Worker(workingSet);
-        _worker.OnItemAnalyzedEvent += OnItemAnalyzed;
-        _worker.OnItemCanceledEvent += OnItemCanceled;
-        _worker.OnItemBoughtEvent += OnItemBought;
-        _worker.OnItemSoldEvent += OnItemSold;
-        _worker.OnErrorEvent += OnError;
+        _worker = InitWorker(workingSet);
         _worker.StartWork();
         _stopwatch.Start();
         _state.WorkingState = ServiceState.ServiceWorkingState.Up;
@@ -59,13 +54,8 @@ public class TradeBot : IDisposable
     public void StopTrading()
     {
         if (_worker is null)
-            throw new ApplicationException("Worker was null (StopTrading). {}");
-        _worker.OnItemAnalyzedEvent -= OnItemAnalyzed;
-        _worker.OnItemCanceledEvent -= OnItemCanceled;
-        _worker.OnItemBoughtEvent -= OnItemBought;
-        _worker.OnItemSoldEvent -= OnItemSold;
-        _worker.OnErrorEvent -= OnError;
-        _worker?.StopWork();
+            throw new ApplicationException("Worker was null (StopTrading).");
+        ClearWorker(_worker);
         _stopwatch.Stop();
         _stopwatch.Reset();
         _state.WorkingState = ServiceState.ServiceWorkingState.Down;
@@ -74,7 +64,7 @@ public class TradeBot : IDisposable
     public void ClearBuyOrders()
     {
         Log.Logger.Information("Start buy orders canceling...");
-        var itemsWithPurchaseOrders = _db.GetItems().Where(item => item.IsTherePurchaseOrder || item.ItemPriority == Item.Priority.BuyOrder);
+        var itemsWithPurchaseOrders = _db.GetOrders().Where(item => item.IsTherePurchaseOrder);
         foreach (var item in itemsWithPurchaseOrders)
         {
             item.CancelBuyOrder();
@@ -83,26 +73,13 @@ public class TradeBot : IDisposable
         Log.Logger.Information("All buy orders have been canceled!");
     }
 
-    public void RefreshWorkingSet()
+    public void ReinitializeWorker()
     {
         Log.Logger.Information("Start working set refreshing...");
-        if (_worker is null)
-            throw new ApplicationException("Worker was null (RefreshWorkingSet)");
-        _worker.OnItemAnalyzedEvent -= OnItemAnalyzed;
-        _worker.OnItemCanceledEvent -= OnItemCanceled;
-        _worker.OnItemBoughtEvent -= OnItemBought;
-        _worker.OnItemSoldEvent -= OnItemSold;
-        _worker.OnErrorEvent -= OnError;
-        _worker?.StopWork();
-        _db.ClearItems();
+        if ( _worker is not null)
+            ClearWorker(_worker);
         var items = InitializePipeline();
-        _worker = new Worker(items);
-        _worker.OnItemAnalyzedEvent += OnItemAnalyzed;
-        _worker.OnItemCanceledEvent += OnItemCanceled;
-        _worker.OnItemBoughtEvent += OnItemBought;
-        _worker.OnItemSoldEvent += OnItemSold;
-        _worker.OnErrorEvent += OnError;
-        _worker.StartWork();
+        _worker = InitWorker(items);
         Log.Logger.Information("Working set have been refreshed!");
     }
 
@@ -166,6 +143,12 @@ public class TradeBot : IDisposable
 
         var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
         File.WriteAllText(ConfigurationPath, updatedSettings);
+
+        if (!CheckConfigurationIntegrity())
+        {
+            File.WriteAllText(ConfigurationPath, currentSettings);
+            Log.Logger.Information("Settings have not been updated!");
+        }
         Log.Logger.Information("Settings have been updated!");
     }
 
@@ -219,6 +202,8 @@ public class TradeBot : IDisposable
     public void Dispose()
     {
         Log.Logger.Information("Disposing trade bot singleton...");
+        if (_worker is not null)
+            ClearWorker(_worker);
         _steamApi.Dispose();
         Log.Logger.Information("Trade bot singleton disposed!");
     }
@@ -236,28 +221,40 @@ public class TradeBot : IDisposable
 
     private List<Item> InitializePipeline()
     {
-        Log.Information("Initializing pipeline...");
-        var pipeline = new List<Item>();
-        var cachedItems = _db.GetItems();
-        if (cachedItems.Any())
-        {
-            Log.Information("Local pipeline loaded");
-            pipeline.AddRange(cachedItems.Select(item => item.ConfigureServiceProperties(_configuration, _steamApi)));
-            return pipeline;
-        }
-        Log.Information("Local pipeline not found");
-        foreach (var newItem in GetItemNames().Select(itemName => new Item { EngItemName = itemName }.ConfigureServiceProperties(_configuration, _steamApi)))
-        {
-            _db.AddItem(newItem);
-            pipeline.Add(newItem);
-        }
+        Log.Information("Load items for analysis....");
+        var itemWithOrders = _db.GetOrders().Where(x => x.IsTherePurchaseOrder);
+        var loadedItemList = GetItemNames()
+            .Where(itemName => itemWithOrders.All(order => order.EngItemName != itemName))
+            .Select(itemName => new Item {EngItemName = itemName}.ConfigureServiceProperties(_configuration, _steamApi));
         Log.Information("Pipeline initialized");
-        return pipeline;
+        return loadedItemList.ToList();
+    }
+
+    private Worker InitWorker(List<Item> items)
+    {
+        var worker = new Worker(items);
+        worker.OnItemAnalyzedEvent += OnItemAnalyzed;
+        worker.OnItemCanceledEvent += OnItemCanceled;
+        worker.OnItemBoughtEvent += OnItemBought;
+        worker.OnItemSoldEvent += OnItemSold;
+        worker.OnErrorEvent += OnError;
+        worker.OnWorkingSetFullyAnalyzedEvent += ReinitializeWorker;
+        return worker;
+    }
+
+    private void ClearWorker(Worker worker)
+    {
+        worker.OnItemAnalyzedEvent -= OnItemAnalyzed;
+        worker.OnItemCanceledEvent -= OnItemCanceled;
+        worker.OnItemBoughtEvent -= OnItemBought;
+        worker.OnItemSoldEvent -= OnItemSold;
+        worker.OnErrorEvent -= OnError;
+        worker.OnWorkingSetFullyAnalyzedEvent -= ReinitializeWorker;
+        worker?.StopWork();
     }
 
     private IEnumerable<string> GetItemNames()
     {
-        Log.Information("Load pipeline from skins-table.xyz...");
         return _steamApi.GetItemNamesList(
             double.Parse(_configuration["MinPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
             double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
@@ -290,8 +287,7 @@ public class TradeBot : IDisposable
 
     private void OnItemAnalyzed(Item item, double balance)
     {
-        _db.UpdateItem(item);
-        _db.AddNewStateInfo(new StateChangingEvent
+        _db.AddNewEvent(new TradingEvent
         {
             Type = InfoType.ItemAnalyzed,
             CurrentBalance = balance,
@@ -303,7 +299,7 @@ public class TradeBot : IDisposable
 
     private void OnError(Exception exception)
     {
-        _db.AddNewStateInfo(new StateChangingEvent
+        _db.AddNewEvent(new TradingEvent
         {
             Type = InfoType.Error,
             Time = DateTime.UtcNow,
@@ -314,8 +310,8 @@ public class TradeBot : IDisposable
 
     private void OnItemSold(Item item)
     {
-        _db.UpdateItem(item);
-        _db.AddNewStateInfo(new StateChangingEvent
+        _db.AddOrUpdateOrder(item);
+        _db.AddNewEvent(new TradingEvent
         {
             Type = InfoType.ItemSold,
             Time = DateTime.UtcNow,
@@ -328,8 +324,8 @@ public class TradeBot : IDisposable
 
     private void OnItemBought(Item item)
     {
-        _db.UpdateItem(item);
-        _db.AddNewStateInfo(new StateChangingEvent
+        _db.AddOrUpdateOrder(item);
+        _db.AddNewEvent(new TradingEvent
         {
             Type = InfoType.ItemBought,
             Time = DateTime.UtcNow,
@@ -342,8 +338,8 @@ public class TradeBot : IDisposable
 
     private void OnItemCanceled(Item item)
     {
-        _db.UpdateItem(item);
-        _db.AddNewStateInfo(new StateChangingEvent
+        _db.RemoveOrder(item);
+        _db.AddNewEvent(new TradingEvent
         {
             Type = InfoType.ItemCanceled,
             Time = DateTime.UtcNow,
