@@ -34,7 +34,7 @@ public static class API
             var configurationJson = await reader.ReadToEndAsync();
             tradeBot.SetConfiguration(configurationJson);
         });
-        app.MapPost("api/itemslistrefreshing", ([FromServices] TradeBot tradeBot) => tradeBot.RefreshWorkingSet());
+        app.MapPost("api/itemslistrefreshing", ([FromServices] TradeBot tradeBot) => tradeBot.ReinitializeWorker());
         app.MapPost("api/orderscanceling", ([FromServices] TradeBot tradeBot) => tradeBot.ClearBuyOrders());
         app.MapGet("api/state", ([FromServices] TradeBot tradeBot) => tradeBot.GetServiceState());
         app.MapGet("api/logs", ([FromServices] TradeBot tradeBot) => tradeBot.GetLogs());

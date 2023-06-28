@@ -17,23 +17,23 @@ public class DbAccess
 
     #region HistoryData
 
-    public void AddNewStateInfo(StateChangingEvent stateChangingEvent)
+    public void AddNewEvent(TradingEvent tradingEvent)
     {
         using var context = _marketDataContextFactory.CreateDbContext();
-        context.States.Add(stateChangingEvent);
+        context.History.Add(tradingEvent);
         context.SaveChanges();
     }
 
-    public List<StateChangingEvent> GetHistory()
+    public List<TradingEvent> GetHistory()
     {
         using var context = _marketDataContextFactory.CreateDbContext();
-        return context.States.ToList();
+        return context.History.ToList();
     }
 
     public void ClearHistory()
     {
         using var context = _marketDataContextFactory.CreateDbContext();
-        context.States.ExecuteDelete();
+        context.History.ExecuteDelete();
         context.SaveChanges();
     }
 
@@ -41,32 +41,29 @@ public class DbAccess
 
     #region MarketData
 
-    public void AddItem(Item item)
+    public void AddOrUpdateOrder(Item item)
     {
         using var context = _marketDataContextFactory.CreateDbContext();
-        context.Items.Add(item);
+        if (context.Orders.Contains(item))
+            context.Orders.Update(item);
+        else
+            context.Orders.Add(item);
         context.SaveChanges();
     }
 
-    public void UpdateItem(Item item)
+    public void RemoveOrder(Item item)
     {
         using var context = _marketDataContextFactory.CreateDbContext();
-        if (context.Items.Contains(item))
-            context.Items.Update(item);
+        var itemSetToRemove = context.Orders.FirstOrDefault(i => i.EngItemName == item.EngItemName && i.RusItemName == item.RusItemName);
+        if (itemSetToRemove is not null)
+            context.Orders.Remove(itemSetToRemove);
         context.SaveChanges();
     }
 
-    public List<Item> GetItems()
+    public List<Item> GetOrders()
     {
         using var context = _marketDataContextFactory.CreateDbContext();
-        return context.Items.ToList();
-    }
-
-    public void ClearItems()
-    {
-        using var context = _marketDataContextFactory.CreateDbContext();
-        context.Items.ExecuteDelete();
-        context.SaveChanges();
+        return context.Orders.ToList();
     }
 
     #endregion

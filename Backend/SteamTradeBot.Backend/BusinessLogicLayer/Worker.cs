@@ -28,17 +28,18 @@ public class Worker
     public delegate void OnWarning(Exception exception);
     public event OnWarning? OnWarningEvent;
 
+    public delegate void OnWorkingSetFullyAnalyzed();
+    public event OnWorkingSetFullyAnalyzed? OnWorkingSetFullyAnalyzedEvent;
+
     public Worker(List<Item> workingSet)
     {
         if (workingSet.Count == 0)
         {
             throw new ArgumentException("Items list was empty!");
         }
-        _itemsPipeline = new PriorityQueue<Item, Item.Priority>();
+        _itemsPipeline = new Queue<Item>();
         foreach (var item in workingSet)
-        {
-            _itemsPipeline.Enqueue(item, item.ItemPriority);
-        }
+            _itemsPipeline.Enqueue(item);
     }
 
     public void StartWork()
@@ -49,9 +50,7 @@ public class Worker
             Log.Warning("Worker already started!");
             return;
         }
-
         _cancellationTokenSource = new CancellationTokenSource();
-        _processedItems = new List<(Item, Item.Priority)>();
 
         Task.Run(ProcessPipelineLoop, _cancellationTokenSource.Token);
         Log.Information("Worker started!");
@@ -71,41 +70,34 @@ public class Worker
     #endregion
 
     #region Private
-    private bool IsWorking => _cancellationTokenSource is not null && !_cancellationTokenSource.IsCancellationRequested;
 
-    private PriorityQueue<Item, Item.Priority> _itemsPipeline;
-    private List<(Item, Item.Priority)>? _processedItems;
-
+    public bool IsWorking => _cancellationTokenSource is not null && !_cancellationTokenSource.IsCancellationRequested;
+    private readonly Queue<Item> _itemsPipeline;
     private CancellationTokenSource? _cancellationTokenSource;
 
     private void ProcessPipelineLoop()
     {
         if (_cancellationTokenSource is null)
             throw new ArgumentException("Cancellation token was null!");
-        if (_processedItems is null)
-            throw new ArgumentException("Processed items list was is null!");
 
         Log.Information("Pipeline processing has started");
         while (!_cancellationTokenSource.IsCancellationRequested)
         {
             var item = _itemsPipeline.Dequeue();
-            var analyzedItem = AnalyzeItem(item);
-
-            if (analyzedItem is null)
-                continue;
-            _processedItems.Add((analyzedItem, analyzedItem.ItemPriority));
-
+            AnalyzeItem(item);
             if (_itemsPipeline.Count == 0)
-                RestartPipeline();
+                break;
         }
         Log.Information("Pipeline processing has ended");
+        if (!_cancellationTokenSource.IsCancellationRequested)
+            OnWorkingSetFullyAnalyzedEvent?.Invoke();
     }
 
-    private Item? AnalyzeItem(Item item)
+    private void AnalyzeItem(Item item)
     {
         try
         {
-            var balance = item.CollectItemData();
+            item.CollectItemData(out var balance);
             OnItemAnalyzedEvent?.Invoke(item, balance);
             if (item.IsProfitable(balance))
             {
@@ -125,19 +117,9 @@ public class Worker
         }
         catch (Exception e)
         {
-            Log.Error($"The item was skipped due to an error ->\r\nMessage: {e.Message}\r\nStack trace: {e.StackTrace}");
+            Log.Error("The item was skipped due to an error ->\r\nMessage: {0}\r\nStack trace: {1}", e.Message, e.StackTrace);
             OnErrorEvent?.Invoke(e);
-            return null;
         }
-        return item;
-    }
-
-    private void RestartPipeline()
-    {
-        if (_processedItems is null)
-            throw new ArgumentException("Processed items list was is null!");
-        _itemsPipeline = new PriorityQueue<Item, Item.Priority>(_processedItems);
-        _processedItems.Clear();
     }
 
     #endregion
