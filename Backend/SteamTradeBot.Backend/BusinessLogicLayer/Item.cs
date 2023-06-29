@@ -95,7 +95,7 @@ public class Item
         var salesForCompare = int.Parse(_configuration["SalesPerWeek"]!);
         if (Sales < salesForCompare)
         {
-            Log.Information("Item is not profitable. Reason: sales volume is lower than needed. {0}", salesForCompare);
+            Log.Information("Item is not profitable. Reason: sales volume is lower than needed. {0} < {1}", Sales, salesForCompare);
             return false;
         }
 
@@ -103,7 +103,7 @@ public class Item
         var avgPriceRange = double.Parse(_configuration["AveragePrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
         if (SellOrderBook.All(sellOrder => sellOrder.Price > AvgPrice + avgPriceRange))
         {
-            Log.Information("Item is not profitable. Reason: average price is higher than needed. {0}", avgPriceRange);
+            Log.Information("Item is not profitable. Reason: average price is higher than needed. {0}", AvgPrice + avgPriceRange);
             return false;
         }
 
@@ -111,7 +111,7 @@ public class Item
         var trendForCompare = double.Parse(_configuration["Trend"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
         if (Trend < trendForCompare)
         {
-            Log.Information("Item is not profitable. Reason: trend is lower than needed. {0}", trendForCompare);
+            Log.Information("Item is not profitable. Reason: trend is lower than needed. {0} < {1}", Trend.ToString("F5"), trendForCompare);
             return false;
         }
 

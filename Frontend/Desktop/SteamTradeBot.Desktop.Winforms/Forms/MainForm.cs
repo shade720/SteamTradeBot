@@ -17,7 +17,6 @@ public partial class MainForm : Form
         _steamTradeBotRestClient = new SteamTradeBotRestClient();
 
         _workerForm = new WorkerForm(_steamTradeBotRestClient);
-        _workerForm.OnWorkingStateChangedEvent += OnStateChanged;
 
         _settingsForm = new SettingsForm(_steamTradeBotRestClient);
         _logInForm = new LogInForm(_steamTradeBotRestClient);
@@ -84,14 +83,13 @@ public partial class MainForm : Form
             case StateInfo.LogInState.LoggedIn:
                 ThreadHelperClass.ExecOnForm(this, () =>
                 {
+                    if (LogOutLabel.Text == state.CurrentUser)
+                        return;
                     StopDisplayLoadingIcon();
                     LogInButton.Visible = false;
                     LogOutButton.Visible = true;
                     LogInLabel.Visible = false;
                     LogOutLabel.Visible = true;
-                    _settingsForm.Hide();
-                    _workerForm.Show();
-                    _logInForm.Hide();
                     LogOutLabel.Text = state.CurrentUser;
                 });
                 break;
@@ -102,6 +100,7 @@ public partial class MainForm : Form
                     LogOutButton.Visible = false;
                     LogInLabel.Visible = true;
                     LogOutLabel.Visible = false;
+                    LogOutLabel.Text = string.Empty;
                 });
                 break;
             default:
@@ -138,5 +137,10 @@ public partial class MainForm : Form
         _settingsForm.Dispose();
         _logInForm.Dispose();
         _steamTradeBotRestClient.Dispose();
+    }
+
+    private void MainForm_Load(object sender, EventArgs e)
+    {
+        _workerForm.OnWorkingStateChangedEvent += OnStateChanged;
     }
 }

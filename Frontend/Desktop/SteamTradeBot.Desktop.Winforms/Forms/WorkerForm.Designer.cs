@@ -479,6 +479,7 @@
             Name = "WorkerForm";
             Text = "Worker";
             FormClosing += WorkerForm_FormClosing;
+            Load += WorkerForm_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
