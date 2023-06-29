@@ -35,9 +35,9 @@ public class SteamAPI : IDisposable
         chromeOptions.AddArgument("--start-maximized");
         chromeOptions.AddArgument("--window-size=1920,1080");
         chromeOptions.AddArgument("--headless");
-        //_chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
-        var driverService = ChromeDriverService.CreateDefaultService();
-        _chromeBrowser = new ChromeDriver(driverService, chromeOptions);
+        _chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
+        //var driverService = ChromeDriverService.CreateDefaultService();
+        //_chromeBrowser = new ChromeDriver(driverService, chromeOptions);
         Log.Logger.Information("Steam Api created!");
     }
 
@@ -131,8 +131,8 @@ public class SteamAPI : IDisposable
             return 0;
         //if (!priceStr.Contains(CurrencyName))
         //    return 0;
-        priceStr = string.Join("", priceStr.SkipWhile(x => !char.IsDigit(x)).TakeWhile(x => !char.IsWhiteSpace(x)));
-        return double.TryParse(priceStr,NumberStyles.Number, CultureInfo.CurrentCulture, out var result) ? result : 0;
+        priceStr = string.Join("", priceStr.SkipWhile(x => !char.IsDigit(x)).TakeWhile(x => !char.IsWhiteSpace(x))).Replace(',','.');
+        return double.TryParse(priceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0;
     }
 
     public class OrderBookItem
@@ -477,7 +477,7 @@ public class SteamAPI : IDisposable
 
     #endregion
 
-    private T SafeConnect<T>(Func<T> unsafeFunc, bool isDelayNeeded = false)
+    private T? SafeConnect<T>(Func<T> unsafeFunc, bool isDelayNeeded = false)
     {
         var retryWaitTimeMs = isDelayNeeded ? RequestDelayMs : 0;
         for (var attempt = 0; attempt < RetriesCount; attempt++)
@@ -489,13 +489,17 @@ public class SteamAPI : IDisposable
             }
             catch (Exception e)
             {
-                Log.Error($"Connection error! Attempt: {attempt + 1}/{RetriesCount}\r\nMessage: {e.Message}\r\nStack trace: {e.StackTrace}");
+                Log.Error("Connection error! Attempt: {0}/{1}\r\nMessage: {2}\r\nStack trace: {3}", attempt + 1, RetriesCount, e.Message, e.StackTrace);
+                if (attempt == RetriesCount - 1)
+                {
+                    Log.Error("Number of attempts are expired!\r\nMessage: {0}\r\nStackTrace: {1}", e.Message, e.StackTrace);
+                    throw;
+                }
                 retryWaitTimeMs = RetryWaitTimeMs;
                 _chromeBrowser.Navigate().Refresh();
             }
         }
-        Log.Error("Attempts expired!");
-        throw new ConnectionAbortedException();
+        return default;
     }
 
     public void Dispose()

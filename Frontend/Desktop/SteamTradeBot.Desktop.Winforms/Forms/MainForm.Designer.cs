@@ -292,6 +292,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "TradeBot";
             FormClosing += MainForm_FormClosing;
+            Load += MainForm_Load;
             panel1.ResumeLayout(false);
             panel4.ResumeLayout(false);
             panel3.ResumeLayout(false);

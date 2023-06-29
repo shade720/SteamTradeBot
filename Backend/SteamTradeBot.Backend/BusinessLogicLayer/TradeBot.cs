@@ -44,21 +44,24 @@ public class TradeBot : IDisposable
         }
         if (_worker is not null)
             return;
+        _state.WorkingState = ServiceState.ServiceWorkingState.Up;
+        _stopwatch.Start();
         var workingSet = InitializePipeline();
         _worker = InitWorker(workingSet);
         _worker.StartWork();
-        _stopwatch.Start();
-        _state.WorkingState = ServiceState.ServiceWorkingState.Up;
     }
 
     public void StopTrading()
     {
         if (_worker is null)
+        {
+            _state.WorkingState = ServiceState.ServiceWorkingState.Down;
             throw new ApplicationException("Worker was null (StopTrading).");
+        }
+        _state.WorkingState = ServiceState.ServiceWorkingState.Down;
         ClearWorker(_worker);
         _stopwatch.Stop();
         _stopwatch.Reset();
-        _state.WorkingState = ServiceState.ServiceWorkingState.Down;
     }
 
     public void ClearBuyOrders()
@@ -97,9 +100,9 @@ public class TradeBot : IDisposable
 
     public void LogOut()
     {
-        _steamApi.LogOut();
-        _state.CurrentUser = string.Empty;
         _state.IsLoggedIn = ServiceState.LogInState.NotLoggedIn;
+        _state.CurrentUser = string.Empty;
+        _steamApi.LogOut();
     }
 
     #endregion
@@ -178,7 +181,6 @@ public class TradeBot : IDisposable
 
     public ServiceState GetServiceState()
     {
-        _state.WorkingState = _worker is null ? ServiceState.ServiceWorkingState.Down : ServiceState.ServiceWorkingState.Up;
         var serviceStateCopy = new ServiceState
         {
             WorkingState = _state.WorkingState,

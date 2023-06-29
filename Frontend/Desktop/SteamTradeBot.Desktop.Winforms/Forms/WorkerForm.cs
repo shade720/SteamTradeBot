@@ -16,8 +16,6 @@ public partial class WorkerForm : Form
     {
         InitializeComponent();
         _steamTradeBotServiceClient = steamTradeBotServiceClient;
-        if (StateRefresher.IsBusy != true)
-            StateRefresher.RunWorkerAsync();
     }
 
     private async void StartButton_Click(object sender, EventArgs e)
@@ -110,5 +108,11 @@ public partial class WorkerForm : Form
         var logs = await _steamTradeBotServiceClient.GetLogFile();
         var logsForm = new LogForm(logs);
         logsForm.Show();
+    }
+
+    private void WorkerForm_Load(object sender, EventArgs e)
+    {
+        if (StateRefresher.IsBusy != true)
+            StateRefresher.RunWorkerAsync();
     }
 }

@@ -8,7 +8,7 @@ namespace SteamTradeBot.Desktop.Winforms.ServiceAccess;
 public class SteamTradeBotRestClient : IDisposable
 {
     private readonly HttpClient _restClient;
-    private const string BaseAddress = "http://localhost:5050/api/";
+    private const string BaseAddress = "http://192.168.0.107:5050/api/";
 
     public SteamTradeBotRestClient()
     {

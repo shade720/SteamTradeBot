@@ -20,29 +20,71 @@ public static class API
             if (exception?.Error is null) 
                 return;
             var obj = exceptionHandlerApp.ApplicationServices.GetService(typeof(ServiceState));
-            if (obj is not null) 
+            if (obj is not null)
+            {
                 ((ServiceState)obj).Errors++;
+            }
             exceptionHandlerApp.Run(async context => await Results.Problem().ExecuteAsync(context));
         });
-        app.MapPost("api/login", LogIn);
-        app.MapPost("api/logout", ([FromServices] TradeBot tradeBot) => tradeBot.LogOut());
-        app.MapPost("api/activation", ([FromServices] TradeBot tradeBot) => tradeBot.StartTrading());
-        app.MapPost("api/deactivation", ([FromServices] TradeBot tradeBot) => tradeBot.StopTrading());
+        app.MapPost("api/login", async ([FromServices] TradeBot tradeBot, Credentials credentials) => await LogIn(tradeBot, credentials));
+        app.MapPost("api/logout", async ([FromServices] TradeBot tradeBot) => await LogOut(tradeBot));
+        app.MapPost("api/activation", async ([FromServices] TradeBot tradeBot) => await StartTrading(tradeBot));
+        app.MapPost("api/deactivation", async ([FromServices] TradeBot tradeBot) => await StopTrading(tradeBot));
         app.MapPost("api/configuration", async ([FromServices] TradeBot tradeBot, HttpContext context) =>
         {
             using var reader = new StreamReader(context.Request.Body);
             var configurationJson = await reader.ReadToEndAsync();
             tradeBot.SetConfiguration(configurationJson);
         });
-        app.MapPost("api/itemslistrefreshing", ([FromServices] TradeBot tradeBot) => tradeBot.ReinitializeWorker());
-        app.MapPost("api/orderscanceling", ([FromServices] TradeBot tradeBot) => tradeBot.ClearBuyOrders());
-        app.MapGet("api/state", ([FromServices] TradeBot tradeBot) => tradeBot.GetServiceState());
-        app.MapGet("api/logs", ([FromServices] TradeBot tradeBot) => tradeBot.GetLogs());
+        app.MapPost("api/itemslistrefreshing", async ([FromServices] TradeBot tradeBot) => await ReinitializeWorker(tradeBot));
+        app.MapPost("api/orderscanceling", async ([FromServices] TradeBot tradeBot) => await ClearBuyOrders(tradeBot));
+        app.MapGet("api/state", async ([FromServices] TradeBot tradeBot) => await GetServiceState(tradeBot));
+        app.MapGet("api/logs", async ([FromServices] TradeBot tradeBot) => await GetLogs(tradeBot));
     }
 
     private static async Task<IResult> LogIn(TradeBot tradeBot, Credentials credentials)
     {
         return await Task.Run(() => tradeBot.LogIn(credentials.Login, credentials.Password, credentials.Token, credentials.Secret))
             .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok() : Results.Problem(task.Exception?.Message));
+    }
+
+    private static async Task<IResult> LogOut(TradeBot tradeBot)
+    {
+        return await Task.Run(tradeBot.LogOut)
+            .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok() : Results.Problem(task.Exception?.Message));
+    }
+
+    private static async Task<IResult> StartTrading(TradeBot tradeBot)
+    {
+        return await Task.Run(tradeBot.StartTrading)
+            .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok() : Results.Problem(task.Exception?.Message));
+    }
+
+    private static async Task<IResult> StopTrading(TradeBot tradeBot)
+    {
+        return await Task.Run(tradeBot.StopTrading)
+            .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok() : Results.Problem(task.Exception?.Message));
+    }
+
+    private static async Task<IResult> ReinitializeWorker(TradeBot tradeBot)
+    {
+        return await Task.Run(tradeBot.ReinitializeWorker)
+            .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok() : Results.Problem(task.Exception?.Message));
+    }
+
+    private static async Task<IResult> ClearBuyOrders(TradeBot tradeBot)
+    {
+        return await Task.Run(tradeBot.ClearBuyOrders)
+            .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok() : Results.Problem(task.Exception?.Message));
+    }
+    private static async Task<IResult> GetServiceState(TradeBot tradeBot)
+    {
+        return await Task.Run(tradeBot.GetServiceState)
+            .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok(task.Result) : Results.Problem(task.Exception?.Message));
+    }
+    private static async Task<IResult> GetLogs(TradeBot tradeBot)
+    {
+        return await Task.Run(tradeBot.GetLogs)
+            .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok(task.Result) : Results.Problem(task.Exception?.Message));
     }
 }
