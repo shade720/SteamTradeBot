@@ -59,13 +59,9 @@ public class SteamAPI : IDisposable
 
     #region Balance
 
-    public double GetBalance(string itemName)
+    public double GetBalance()
     {
-        return SafeConnect(() =>
-        {
-            SetPage(itemName);
-            return ParsePrice(ReadFromElement(By.Id("header_wallet_balance"), true));
-        });
+        return SafeConnect(() => ParsePrice(ReadFromElement(By.Id("header_wallet_balance"), true)));
     }
 
     #endregion

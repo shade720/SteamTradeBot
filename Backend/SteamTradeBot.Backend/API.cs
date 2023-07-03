@@ -36,7 +36,6 @@ public static class API
             var configurationJson = await reader.ReadToEndAsync();
             tradeBot.SetConfiguration(configurationJson);
         });
-        app.MapPost("api/itemslistrefreshing", async ([FromServices] TradeBot tradeBot) => await ReinitializeWorker(tradeBot));
         app.MapPost("api/orderscanceling", async ([FromServices] TradeBot tradeBot) => await ClearBuyOrders(tradeBot));
         app.MapGet("api/state", async ([FromServices] TradeBot tradeBot) => await GetServiceState(tradeBot));
         app.MapGet("api/logs", async ([FromServices] TradeBot tradeBot) => await GetLogs(tradeBot));
@@ -63,12 +62,6 @@ public static class API
     private static async Task<IResult> StopTrading(TradeBot tradeBot)
     {
         return await Task.Run(tradeBot.StopTrading)
-            .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok() : Results.Problem(task.Exception?.Message));
-    }
-
-    private static async Task<IResult> ReinitializeWorker(TradeBot tradeBot)
-    {
-        return await Task.Run(tradeBot.ReinitializeWorker)
             .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok() : Results.Problem(task.Exception?.Message));
     }
 

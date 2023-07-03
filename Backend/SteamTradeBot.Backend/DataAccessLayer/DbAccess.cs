@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.Models;
 
 namespace SteamTradeBot.Backend.DataAccessLayer;
@@ -41,30 +40,63 @@ public class DbAccess
 
     #region MarketData
 
-    public void AddOrUpdateOrder(Item item)
+    #region BuyOrders
+
+    public void AddOrUpdateBuyOrder(BuyOrder order)
     {
         using var context = _marketDataContextFactory.CreateDbContext();
-        if (context.Orders.Contains(item))
-            context.Orders.Update(item);
+        if (context.BuyOrders.Contains(order))
+            context.BuyOrders.Update(order);
         else
-            context.Orders.Add(item);
+            context.BuyOrders.Add(order);
         context.SaveChanges();
     }
 
-    public void RemoveOrder(Item item)
+    public void RemoveBuyOrder(BuyOrder order)
     {
         using var context = _marketDataContextFactory.CreateDbContext();
-        var itemSetToRemove = context.Orders.FirstOrDefault(i => i.EngItemName == item.EngItemName && i.RusItemName == item.RusItemName);
+        var itemSetToRemove = context.BuyOrders.FirstOrDefault(i => i.EngItemName == order.EngItemName && i.RusItemName == order.RusItemName);
         if (itemSetToRemove is not null)
-            context.Orders.Remove(itemSetToRemove);
+            context.BuyOrders.Remove(itemSetToRemove);
         context.SaveChanges();
     }
 
-    public List<Item> GetOrders()
+    public List<BuyOrder> GetBuyOrders()
     {
         using var context = _marketDataContextFactory.CreateDbContext();
-        return context.Orders.ToList();
+        return context.BuyOrders.ToList();
     }
+
+    #endregion
+
+    #region SellOrders
+
+    public void AddOrUpdateSellOrder(SellOrder order)
+    {
+        using var context = _marketDataContextFactory.CreateDbContext();
+        if (context.SellOrders.Contains(order))
+            context.SellOrders.Update(order);
+        else
+            context.SellOrders.Add(order);
+        context.SaveChanges();
+    }
+
+    public void RemoveSellOrder(SellOrder order)
+    {
+        using var context = _marketDataContextFactory.CreateDbContext();
+        var itemSetToRemove = context.SellOrders.FirstOrDefault(i => i.EngItemName == order.EngItemName && i.RusItemName == order.RusItemName);
+        if (itemSetToRemove is not null)
+            context.SellOrders.Remove(itemSetToRemove);
+        context.SaveChanges();
+    }
+
+    public List<SellOrder> GetSellOrders()
+    {
+        using var context = _marketDataContextFactory.CreateDbContext();
+        return context.SellOrders.ToList();
+    }
+
+    #endregion
 
     #endregion
 }
