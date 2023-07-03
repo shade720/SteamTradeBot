@@ -79,7 +79,7 @@ public class Item
         BuyOrderBook = _steamApi.GetBuyOrdersBook(ItemUrl);
         SellOrderBook = _steamApi.GetSellOrdersBook(ItemUrl, int.Parse(_configuration["ListingFindRange"]!));
 
-        Log.Information("Collected item data:\r\nEngItemName: {0}; \r\nSales: {1}; \r\nAvgPrice: {2}; \r\nTrend: {3}; \r\nBestSellPrice: {4}; \r\nBestBuyPrice: {5};", EngItemName, Sales, AvgPrice, Trend, SellOrderBook[0].Price, BuyOrderBook[0].Price);
+        Log.Information("Collected item data:\r\nEngItemName: {0}; \r\nSales: {1}; \r\nAvgPrice: {2}; \r\nTrend: {3}; \r\nBestSellPrice: {4}; \r\nBestBuyPrice: {5};", EngItemName, Sales, AvgPrice.ToString("F10"), Trend, SellOrderBook[0].Price, BuyOrderBook[0].Price);
         balance = _steamApi.GetBalance(ItemUrl);
     }
 
@@ -111,7 +111,7 @@ public class Item
         var trendForCompare = double.Parse(_configuration["Trend"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
         if (Trend < trendForCompare)
         {
-            Log.Information("Item is not profitable. Reason: trend is lower than needed. {0} < {1}", Trend.ToString("F5"), trendForCompare);
+            Log.Information("Item is not profitable. Reason: trend is lower than needed. {0} < {1}", Trend.ToString("F10"), trendForCompare);
             return false;
         }
 

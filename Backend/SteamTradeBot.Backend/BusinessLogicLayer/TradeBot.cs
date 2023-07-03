@@ -79,10 +79,11 @@ public class TradeBot : IDisposable
     public void ReinitializeWorker()
     {
         Log.Logger.Information("Start working set refreshing...");
-        if ( _worker is not null)
+        if (_worker is not null)
             ClearWorker(_worker);
         var items = InitializePipeline();
         _worker = InitWorker(items);
+        _worker.StartWork();
         Log.Logger.Information("Working set have been refreshed!");
     }
 
@@ -93,9 +94,18 @@ public class TradeBot : IDisposable
     public void LogIn(string login, string password, string token, string secret)
     {
         _state.IsLoggedIn = ServiceState.LogInState.Pending;
-        _steamApi.LogIn(login, password, token, secret);
-        _state.IsLoggedIn = ServiceState.LogInState.LoggedIn;
-        _state.CurrentUser = login;
+        try
+        {
+            _steamApi.LogIn(login, password, token, secret);
+            _state.IsLoggedIn = ServiceState.LogInState.LoggedIn;
+            _state.CurrentUser = login;
+        }
+        catch
+        {
+            _state.IsLoggedIn = ServiceState.LogInState.NotLoggedIn;
+            _state.CurrentUser = string.Empty;
+            throw;
+        }
     }
 
     public void LogOut()
@@ -227,9 +237,10 @@ public class TradeBot : IDisposable
         var itemWithOrders = _db.GetOrders().Where(x => x.IsTherePurchaseOrder);
         var loadedItemList = GetItemNames()
             .Where(itemName => itemWithOrders.All(order => order.EngItemName != itemName))
-            .Select(itemName => new Item {EngItemName = itemName}.ConfigureServiceProperties(_configuration, _steamApi));
+            .Select(itemName => new Item {EngItemName = itemName}.ConfigureServiceProperties(_configuration, _steamApi))
+            .ToList();
         Log.Information("Pipeline initialized");
-        return loadedItemList.ToList();
+        return loadedItemList;
     }
 
     private Worker InitWorker(List<Item> items)
@@ -252,16 +263,24 @@ public class TradeBot : IDisposable
         worker.OnItemSoldEvent -= OnItemSold;
         worker.OnErrorEvent -= OnError;
         worker.OnWorkingSetFullyAnalyzedEvent -= ReinitializeWorker;
-        worker?.StopWork();
+        worker.StopWork();
     }
 
-    private IEnumerable<string> GetItemNames()
+    private List<string> GetItemNames()
     {
-        return _steamApi.GetItemNamesList(
-            double.Parse(_configuration["MinPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
-            double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
-            int.Parse(_configuration["SalesPerWeek"]!) * 7,
-            int.Parse(_configuration["ItemListSize"]!));
+        try
+        {
+            return _steamApi.GetItemNamesList(
+                double.Parse(_configuration["MinPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
+                double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
+                int.Parse(_configuration["SalesPerWeek"]!) * 7,
+                int.Parse(_configuration["ItemListSize"]!)).ToList();
+        }
+        catch (Exception e)
+        {
+            Log.Logger.Error("Error due to getting items list. Message: {0}, StackTrace: {1}", e.Message, e.StackTrace);
+            return new List<string>();
+        }
     }
 
     private bool CheckConfigurationIntegrity()

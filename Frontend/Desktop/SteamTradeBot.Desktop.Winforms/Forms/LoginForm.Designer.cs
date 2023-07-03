@@ -245,9 +245,9 @@
         private CheckBox RememberMeCheckBox;
         private TextBox TokenTextBox;
         private Label label3;
-        private Button LogInButton;
         private Button ChooseMaFileButton;
         private Button ResetButton;
         private OpenFileDialog OpenFileDialog;
+        public Button LogInButton;
     }
 }

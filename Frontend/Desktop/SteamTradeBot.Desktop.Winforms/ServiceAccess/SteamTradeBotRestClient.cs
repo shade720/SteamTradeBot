@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Security.Authentication;
 using System.Text;
 using Newtonsoft.Json;
 using SteamTradeBot.Desktop.Winforms.Models;
@@ -9,6 +10,7 @@ public class SteamTradeBotRestClient : IDisposable
 {
     private readonly HttpClient _restClient;
     private const string BaseAddress = "http://192.168.0.107:5050/api/";
+    //private const string BaseAddress = "http://localhost:5050/api/";
 
     public SteamTradeBotRestClient()
     {
@@ -21,7 +23,8 @@ public class SteamTradeBotRestClient : IDisposable
     public async Task LogIn(Credentials credentials)
     {
         var response = await _restClient.PostAsync("login", new StringContent(JsonConvert.SerializeObject(credentials), Encoding.UTF8, "application/json"));
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            throw new AuthenticationException(await response.Content.ReadAsStringAsync());
     }
 
     public async Task LogOut()

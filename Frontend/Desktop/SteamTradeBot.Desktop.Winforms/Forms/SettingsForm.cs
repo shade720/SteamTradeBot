@@ -37,6 +37,7 @@ public partial class SettingsForm : Form
         {
             var configuration = GetCurrentConfiguration();
             await _steamTradeBotRestClient.UploadSettings(JsonConvert.SerializeObject(configuration));
+            MessageBox.Show(@"Configuration was uploaded!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception exception)
         {
@@ -93,12 +94,11 @@ public partial class SettingsForm : Form
         {
             var currentConfiguration = GetCurrentConfiguration();
             Program.SaveConfiguration(currentConfiguration);
+            MessageBox.Show(@"Configuration was saved!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception exception)
         {
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
         }
-        MessageBox.Show(@"Configuration was saved!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 }
