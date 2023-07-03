@@ -34,9 +34,7 @@ public class Worker
     public Worker(List<Item> workingSet)
     {
         if (workingSet.Count == 0)
-        {
-            throw new ArgumentException("Items list was empty!");
-        }
+            OnWorkingSetFullyAnalyzedEvent?.Invoke();
         _itemsPipeline = new Queue<Item>();
         foreach (var item in workingSet)
             _itemsPipeline.Enqueue(item);

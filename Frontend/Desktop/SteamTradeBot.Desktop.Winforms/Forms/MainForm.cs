@@ -72,11 +72,15 @@ public partial class MainForm : Form
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, null)
         };
 
+        if (_logInForm.State == state.IsLoggedIn)
+            return;
         switch (state.IsLoggedIn)
         {
             case StateInfo.LogInState.Pending:
                 ThreadHelperClass.ExecOnForm(this, () =>
                 {
+                    _logInForm.LogInButton.Enabled = false;
+                    _logInForm.State = StateInfo.LogInState.Pending;
                     StartDisplayLoadingIcon("Connecting to steam API...");
                 });
                 break;
@@ -91,16 +95,24 @@ public partial class MainForm : Form
                     LogInLabel.Visible = false;
                     LogOutLabel.Visible = true;
                     LogOutLabel.Text = state.CurrentUser;
+                    _logInForm.LogInButton.Enabled = false;
+                    _logInForm.Hide();
+                    _workerForm.Show();
+                    _settingsForm.Hide();
+                    _logInForm.State = StateInfo.LogInState.LoggedIn;
                 });
                 break;
             case StateInfo.LogInState.NotLoggedIn:
                 ThreadHelperClass.ExecOnForm(this, () =>
                 {
+                    StopDisplayLoadingIcon();
                     LogInButton.Visible = true;
                     LogOutButton.Visible = false;
                     LogInLabel.Visible = true;
                     LogOutLabel.Visible = false;
                     LogOutLabel.Text = string.Empty;
+                    _logInForm.LogInButton.Enabled = true;
+                    _logInForm.State = StateInfo.LogInState.NotLoggedIn;
                 });
                 break;
             default:

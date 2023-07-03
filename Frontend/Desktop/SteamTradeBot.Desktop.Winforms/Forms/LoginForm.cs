@@ -10,6 +10,7 @@ public partial class LogInForm : Form
 {
     private readonly SteamTradeBotRestClient _steamTradeBotRestClient;
     private readonly Credentials _credentials;
+    public StateInfo.LogInState State { get; set; }
 
     public LogInForm(SteamTradeBotRestClient steamTradeBotRestClient)
     {
@@ -26,11 +27,9 @@ public partial class LogInForm : Form
 
     private async void LogInButton_Click(object sender, EventArgs e)
     {
-        LogInButton.Enabled = false;
         if (string.IsNullOrEmpty(LogInTextBox.Text) || string.IsNullOrEmpty(PasswordTextBox.Text))
         {
             MessageBox.Show(@"Enter the login and the password!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            LogInButton.Enabled = true;
             return;
         }
 
@@ -49,7 +48,6 @@ public partial class LogInForm : Form
                 if (secret is null)
                 {
                     MessageBox.Show(@"Can't extract the secret from this maFile", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    LogInButton.Enabled = true;
                     return;
                 }
                 _credentials.Secret = secret;
@@ -57,7 +55,6 @@ public partial class LogInForm : Form
             else
             {
                 MessageBox.Show(@"Enter the token or maFilePath!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LogInButton.Enabled = true;
                 return;
             }
         }
@@ -69,13 +66,11 @@ public partial class LogInForm : Form
         catch (Exception exception)
         {
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            LogInButton.Enabled = true;
             return;
         }
 
-        if (RememberMeCheckBox.Checked) 
+        if (RememberMeCheckBox.Checked)
             Program.SaveCredentials(_credentials);
-        LogInButton.Enabled = true;
     }
 
     private void ChooseMaFileButton_Click(object sender, EventArgs e)

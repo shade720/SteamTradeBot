@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -273,14 +274,23 @@ public class SteamAPI : IDisposable
 
     #region RefreshWorkingSet
 
-    public List<string> GetItemNamesList(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
+    public IEnumerable<string> GetItemNamesList(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
     {
         return SafeConnect(() =>
         {
             var result = new List<string>();
-            SetPage("https://skins-table.xyz/");
-            ClickOnElement(By.XPath("/html/body/div[1]/div[4]/div/div/center/div/div/div[2]/form/div[2]/a"));
-            ClickOnElement(By.Id("imageLogin"));
+            SetPage("https://skins-table.xyz/table/");
+            try
+            {
+                Log.Logger.Information("Check if we are already logged in...");
+                ClickOnElement(By.XPath("/html/body/div[1]/div[4]/div/div/center/div/div/div[2]/form/div[2]/a"));
+                ClickOnElement(By.Id("imageLogin"));
+                Log.Logger.Information("Logged in successfully on skins-table.xyz");
+            }
+            catch
+            {
+                Log.Logger.Information("Already logged in on skins-table.xyz");
+            }
 
             SetPage("https://skins-table.xyz/table/");
 
@@ -312,6 +322,7 @@ public class SteamAPI : IDisposable
                 var itemName = string.Join("", matches[i].ToString().SkipWhile(x => x != '=').Skip(2).SkipLast(1));
                 if (itemName.Contains("Sealed Graffiti") || itemName.Contains("Sticker") || itemName.Contains("Case"))
                     continue;
+                Log.Logger.Information("Get {0} item", itemName);
                 result.Add(itemName);
             }
             return result;
@@ -477,7 +488,7 @@ public class SteamAPI : IDisposable
 
     #endregion
 
-    private T? SafeConnect<T>(Func<T> unsafeFunc, bool isDelayNeeded = false)
+    private T SafeConnect<T>(Func<T> unsafeFunc, bool isDelayNeeded = false)
     {
         var retryWaitTimeMs = isDelayNeeded ? RequestDelayMs : 0;
         for (var attempt = 0; attempt < RetriesCount; attempt++)
@@ -490,16 +501,12 @@ public class SteamAPI : IDisposable
             catch (Exception e)
             {
                 Log.Error("Connection error! Attempt: {0}/{1}\r\nMessage: {2}\r\nStack trace: {3}", attempt + 1, RetriesCount, e.Message, e.StackTrace);
-                if (attempt == RetriesCount - 1)
-                {
-                    Log.Error("Number of attempts are expired!\r\nMessage: {0}\r\nStackTrace: {1}", e.Message, e.StackTrace);
-                    throw;
-                }
                 retryWaitTimeMs = RetryWaitTimeMs;
                 _chromeBrowser.Navigate().Refresh();
             }
         }
-        return default;
+        Log.Error("Number of attempts are expired!");
+        throw new Exception("Number of attempts are expired!");
     }
 
     public void Dispose()
