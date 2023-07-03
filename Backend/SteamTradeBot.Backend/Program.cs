@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SteamTradeBot.Backend;
 using SteamTradeBot.Backend.BusinessLogicLayer;
-using SteamTradeBot.Backend.Models;
 using SteamTradeBot.Backend.DataAccessLayer;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
@@ -41,11 +40,9 @@ builder.Configuration.SetBasePath(Environment.CurrentDirectory)
     .AddEnvironmentVariables();
 
 var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? builder.Configuration["ConnectionString"];
-
 builder.Services.AddDbContextFactory<MarketDataContext>(options => options.UseNpgsql(postgresConnectionString));
 
 builder.Services.AddSingleton<TradeBot>();
-builder.Services.AddSingleton<ServiceState>();
 
 var app = builder.Build();
 

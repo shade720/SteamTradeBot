@@ -6,11 +6,17 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Serilog;
+using SteamTradeBot.Backend.BusinessLogicLayer.Rules;
+using SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
+using SteamTradeBot.Backend.BusinessLogicLayer.Rules.ProfitRules;
+using SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models;
 
@@ -18,19 +24,52 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
 public class TradeBot : IDisposable
 {
+    private readonly SteamAPI _steamApi;
+    private readonly IConfiguration _configuration;
+    private readonly ServiceState _state;
+    private readonly DbAccess _db;
+    private readonly Stopwatch _stopwatch;
+
+    private readonly MarketClient _marketClient;
+    private readonly MarketRules _rules;
+    private readonly ItemBuilder _itemBuilder;
+
+    private CancellationTokenSource? _cancellationTokenSource;
+
+
     #region Public
 
     public TradeBot
     (
         IConfiguration configuration, 
-        IDbContextFactory<MarketDataContext> marketContextFactory,
-        ServiceState state)
+        IDbContextFactory<MarketDataContext> marketContextFactory)
     {
         _configuration = configuration;
-        _state = state;
+
+        _state = new ServiceState();
         _db = new DbAccess(marketContextFactory);
         _steamApi = new SteamAPI();
         _stopwatch = new Stopwatch();
+        _itemBuilder = new ItemBuilder(_steamApi);
+        _marketClient = new MarketClient(_steamApi, _configuration);
+        var buyRules = new List<IBuyRule>
+        {
+            new SalesCountRule(_configuration),
+            new AveragePriceRule(_configuration),
+            new TrendRule(_configuration),
+            new RequiredProfitRule(_configuration),
+            new AvailableBalanceRule(_steamApi.GetBalance(), _configuration),
+        };
+        var sellRules = new List<ISellRule>()
+        {
+            new CurrentQuantityCheckRule(_steamApi)
+        };
+        var cancelRules = new List<ICancelRule>
+        {
+            new FitPriceRule(_steamApi, _configuration)
+        };
+        _rules = new MarketRules(buyRules, sellRules, cancelRules);
+
         Log.Logger.Information("TradeBotSingleton created!");
     }
 
@@ -42,24 +81,21 @@ public class TradeBot : IDisposable
         {
             throw new ApplicationException("Configuration is corrupted. Trading not started!");
         }
-        if (_worker is not null)
-            return;
         _state.WorkingState = ServiceState.ServiceWorkingState.Up;
         _stopwatch.Start();
-        var workingSet = InitializePipeline();
-        _worker = InitWorker(workingSet);
-        _worker.StartWork();
+        _cancellationTokenSource = new CancellationTokenSource();
+        Task.Run(WorkerLoop);
     }
 
     public void StopTrading()
     {
-        if (_worker is null)
+        if (_cancellationTokenSource is null)
         {
             _state.WorkingState = ServiceState.ServiceWorkingState.Down;
-            throw new ApplicationException("Worker was null (StopTrading).");
+            throw new Exception("Worker is already stopped!");
         }
+        _cancellationTokenSource.Cancel();
         _state.WorkingState = ServiceState.ServiceWorkingState.Down;
-        ClearWorker(_worker);
         _stopwatch.Stop();
         _stopwatch.Reset();
     }
@@ -67,24 +103,13 @@ public class TradeBot : IDisposable
     public void ClearBuyOrders()
     {
         Log.Logger.Information("Start buy orders canceling...");
-        var itemsWithPurchaseOrders = _db.GetOrders().Where(item => item.IsTherePurchaseOrder);
+        var itemsWithPurchaseOrders = _db.GetBuyOrders();
         foreach (var item in itemsWithPurchaseOrders)
         {
-            item.CancelBuyOrder();
-            Log.Logger.Information("Item {0} with buy price {1} was canceled", item.EngItemName, item.BuyPrice);
+            _marketClient.CancelBuyOrder(item);
+            Log.Logger.Information("Item {0} with buy price {1} was canceled", item.EngItemName, item.Price);
         }
         Log.Logger.Information("All buy orders have been canceled!");
-    }
-
-    public void ReinitializeWorker()
-    {
-        Log.Logger.Information("Start working set refreshing...");
-        if (_worker is not null)
-            ClearWorker(_worker);
-        var items = InitializePipeline();
-        _worker = InitWorker(items);
-        _worker.StartWork();
-        Log.Logger.Information("Working set have been refreshed!");
     }
 
     #endregion
@@ -165,6 +190,27 @@ public class TradeBot : IDisposable
         Log.Logger.Information("Settings have been updated!");
     }
 
+    private bool CheckConfigurationIntegrity()
+    {
+        Log.Information("Check configuration integrity...");
+        if (int.TryParse(_configuration["OrderQuantity"], out _) &&
+            int.TryParse(_configuration["SalesPerWeek"], out _) &&
+            _configuration["SteamUserId"] is not null &&
+            int.TryParse(_configuration["ListingFindRange"], out _) &&
+            int.TryParse(_configuration["AnalysisIntervalDays"], out _) &&
+            double.TryParse(_configuration["FitPriceRange"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
+            double.TryParse(_configuration["AveragePrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
+            double.TryParse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
+            double.TryParse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
+            double.TryParse(_configuration["RequiredProfit"], NumberStyles.Any, CultureInfo.InvariantCulture, out _))
+        {
+            Log.Information("Check configuration integrity -> OK");
+            return true;
+        }
+        Log.Fatal("Configuration error");
+        return false;
+    }
+
     #endregion
 
     #region Logs
@@ -205,7 +251,6 @@ public class TradeBot : IDisposable
             CurrentUser = _state.CurrentUser,
             IsLoggedIn = _state.IsLoggedIn,
         };
-        _state.Events.Clear();
         return serviceStateCopy;
     }
 
@@ -214,8 +259,6 @@ public class TradeBot : IDisposable
     public void Dispose()
     {
         Log.Logger.Information("Disposing trade bot singleton...");
-        if (_worker is not null)
-            ClearWorker(_worker);
         _steamApi.Dispose();
         Log.Logger.Information("Trade bot singleton disposed!");
     }
@@ -223,58 +266,168 @@ public class TradeBot : IDisposable
 
     #region Private
 
-    private readonly SteamAPI _steamApi;
-    private readonly IConfiguration _configuration;
-    private readonly ServiceState _state;
-    private readonly DbAccess _db;
-    private readonly Stopwatch _stopwatch;
-
-    private Worker? _worker;
-
-    private List<Item> InitializePipeline()
+    private void WorkerLoop()
     {
-        Log.Information("Load items for analysis....");
-        var itemWithOrders = _db.GetOrders().Where(x => x.IsTherePurchaseOrder);
-        var loadedItemList = GetItemNames()
-            .Where(itemName => itemWithOrders.All(order => order.EngItemName != itemName))
-            .Select(itemName => new Item {EngItemName = itemName}.ConfigureServiceProperties(_configuration, _steamApi))
-            .ToList();
-        Log.Information("Pipeline initialized");
-        return loadedItemList;
+        if (_cancellationTokenSource is null)
+            throw new ArgumentException("Cancellation token was null!");
+        Log.Information("Worker has started");
+        while (!_cancellationTokenSource.IsCancellationRequested)
+        {
+            var itemNames = GetItemNames();
+            foreach (var item in itemNames.Select(ConstructItemPage).Where(item => item is not null))
+            {
+                AnalyzeItem(item!);
+            }
+        }
+        Log.Information("Worker has ended");
     }
 
-    private Worker InitWorker(List<Item> items)
-    {
-        var worker = new Worker(items);
-        worker.OnItemAnalyzedEvent += OnItemAnalyzed;
-        worker.OnItemCanceledEvent += OnItemCanceled;
-        worker.OnItemBoughtEvent += OnItemBought;
-        worker.OnItemSoldEvent += OnItemSold;
-        worker.OnErrorEvent += OnError;
-        worker.OnWorkingSetFullyAnalyzedEvent += ReinitializeWorker;
-        return worker;
-    }
-
-    private void ClearWorker(Worker worker)
-    {
-        worker.OnItemAnalyzedEvent -= OnItemAnalyzed;
-        worker.OnItemCanceledEvent -= OnItemCanceled;
-        worker.OnItemBoughtEvent -= OnItemBought;
-        worker.OnItemSoldEvent -= OnItemSold;
-        worker.OnErrorEvent -= OnError;
-        worker.OnWorkingSetFullyAnalyzedEvent -= ReinitializeWorker;
-        worker.StopWork();
-    }
-
-    private List<string> GetItemNames()
+    private ItemPage? ConstructItemPage(string itemName)
     {
         try
         {
-            return _steamApi.GetItemNamesList(
-                double.Parse(_configuration["MinPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
-                double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
-                int.Parse(_configuration["SalesPerWeek"]!) * 7,
-                int.Parse(_configuration["ItemListSize"]!)).ToList();
+            var itemPage = _itemBuilder.Create(itemName)
+                .SetRusItemName()
+                .SetItemUrl()
+                .SetGraph(int.Parse(_configuration["AnalysisIntervalDays"]!))
+                .SetAvgPrice()
+                .SetItemSales()
+                .SetTrend()
+                .SetBuyOrderBook()
+                .SetSellOrderBook(int.Parse(_configuration["ListingFindRange"]!))
+                .SetBalance()
+                .Build();
+            _db.AddNewEvent(new TradingEvent
+            {
+                Type = InfoType.ItemAnalyzed,
+                CurrentBalance = itemPage.Balance,
+                Time = DateTime.UtcNow,
+                Info = itemPage.EngItemName
+            });
+            _state.ItemsAnalyzed++;
+            return itemPage;
+        }
+        catch (Exception e)
+        {
+            Log.Error("The item was skipped due to an error ->\r\nMessage: {0}\r\nStack trace: {1}", e.Message, e.StackTrace);
+            OnError(e);
+            return null;
+        }
+    }
+
+    private void AnalyzeItem(ItemPage itemPage)
+    {
+        try
+        {
+            if (_rules.CanBuyItem(itemPage))
+            {
+                FormBuyOrder(itemPage);
+                return;
+            }
+
+            if (_rules.IsNeedCancelItem(itemPage))
+            {
+                FormOrderCancelling(itemPage);
+                return;
+            }
+
+            if (_rules.CanSellItem(itemPage))
+            {
+                FormSellOrder(itemPage);
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Error("The item was skipped due to an error ->\r\nMessage: {0}\r\nStack trace: {1}", e.Message, e.StackTrace);
+            OnError(e);
+        }
+    }
+
+    private void FormOrderCancelling(ItemPage item)
+    {
+        var order = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName && x.RusItemName == item.RusItemName && x.ItemUrl == item.ItemUrl && Math.Abs(x.Price - item.BuyPrice) < 0.001);
+        _marketClient.CancelBuyOrder(order);
+        _db.RemoveBuyOrder(order);
+        _db.AddNewEvent(new TradingEvent
+        {
+            Type = InfoType.ItemCanceled,
+            Time = DateTime.UtcNow,
+            Info = order.EngItemName
+        });
+        _state.ItemCanceled++;
+        _state.Events.Add($"{DateTime.UtcNow}-{order.EngItemName}-Canceled-{order.Price}");
+    }
+
+    private void FormSellOrder(ItemPage item)
+    {
+        var buyOrder = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName && x.RusItemName == item.RusItemName && x.ItemUrl == item.ItemUrl);
+        var steamCommission = double.Parse(_configuration["SteamCommission"]!, NumberStyles.Any,
+            CultureInfo.InvariantCulture);
+        var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any,
+            CultureInfo.InvariantCulture);
+        var sellOrder = new SellOrder
+        {
+            EngItemName = item.EngItemName,
+            RusItemName = item.RusItemName,
+            ItemUrl = item.ItemUrl,
+            Price = buyOrder.Price * (1 + steamCommission) + requiredProfit
+        };
+
+        _marketClient.Sell(sellOrder);
+        _db.AddOrUpdateSellOrder(sellOrder);
+        _db.AddNewEvent(new TradingEvent
+        {
+            Type = InfoType.ItemSold,
+            Time = DateTime.UtcNow,
+            Info = sellOrder.EngItemName,
+            SellPrice = sellOrder.Price,
+            Profit = sellOrder.Price - buyOrder.Price
+        });
+        _state.ItemsSold++;
+        _state.Events.Add($"{DateTime.UtcNow}-{sellOrder.EngItemName}-Sold-{sellOrder.Price}");
+    }
+
+    private void FormBuyOrder(ItemPage item)
+    {
+        var buyOrder = new BuyOrder
+        {
+            EngItemName = item.EngItemName,
+            RusItemName = item.RusItemName,
+            ItemUrl = item.ItemUrl,
+            Price = item.BuyPrice,
+            Quantity = int.Parse(_configuration["OrderQuantity"]!)
+        };
+        _marketClient.Buy(buyOrder);
+
+        _db.AddOrUpdateBuyOrder(buyOrder);
+        _db.AddNewEvent(new TradingEvent
+        {
+            Type = InfoType.ItemBought,
+            Time = DateTime.UtcNow,
+            Info = buyOrder.EngItemName,
+            BuyPrice = buyOrder.Price
+        });
+        _state.ItemsBought++;
+        _state.Events.Add($"{DateTime.UtcNow}-{buyOrder.EngItemName}-Bought-{buyOrder.Price}");
+    }
+
+
+    private IEnumerable<string> GetItemNames()
+    {
+        try
+        {
+            Log.Information("Load items for analysis....");
+            var ordersNames = _db.GetBuyOrders().Select(x => x.EngItemName);
+            var loadedItemList = _steamApi.GetItemNamesList(
+                    double.Parse(_configuration["MinPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
+                    double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
+                    int.Parse(_configuration["SalesPerWeek"]!) * 7,
+                    int.Parse(_configuration["ItemListSize"]!))
+                .Where(itemName => ordersNames.All(order => order != itemName))
+                .ToList();
+            Log.Information("Pipeline initialized");
+            return loadedItemList;
         }
         catch (Exception e)
         {
@@ -283,40 +436,7 @@ public class TradeBot : IDisposable
         }
     }
 
-    private bool CheckConfigurationIntegrity()
-    {
-        Log.Information("Check configuration integrity...");
-        if (int.TryParse(_configuration["OrderQuantity"], out _) &&
-            int.TryParse(_configuration["SalesPerWeek"], out _) &&
-            _configuration["SteamUserId"] is not null &&
-            int.TryParse(_configuration["ListingFindRange"], out _) &&
-            int.TryParse(_configuration["AnalysisIntervalDays"], out _) &&
-            double.TryParse(_configuration["FitPriceRange"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
-            double.TryParse(_configuration["AveragePrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
-            double.TryParse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
-            double.TryParse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
-            double.TryParse(_configuration["RequiredProfit"], NumberStyles.Any, CultureInfo.InvariantCulture, out _))
-        {
-            Log.Information("Check configuration integrity -> OK");
-            return true;
-        }
-        Log.Fatal("Configuration error");
-        return false;
-    }
-
     #region WorkerEventHandlers
-
-    private void OnItemAnalyzed(Item item, double balance)
-    {
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemAnalyzed,
-            CurrentBalance = balance,
-            Time = DateTime.UtcNow,
-            Info = item.EngItemName
-        });
-        _state.ItemsAnalyzed++;
-    }
 
     private void OnError(Exception exception)
     {
@@ -327,47 +447,6 @@ public class TradeBot : IDisposable
             Info = $"Message: {exception.Message}, StackTrace: {exception.StackTrace}"
         });
         _state.Errors++;
-    }
-
-    private void OnItemSold(Item item)
-    {
-        _db.AddOrUpdateOrder(item);
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemSold,
-            Time = DateTime.UtcNow,
-            Info = item.EngItemName,
-            SellPrice = item.SellPrice
-        });
-        _state.ItemsSold++;
-        _state.Events.Add($"{DateTime.UtcNow}-{item.EngItemName}-Sold-{item.BuyPrice}-{item.SellPrice}");
-    }
-
-    private void OnItemBought(Item item)
-    {
-        _db.AddOrUpdateOrder(item);
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemBought,
-            Time = DateTime.UtcNow,
-            Info = item.EngItemName,
-            BuyPrice = item.BuyPrice
-        });
-        _state.ItemsBought++;
-        _state.Events.Add($"{DateTime.UtcNow}-{item.EngItemName}-Bought-{item.BuyPrice}");
-    }
-
-    private void OnItemCanceled(Item item)
-    {
-        _db.RemoveOrder(item);
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemCanceled,
-            Time = DateTime.UtcNow,
-            Info = item.EngItemName
-        });
-        _state.ItemCanceled++;
-        _state.Events.Add($"{DateTime.UtcNow}-{item.EngItemName}-Canceled-{item.BuyPrice}");
     }
 
     #endregion
