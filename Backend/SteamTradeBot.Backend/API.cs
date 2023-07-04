@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -37,7 +38,7 @@ public static class API
             tradeBot.SetConfiguration(configurationJson);
         });
         app.MapPost("api/orderscanceling", async ([FromServices] TradeBot tradeBot) => await ClearBuyOrders(tradeBot));
-        app.MapGet("api/state", async ([FromServices] TradeBot tradeBot) => await GetServiceState(tradeBot));
+        app.MapGet("api/state", async ([FromQuery(Name = "date")] DateTime fromDate, [FromServices] TradeBot tradeBot) => await GetServiceState(tradeBot, fromDate));
         app.MapGet("api/logs", async ([FromServices] TradeBot tradeBot) => await GetLogs(tradeBot));
     }
 
@@ -70,9 +71,9 @@ public static class API
         return await Task.Run(tradeBot.ClearBuyOrders)
             .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok() : Results.Problem(task.Exception?.Message));
     }
-    private static async Task<IResult> GetServiceState(TradeBot tradeBot)
+    private static async Task<IResult> GetServiceState(TradeBot tradeBot, DateTime fromDate)
     {
-        return await Task.Run(tradeBot.GetServiceState)
+        return await Task.Run(() => tradeBot.GetServiceState(fromDate))
             .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok(task.Result) : Results.Problem(task.Exception?.Message));
     }
     private static async Task<IResult> GetLogs(TradeBot tradeBot)

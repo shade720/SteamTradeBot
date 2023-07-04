@@ -1,6 +1,7 @@
 ﻿using SteamTradeBot.Desktop.Winforms.ServiceAccess;
 using System.ComponentModel;
 using SteamTradeBot.Desktop.Winforms.Models;
+using System.Windows.Forms;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -85,10 +86,20 @@ public partial class WorkerForm : Form
         {
             foreach (var eventInfo in state.Events)
             {
-                HistoryDataGridView.Rows.Add(eventInfo.Split('-'));
+                AddIfNotExist(eventInfo);
             }
         });
         ThreadHelperClass.ExecOnForm(this, () => WorkingStateControlsVisibility(state.WorkingState == StateInfo.ServiceWorkingState.Up));
+    }
+
+    private void AddIfNotExist(string eventInfo)
+    {
+        var info = eventInfo.Split('#');
+        var entryFound = HistoryDataGridView.Rows.Cast<DataGridViewRow>().Any(row => row.Cells[0].Value.ToString() == info[0] && row.Cells[1].Value.ToString() == info[1]);
+        if (!entryFound)
+        {
+            HistoryDataGridView.Rows.Add(info);
+        }
     }
 
     private void WorkingStateControlsVisibility(bool isWorking)

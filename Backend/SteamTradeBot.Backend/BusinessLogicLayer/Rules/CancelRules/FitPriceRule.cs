@@ -24,6 +24,6 @@ public class FitPriceRule : ICancelRule
         const int listingPageSize = 1;
         var sellOrderBook = _api.GetSellOrdersBook(itemPage.ItemUrl, listingPageSize);
         var fitPriceRange = double.Parse(_configuration["FitPriceRange"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
-        return sellOrderBook.Any(x => Math.Abs(x.Price - itemPage.BuyPrice) < fitPriceRange);
+        return sellOrderBook.Any(x => Math.Abs(x.Price - itemPage.BuyOrderPrice) < fitPriceRange);
     }
 }

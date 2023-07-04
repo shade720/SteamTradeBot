@@ -1,4 +1,4 @@
-# docker run --name SteamTradeBot -d --rm -it -p 5050:80 -p 5060:443 -e SELENIUM_HOST="http://host.docker.internal:5051" -e POSTGRES_CONNECTION_STRING="Host=host.docker.internal;Port=32768;Database=MarketDatabase;Username=postgres;Password=postgrespw" steam-trade-bot
+# docker run --name SteamTradeBot -d -it -p 5050:80 -p 5060:443 -e SELENIUM_HOST="http://host.docker.internal:5051" -e POSTGRES_CONNECTION_STRING="Host=host.docker.internal;Port=32768;Database=MarketDatabase;Username=postgres;Password=postgrespw" steam-trade-bot
 # docker build -t unh0ly/steam-trade-bot:latest .
 # docker push unh0ly/steam-trade-bot
 
