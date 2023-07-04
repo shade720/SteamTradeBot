@@ -11,6 +11,7 @@ public class SteamTradeBotRestClient : IDisposable
     private readonly HttpClient _restClient;
     private const string BaseAddress = "http://192.168.0.107:5050/api/";
     //private const string BaseAddress = "http://localhost:5050/api/";
+    private DateTime _lastStateCheck = DateTime.MinValue;
 
     public SteamTradeBotRestClient()
     {
@@ -61,7 +62,8 @@ public class SteamTradeBotRestClient : IDisposable
     {
         try
         {
-            var response = await _restClient.GetAsync("state");
+            var response = await _restClient.GetAsync($"state?date={_lastStateCheck}");
+            _lastStateCheck = DateTime.Now;
             var stateInfoJson = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<StateInfo>(stateInfoJson)!;
         }

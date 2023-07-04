@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -19,6 +9,16 @@ using SteamTradeBot.Backend.BusinessLogicLayer.Rules.ProfitRules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Dynamic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
@@ -41,13 +41,30 @@ public class TradeBot : IDisposable
 
     public TradeBot
     (
-        IConfiguration configuration, 
+        IConfiguration configuration,
         IDbContextFactory<MarketDataContext> marketContextFactory)
     {
         _configuration = configuration;
-
-        _state = new ServiceState();
         _db = new DbAccess(marketContextFactory);
+
+        var history = _db.GetHistory();
+        _state = new ServiceState
+        {
+            Warnings = history.Count(x => x.Type == InfoType.Warning),
+            Errors = history.Count(x => x.Type == InfoType.Error),
+            ItemsAnalyzed = history.Count(x => x.Type == InfoType.ItemAnalyzed),
+            ItemsBought = history.Count(x => x.Type == InfoType.ItemBought),
+            ItemsSold = history.Count(x => x.Type == InfoType.ItemSold),
+            ItemCanceled = history.Count(x => x.Type == InfoType.ItemCanceled),
+            Events = history
+                .Where(x => x.Type is InfoType.ItemBought or InfoType.ItemCanceled or InfoType.ItemSold)
+                .Select(x =>
+                {
+                    var profit = x.Profit > 0 ? x.Profit.ToString() : string.Empty;
+                    return $"{x.Time}#{x.Info}#{x.Type}#{x.BuyPrice}#{x.SellPrice}#{profit}";
+                })
+                .ToList()
+        };
         _steamApi = new SteamAPI();
         _stopwatch = new Stopwatch();
         _itemBuilder = new ItemBuilder(_steamApi);
@@ -58,9 +75,9 @@ public class TradeBot : IDisposable
             new AveragePriceRule(_configuration),
             new TrendRule(_configuration),
             new RequiredProfitRule(_configuration),
-            new AvailableBalanceRule(_steamApi.GetBalance(), _configuration),
+            new AvailableBalanceRule(_configuration),
         };
-        var sellRules = new List<ISellRule>()
+        var sellRules = new List<ISellRule>
         {
             new CurrentQuantityCheckRule(_steamApi)
         };
@@ -235,7 +252,7 @@ public class TradeBot : IDisposable
 
     #region State
 
-    public ServiceState GetServiceState()
+    public ServiceState GetServiceState(DateTime fromDate)
     {
         var serviceStateCopy = new ServiceState
         {
@@ -246,7 +263,7 @@ public class TradeBot : IDisposable
             ItemCanceled = _state.ItemCanceled,
             Errors = _state.Errors,
             Warnings = _state.Warnings,
-            Events = new List<string>(_state.Events),
+            Events = new List<string>(_state.Events.Where(x => DateTime.Parse(x.Split('#')[0]) > fromDate)),
             Uptime = _stopwatch.Elapsed,
             CurrentUser = _state.CurrentUser,
             IsLoggedIn = _state.IsLoggedIn,
@@ -277,6 +294,8 @@ public class TradeBot : IDisposable
             foreach (var item in itemNames.Select(ConstructItemPage).Where(item => item is not null))
             {
                 AnalyzeItem(item!);
+                if (_cancellationTokenSource.IsCancellationRequested)
+                    break;
             }
         }
         Log.Information("Worker has ended");
@@ -286,9 +305,10 @@ public class TradeBot : IDisposable
     {
         try
         {
+            Log.Information("Get {0} page...", itemName);
             var itemPage = _itemBuilder.Create(itemName)
-                .SetRusItemName()
                 .SetItemUrl()
+                .SetRusItemName()
                 .SetGraph(int.Parse(_configuration["AnalysisIntervalDays"]!))
                 .SetAvgPrice()
                 .SetItemSales()
@@ -304,7 +324,7 @@ public class TradeBot : IDisposable
                 Time = DateTime.UtcNow,
                 Info = itemPage.EngItemName
             });
-            _state.ItemsAnalyzed++;
+            Log.Information("OK");
             return itemPage;
         }
         catch (Exception e)
@@ -324,18 +344,17 @@ public class TradeBot : IDisposable
                 FormBuyOrder(itemPage);
                 return;
             }
-
             if (_rules.IsNeedCancelItem(itemPage))
             {
                 FormOrderCancelling(itemPage);
                 return;
             }
-
             if (_rules.CanSellItem(itemPage))
             {
                 FormSellOrder(itemPage);
                 return;
             }
+            _state.ItemsAnalyzed++;
         }
         catch (Exception e)
         {
@@ -346,7 +365,7 @@ public class TradeBot : IDisposable
 
     private void FormOrderCancelling(ItemPage item)
     {
-        var order = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName && x.RusItemName == item.RusItemName && x.ItemUrl == item.ItemUrl && Math.Abs(x.Price - item.BuyPrice) < 0.001);
+        var order = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName && x.RusItemName == item.RusItemName && x.ItemUrl == item.ItemUrl && Math.Abs(x.Price - item.BuyOrderPrice) < 0.001);
         _marketClient.CancelBuyOrder(order);
         _db.RemoveBuyOrder(order);
         _db.AddNewEvent(new TradingEvent
@@ -356,7 +375,7 @@ public class TradeBot : IDisposable
             Info = order.EngItemName
         });
         _state.ItemCanceled++;
-        _state.Events.Add($"{DateTime.UtcNow}-{order.EngItemName}-Canceled-{order.Price}");
+        _state.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Canceled#{order.Price}");
     }
 
     private void FormSellOrder(ItemPage item)
@@ -385,17 +404,25 @@ public class TradeBot : IDisposable
             Profit = sellOrder.Price - buyOrder.Price
         });
         _state.ItemsSold++;
-        _state.Events.Add($"{DateTime.UtcNow}-{sellOrder.EngItemName}-Sold-{sellOrder.Price}");
+        _state.Events.Add($"{DateTime.UtcNow}#{sellOrder.EngItemName}#Sold#{sellOrder.Price}");
     }
 
     private void FormBuyOrder(ItemPage item)
     {
+        var steamCommission = double.Parse(_configuration["SteamCommission"]!, NumberStyles.Any,
+            CultureInfo.InvariantCulture);
+        var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any,
+            CultureInfo.InvariantCulture);
+        var price = item.SellOrderBook.FirstOrDefault(sellOrder => item.BuyOrderBook.Take(5).Any(buyOrder => sellOrder.Price + requiredProfit < buyOrder.Price * (1 + steamCommission)));
+        if (price is null)
+            throw new Exception("Sell order not found");
+
         var buyOrder = new BuyOrder
         {
             EngItemName = item.EngItemName,
             RusItemName = item.RusItemName,
             ItemUrl = item.ItemUrl,
-            Price = item.BuyPrice,
+            Price = price.Price,
             Quantity = int.Parse(_configuration["OrderQuantity"]!)
         };
         _marketClient.Buy(buyOrder);
@@ -409,7 +436,7 @@ public class TradeBot : IDisposable
             BuyPrice = buyOrder.Price
         });
         _state.ItemsBought++;
-        _state.Events.Add($"{DateTime.UtcNow}-{buyOrder.EngItemName}-Bought-{buyOrder.Price}");
+        _state.Events.Add($"{DateTime.UtcNow}#{buyOrder.EngItemName}#Bought#{buyOrder.Price}");
     }
 
 

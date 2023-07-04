@@ -90,11 +90,11 @@ public class ItemBuilder
         //m = ∑ (x - AVG(x)(y - AVG(y)) / ∑ (x - AVG(x))²
         var localGraph = graph.ToList();
 
-        var avgX = localGraph.Average(x => x.Date.AddYears(-2000).Ticks);
-        var avgY = localGraph.Average(x => x.Price);
+        var avgX = localGraph.Average(x => x.Date.ToOADate());
+        var avgY = localGraph.Average(x => x.Price * x.Quantity);
 
-        var item1 = localGraph.Sum(x => (x.Date.Ticks - avgX) * (x.Price - avgY));
-        var item2 = localGraph.Sum(x => Math.Pow(x.Date.Ticks - avgX, 2));
+        var item1 = localGraph.Sum(x => (x.Date.ToOADate() - avgX) * ((x.Price * x.Quantity) - avgY));
+        var item2 = localGraph.Sum(x => Math.Pow(x.Date.ToOADate() - avgX, 2));
 
         return item1 / item2;
     }

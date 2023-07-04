@@ -22,16 +22,16 @@ public class MarketRules
 
     public bool CanBuyItem(ItemPage itemPage)
     {
-        return _buyRules.Aggregate(true, (current, rule) => current & rule.IsFollowed(itemPage));
+        return _buyRules.All(rule => rule.IsFollowed(itemPage));
     }
 
     public bool CanSellItem(ItemPage itemPage)
     {
-        return _sellRules.Aggregate(true, (current, rule) => current & rule.IsFollowed(itemPage));
+        return _sellRules.All(rule => rule.IsFollowed(itemPage));
     }
 
     public bool IsNeedCancelItem(ItemPage itemPage)
     {
-        return _cancelRules.Aggregate(true, (current, rule) => current & rule.IsFollowed(itemPage));
+        return _cancelRules.All(rule => rule.IsFollowed(itemPage));
     }
 }
