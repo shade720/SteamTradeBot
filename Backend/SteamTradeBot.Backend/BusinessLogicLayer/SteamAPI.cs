@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -206,12 +207,29 @@ public class SteamAPI : IDisposable
         });
     }
 
+    public double? GetSellOrderPrice(string itemUrl)
+    {
+        return SafeConnect(() =>
+        {
+            SetPage(itemUrl);
+            try
+            {
+                var priceStr = ReadFromElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[1]/div[2]/div/div[2]/span/span/span/span[1]"), true);
+                return ParsePrice(priceStr);
+            }
+            catch
+            {
+                return new double?();
+            }
+        });
+    }
+
     public bool CancelSellOrder(string itemUrl)
     {
         return SafeConnect(() =>
         {
             SetPage(itemUrl);
-            ClickOnElement(By.XPath("/html/body/div[1]/div[7]/div[2]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div/div[2]/div/div[5]/div/a"));
+            ClickOnElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[1]/div[2]/div/div[5]/div/a/span[2]"));
             ClickOnElement(By.XPath("//*[@id='market_removelisting_dialog_accept']"));
             return true;
         });
@@ -246,13 +264,37 @@ public class SteamAPI : IDisposable
         }, true);
     }
 
-    public int GetBuyOrderQuantity(string itemUrl)
+    public int? GetBuyOrderQuantity(string itemUrl)
     {
         return SafeConnect(() =>
         {
             SetPage(itemUrl);
-            var quantity = int.Parse(ReadFromElement(By.XPath("/html/body/div[1]/div[7]/div[2]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div/div[2]/div[3]/span/span"), true));
-            return quantity;
+            try
+            {
+                var quantity = int.Parse(ReadFromElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[2]/div[2]/div[3]/span/span"), true));
+                return quantity;
+            }
+            catch
+            {
+                return new int?();
+            }
+        });
+    }
+
+    public double? GetBuyOrderPrice(string itemUrl)
+    {
+        return SafeConnect(() =>
+        {
+            SetPage(itemUrl);
+            try
+            {
+                var price = ReadFromElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[2]/div[2]/div[2]/span/span"), true);
+                return ParsePrice(price);
+            }
+            catch
+            {
+                return new double?();
+            }
         });
     }
 
@@ -261,7 +303,7 @@ public class SteamAPI : IDisposable
         return SafeConnect(() =>
         {
             SetPage(itemUrl);
-            ClickOnElement(By.XPath("/html/body/div[1]/div[7]/div[2]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div/div[2]/div[5]/div/a/span[2]"));
+            ClickOnElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[2]/div[2]/div[5]/div/a/span[2]"));
             return true;
         }, true);
     }

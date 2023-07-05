@@ -1,21 +1,25 @@
-﻿using Serilog;
+﻿using System.Linq;
+using Serilog;
+using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
 
 public class CurrentQuantityCheckRule : ISellRule
 {
-    private readonly SteamAPI _api;
+    private readonly DbAccess _db;
 
-    public CurrentQuantityCheckRule(SteamAPI api)
+    public CurrentQuantityCheckRule(DbAccess db)
     {
-        _api = api;
+        _db = db;
     }
     public bool IsFollowed(ItemPage itemPage)
     {
-        if (itemPage.BuyOrderQuantity <= 0 || !itemPage.IsThereSellOrder)
-            return false;
         Log.Information("Checking if order satisfied...");
-        return itemPage.BuyOrderQuantity <= _api.GetBuyOrderQuantity(itemPage.ItemUrl);
+        var localOrder = _db.GetBuyOrders().FirstOrDefault(order => order.EngItemName == itemPage.EngItemName);
+        if (localOrder is null)
+            return false;
+
+        return itemPage.MyBuyOrder is null || itemPage.MyBuyOrder.Quantity < localOrder.Quantity;
     }
 }
