@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -19,11 +18,11 @@ public class FitPriceRule : ICancelRule
     }
     public bool IsFollowed(ItemPage itemPage)
     {
-        if (itemPage.BuyOrderQuantity <= 0) return false;
+        if (itemPage.MyBuyOrder is null) return false;
         Log.Information("Checking if order obsolete...");
-        const int listingPageSize = 1;
-        var sellOrderBook = _api.GetSellOrdersBook(itemPage.ItemUrl, listingPageSize);
+        const int findRange = 1;
+        var sellOrderBook = _api.GetSellOrdersBook(itemPage.ItemUrl, findRange);
         var fitPriceRange = double.Parse(_configuration["FitPriceRange"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
-        return sellOrderBook.Any(x => Math.Abs(x.Price - itemPage.BuyOrderPrice) < fitPriceRange);
+        return sellOrderBook.Any(x => x.Price - itemPage.MyBuyOrder.Price > fitPriceRange);
     }
 }

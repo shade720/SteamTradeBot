@@ -26,6 +26,31 @@ public class ItemBuilder
         return _itemPage;
     }
 
+    public ItemBuilder SetMyBuyOrder()
+    {
+        var quantity = _api.GetBuyOrderQuantity(_itemPage.ItemUrl);
+        var price = _api.GetBuyOrderPrice(_itemPage.ItemUrl);
+
+        if (!quantity.HasValue || !price.HasValue)
+            _itemPage.MyBuyOrder = null;
+
+        _itemPage.MyBuyOrder = new BuyOrder
+        {
+            EngItemName = _itemPage.EngItemName,
+            RusItemName = _itemPage.RusItemName,
+            ItemUrl = _itemPage.ItemUrl,
+            Price = price!.Value,
+            Quantity = quantity!.Value
+        };
+        return this;
+    }
+
+    public ItemBuilder SetMySellOrders(int quantity)
+    {
+        
+        return this;
+    }
+
     public ItemBuilder SetBalance()
     {
         _itemPage.Balance = _api.GetBalance();

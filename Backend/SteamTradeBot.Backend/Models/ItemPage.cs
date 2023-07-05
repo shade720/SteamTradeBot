@@ -8,14 +8,9 @@ public class ItemPage
     public string EngItemName { get; set; }
     public string RusItemName { get; set; }
     public string ItemUrl { get; set; }
-    public double BuyOrderPrice { get; set; }
-    public int BuyOrderQuantity { get; set; }
-    public double SellOrderPrice { get; set; }
-    public double SellOrderQuantity { get; set; }
-    public bool IsThereBuyOrder { get; set; }
-    public bool IsThereSellOrder { get; set; }
-
-
+    public double BuyPrice { get; set; }
+    public BuyOrder? MyBuyOrder { get; set; }
+    public List<SellOrder>? MySellOrders { get; set; }
     public double AvgPrice { get; set; }
     public double Trend { get; set; }
     public double Sales { get; set; }

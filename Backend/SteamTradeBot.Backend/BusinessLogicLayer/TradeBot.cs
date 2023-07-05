@@ -79,7 +79,7 @@ public class TradeBot : IDisposable
         };
         var sellRules = new List<ISellRule>
         {
-            new CurrentQuantityCheckRule(_steamApi)
+            new CurrentQuantityCheckRule(_db)
         };
         var cancelRules = new List<ICancelRule>
         {
@@ -316,15 +316,9 @@ public class TradeBot : IDisposable
                 .SetBuyOrderBook()
                 .SetSellOrderBook(int.Parse(_configuration["ListingFindRange"]!))
                 .SetBalance()
+                .SetMyBuyOrder()
                 .Build();
-            _db.AddNewEvent(new TradingEvent
-            {
-                Type = InfoType.ItemAnalyzed,
-                CurrentBalance = itemPage.Balance,
-                Time = DateTime.UtcNow,
-                Info = itemPage.EngItemName
-            });
-            Log.Information("OK");
+            Log.Information("Get {0} page -> OK", itemName);
             return itemPage;
         }
         catch (Exception e)
@@ -355,6 +349,13 @@ public class TradeBot : IDisposable
                 return;
             }
             _state.ItemsAnalyzed++;
+            _db.AddNewEvent(new TradingEvent
+            {
+                Type = InfoType.ItemAnalyzed,
+                CurrentBalance = itemPage.Balance,
+                Time = DateTime.UtcNow,
+                Info = itemPage.EngItemName
+            });
         }
         catch (Exception e)
         {
@@ -365,7 +366,7 @@ public class TradeBot : IDisposable
 
     private void FormOrderCancelling(ItemPage item)
     {
-        var order = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName && x.RusItemName == item.RusItemName && x.ItemUrl == item.ItemUrl && Math.Abs(x.Price - item.BuyOrderPrice) < 0.001);
+        var order = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName);
         _marketClient.CancelBuyOrder(order);
         _db.RemoveBuyOrder(order);
         _db.AddNewEvent(new TradingEvent
@@ -413,30 +414,34 @@ public class TradeBot : IDisposable
             CultureInfo.InvariantCulture);
         var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any,
             CultureInfo.InvariantCulture);
-        var price = item.SellOrderBook.FirstOrDefault(sellOrder => item.BuyOrderBook.Take(5).Any(buyOrder => sellOrder.Price + requiredProfit < buyOrder.Price * (1 + steamCommission)));
-        if (price is null)
+        var price = item.BuyOrderBook.Take(5).FirstOrDefault(buyOrder => item.SellOrderBook.Any(sellOrder => sellOrder.Price + requiredProfit > buyOrder.Price * (1 + steamCommission)));
+        if (price is not null)
+        {
+            var buyOrder = new BuyOrder
+            {
+                EngItemName = item.EngItemName,
+                RusItemName = item.RusItemName,
+                ItemUrl = item.ItemUrl,
+                Price = price.Price,
+                Quantity = int.Parse(_configuration["OrderQuantity"]!)
+            };
+            _marketClient.Buy(buyOrder);
+
+            _db.AddOrUpdateBuyOrder(buyOrder);
+            _db.AddNewEvent(new TradingEvent
+            {
+                Type = InfoType.ItemBought,
+                Time = DateTime.UtcNow,
+                Info = buyOrder.EngItemName,
+                BuyPrice = buyOrder.Price
+            });
+            _state.ItemsBought++;
+            _state.Events.Add($"{DateTime.UtcNow}#{buyOrder.EngItemName}#Bought#{buyOrder.Price}");
+        }
+        else
+        {
             throw new Exception("Sell order not found");
-
-        var buyOrder = new BuyOrder
-        {
-            EngItemName = item.EngItemName,
-            RusItemName = item.RusItemName,
-            ItemUrl = item.ItemUrl,
-            Price = price.Price,
-            Quantity = int.Parse(_configuration["OrderQuantity"]!)
-        };
-        _marketClient.Buy(buyOrder);
-
-        _db.AddOrUpdateBuyOrder(buyOrder);
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemBought,
-            Time = DateTime.UtcNow,
-            Info = buyOrder.EngItemName,
-            BuyPrice = buyOrder.Price
-        });
-        _state.ItemsBought++;
-        _state.Events.Add($"{DateTime.UtcNow}#{buyOrder.EngItemName}#Bought#{buyOrder.Price}");
+        }
     }
 
 
