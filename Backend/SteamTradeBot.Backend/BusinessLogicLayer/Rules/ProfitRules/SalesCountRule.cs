@@ -16,8 +16,9 @@ public class SalesCountRule : IBuyRule
     {
         Log.Information("Checking sales per week...");
         var sales = int.Parse(_configuration["SalesPerWeek"]!);
-        if (!(itemPage.Sales < sales)) return true;
-        Log.Information("Item is not profitable. Reason: sales volume is lower than needed. {0} < {1}", itemPage.Sales, sales);
+        if (itemPage.Sales > sales) 
+            return true;
+        Log.Information("Item is not profitable. Reason: sales volume is lower than needed. Current sales: {0} < Required sales: {1}", itemPage.Sales, sales);
         return false;
     }
 }

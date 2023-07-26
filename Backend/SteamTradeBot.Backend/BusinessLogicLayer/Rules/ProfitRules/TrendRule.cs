@@ -18,8 +18,10 @@ public class TrendRule : IBuyRule
     {
         Log.Information("Checking trend...");
         var trendForCompare = double.Parse(_configuration["Trend"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
-        if (!(itemPage.Trend < trendForCompare)) return true;
-        Log.Information("Item is not profitable. Reason: trend is lower than needed. {0} < {1}", itemPage.Trend.ToString("F10"), trendForCompare);
+        if (itemPage.Trend > trendForCompare)
+            return true;
+        Log.Information("Item is not profitable. Reason: trend is lower than needed. Current trend: {0} < Required trend: {1}", 
+            itemPage.Trend.ToString("F10"), trendForCompare);
         return false;
     }
 }

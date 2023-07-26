@@ -83,7 +83,7 @@ public class TradeBot : IDisposable
         };
         var cancelRules = new List<ICancelRule>
         {
-            new FitPriceRule(_steamApi, _configuration)
+            new FitPriceRule(_configuration, _db)
         };
         _rules = new MarketRules(buyRules, sellRules, cancelRules);
 
@@ -296,6 +296,7 @@ public class TradeBot : IDisposable
                 .SetMyBuyOrder()
                 .Build();
             Log.Information("Get {0} page -> OK", itemName);
+            OnItemAnalyzed(itemPage);
             return itemPage;
         }
         catch (Exception e)
@@ -325,7 +326,6 @@ public class TradeBot : IDisposable
                 FormSellOrder(itemPage);
                 return;
             }
-            OnItemAnalyzed(itemPage);
         }
         catch (Exception e)
         {
@@ -373,7 +373,7 @@ public class TradeBot : IDisposable
         }
 
         _db.AddOrUpdateSellOrder(sellOrder);
-        OnItemSell(sellOrder);
+        OnItemSelling(sellOrder);
     }
 
     private void FormBuyOrder(ItemPage item)
@@ -396,7 +396,7 @@ public class TradeBot : IDisposable
             _marketClient.Buy(buyOrder);
 
             _db.AddOrUpdateBuyOrder(buyOrder);
-            OnItemBuy(buyOrder);
+            OnItemBuying(buyOrder);
         }
         else
         {
@@ -471,7 +471,7 @@ public class TradeBot : IDisposable
         });
     }
 
-    private void OnItemSell(SellOrder order)
+    private void OnItemSelling(SellOrder order)
     {
         _db.AddNewEvent(new TradingEvent
         {
@@ -485,7 +485,7 @@ public class TradeBot : IDisposable
         _state.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Sold#{order.Price}");
     }
 
-    private void OnItemBuy(BuyOrder order)
+    private void OnItemBuying(BuyOrder order)
     {
         _db.AddNewEvent(new TradingEvent
         {
