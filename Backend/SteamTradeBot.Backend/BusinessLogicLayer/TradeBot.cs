@@ -11,7 +11,6 @@ using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
@@ -26,47 +25,28 @@ public class TradeBot : IDisposable
 {
     private readonly SteamAPI _steamApi;
     private readonly IConfiguration _configuration;
-    private readonly ServiceState _state;
-    private readonly DbAccess _db;
-    private readonly Stopwatch _stopwatch;
-
+    private readonly StateManager _stateManager;
+    private readonly MarketDbAccess _marketDb;
+    
     private readonly MarketClient _marketClient;
     private readonly MarketRules _rules;
     private readonly ItemBuilder _itemBuilder;
 
     private CancellationTokenSource? _cancellationTokenSource;
 
-
     #region Public
 
     public TradeBot
     (
         IConfiguration configuration,
-        IDbContextFactory<MarketDataContext> marketContextFactory)
+        IDbContextFactory<TradeBotDataContext> tradeBotDataContextFactory,
+        StateManager stateManager)
     {
         _configuration = configuration;
-        _db = new DbAccess(marketContextFactory);
+        _marketDb = new MarketDbAccess(tradeBotDataContextFactory);
+        _stateManager = stateManager;
 
-        var history = _db.GetHistory();
-        _state = new ServiceState
-        {
-            Warnings = history.Count(x => x.Type == InfoType.Warning),
-            Errors = history.Count(x => x.Type == InfoType.Error),
-            ItemsAnalyzed = history.Count(x => x.Type == InfoType.ItemAnalyzed),
-            ItemsBought = history.Count(x => x.Type == InfoType.ItemBought),
-            ItemsSold = history.Count(x => x.Type == InfoType.ItemSold),
-            ItemCanceled = history.Count(x => x.Type == InfoType.ItemCanceled),
-            Events = history
-                .Where(x => x.Type is InfoType.ItemBought or InfoType.ItemCanceled or InfoType.ItemSold)
-                .Select(x =>
-                {
-                    var profit = x.Profit > 0 ? x.Profit.ToString() : string.Empty;
-                    return $"{x.Time}#{x.Info}#{x.Type}#{x.BuyPrice}#{x.SellPrice}#{profit}";
-                })
-                .ToList()
-        };
         _steamApi = new SteamAPI();
-        _stopwatch = new Stopwatch();
         _itemBuilder = new ItemBuilder(_steamApi);
         _marketClient = new MarketClient(_steamApi, _configuration);
         var buyRules = new List<IBuyRule>
@@ -79,11 +59,11 @@ public class TradeBot : IDisposable
         };
         var sellRules = new List<ISellRule>
         {
-            new CurrentQuantityCheckRule(_db)
+            new CurrentQuantityCheckRule(_marketDb)
         };
         var cancelRules = new List<ICancelRule>
         {
-            new FitPriceRule(_configuration, _db)
+            new FitPriceRule(_configuration, _marketDb)
         };
         _rules = new MarketRules(buyRules, sellRules, cancelRules);
 
@@ -98,29 +78,25 @@ public class TradeBot : IDisposable
         {
             throw new ApplicationException("Configuration is corrupted. Trading not started!");
         }
-        _state.WorkingState = ServiceState.ServiceWorkingState.Up;
-        _stopwatch.Start();
+        _stateManager.OnTradingStarted();
         _cancellationTokenSource = new CancellationTokenSource();
         Task.Run(WorkerLoop);
     }
 
     public void StopTrading()
     {
+        _stateManager.OnTradingStopped();
         if (_cancellationTokenSource is null)
         {
-            _state.WorkingState = ServiceState.ServiceWorkingState.Down;
             throw new Exception("Worker is already stopped!");
         }
         _cancellationTokenSource.Cancel();
-        _state.WorkingState = ServiceState.ServiceWorkingState.Down;
-        _stopwatch.Stop();
-        _stopwatch.Reset();
     }
 
     public void ClearBuyOrders()
     {
         Log.Logger.Information("Start buy orders canceling...");
-        var itemsWithPurchaseOrders = _db.GetBuyOrders();
+        var itemsWithPurchaseOrders = _marketDb.GetBuyOrders();
         foreach (var item in itemsWithPurchaseOrders)
         {
             _marketClient.CancelBuyOrder(item);
@@ -135,25 +111,22 @@ public class TradeBot : IDisposable
 
     public void LogIn(string login, string password, string token, string secret)
     {
-        _state.IsLoggedIn = ServiceState.LogInState.Pending;
+        _stateManager.OnLogInPending();
         try
         {
             _steamApi.LogIn(login, password, token, secret);
-            _state.IsLoggedIn = ServiceState.LogInState.LoggedIn;
-            _state.CurrentUser = login;
+            _stateManager.OnLoggedIn(login);
         }
         catch
         {
-            _state.IsLoggedIn = ServiceState.LogInState.NotLoggedIn;
-            _state.CurrentUser = string.Empty;
+            _stateManager.OnLoggedOut();
             throw;
         }
     }
 
     public void LogOut()
     {
-        _state.IsLoggedIn = ServiceState.LogInState.NotLoggedIn;
-        _state.CurrentUser = string.Empty;
+        _stateManager.OnLoggedOut();
         _steamApi.LogOut();
     }
 
@@ -268,9 +241,10 @@ public class TradeBot : IDisposable
         while (!_cancellationTokenSource.IsCancellationRequested)
         {
             var itemNames = GetItemNames();
-            foreach (var item in itemNames.Select(ConstructItemPage).Where(item => item is not null))
+            foreach (var itemPage in itemNames.Select(ConstructItemPage).Where(item => item is not null))
             {
-                AnalyzeItem(item!);
+                var actionBasedOnCondition = CheckCondition(itemPage!);
+                actionBasedOnCondition?.Invoke(itemPage!);
                 if (_cancellationTokenSource.IsCancellationRequested)
                     break;
             }
@@ -296,55 +270,49 @@ public class TradeBot : IDisposable
                 .SetMyBuyOrder()
                 .Build();
             Log.Information("Get {0} page -> OK", itemName);
-            OnItemAnalyzed(itemPage);
+            _stateManager.OnItemAnalyzed(itemPage);
             return itemPage;
         }
         catch (Exception e)
         {
             Log.Error("The item was skipped due to an error ->\r\nMessage: {0}\r\nStack trace: {1}", e.Message, e.StackTrace);
-            OnError(e);
+            _stateManager.OnError(e);
             return null;
         }
     }
 
-    private void AnalyzeItem(ItemPage itemPage)
+    private Action<ItemPage>? CheckCondition(ItemPage itemPage)
     {
         try
         {
             if (_rules.CanBuyItem(itemPage))
-            {
-                FormBuyOrder(itemPage);
-                return;
-            }
+                return FormBuyOrder;
+
             if (_rules.IsNeedCancelItem(itemPage))
-            {
-                FormOrderCancelling(itemPage);
-                return;
-            }
+                return FormOrderCancelling;
+            
             if (_rules.CanSellItem(itemPage))
-            {
-                FormSellOrder(itemPage);
-                return;
-            }
+                return FormSellOrder;
         }
         catch (Exception e)
         {
             Log.Error("The item was skipped due to an error ->\r\nMessage: {0}\r\nStack trace: {1}", e.Message, e.StackTrace);
-            OnError(e);
+            _stateManager.OnError(e);
         }
+        return null;
     }
 
     private void FormOrderCancelling(ItemPage item)
     {
-        var order = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName);
+        var order = _marketDb.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName);
         _marketClient.CancelBuyOrder(order);
-        _db.RemoveBuyOrder(order);
-        OnItemCancelling(order);
+        _marketDb.RemoveBuyOrder(order);
+        _stateManager.OnItemCancelling(order);
     }
 
     private void FormSellOrder(ItemPage item)
     {
-        var buyOrder = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName);
+        var buyOrder = _marketDb.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName);
         if (buyOrder is null)
             throw new Exception("Can't find local buy order for sell order forming");
         var steamCommission = double.Parse(_configuration["SteamCommission"]!, NumberStyles.Any,
@@ -364,16 +332,16 @@ public class TradeBot : IDisposable
 
         if (item.MyBuyOrder is null)
         {
-            _db.RemoveBuyOrder(buyOrder);
+            _marketDb.RemoveBuyOrder(buyOrder);
         }
         if (item.MyBuyOrder is not null && item.MyBuyOrder.Quantity > 0)
         {
             buyOrder.Quantity = item.MyBuyOrder.Quantity;
-            _db.AddOrUpdateBuyOrder(buyOrder);
+            _marketDb.AddOrUpdateBuyOrder(buyOrder);
         }
 
-        _db.AddOrUpdateSellOrder(sellOrder);
-        OnItemSelling(sellOrder);
+        _marketDb.AddOrUpdateSellOrder(sellOrder);
+        _stateManager.OnItemSelling(sellOrder);
     }
 
     private void FormBuyOrder(ItemPage item)
@@ -383,7 +351,7 @@ public class TradeBot : IDisposable
         var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any,
             CultureInfo.InvariantCulture);
         var price = item.BuyOrderBook.FirstOrDefault(buyOrder => item.SellOrderBook.Any(sellOrder => sellOrder.Price + requiredProfit > buyOrder.Price * (1 + steamCommission)));
-        if (price is not null)
+        if (price is null)
             throw new Exception("Sell order not found");
         var buyOrder = new BuyOrder
         {
@@ -394,9 +362,8 @@ public class TradeBot : IDisposable
             Quantity = int.Parse(_configuration["OrderQuantity"]!)
         };
         _marketClient.Buy(buyOrder);
-
-        _db.AddOrUpdateBuyOrder(buyOrder);
-        OnItemBuying(buyOrder);
+        _marketDb.AddOrUpdateBuyOrder(buyOrder);
+        _stateManager.OnItemBuying(buyOrder);
     }
 
     private IEnumerable<string> GetItemNames()
@@ -404,7 +371,7 @@ public class TradeBot : IDisposable
         try
         {
             Log.Information("Load items for analysis....");
-            var ordersNames = _db.GetBuyOrders().Select(x => x.EngItemName);
+            var ordersNames = _marketDb.GetBuyOrders().Select(x => x.EngItemName);
             var loadedItemList = _steamApi.GetItemNamesList(
                     double.Parse(_configuration["MinPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
                     double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
@@ -421,91 +388,6 @@ public class TradeBot : IDisposable
             return new List<string>();
         }
     }
-
-    #region StateRefreshingEvents
-
-    public ServiceState GetServiceState(long fromDate)
-    {
-        var serviceStateCopy = new ServiceState
-        {
-            WorkingState = _state.WorkingState,
-            ItemsAnalyzed = _state.ItemsAnalyzed,
-            ItemsBought = _state.ItemsBought,
-            ItemsSold = _state.ItemsSold,
-            ItemCanceled = _state.ItemCanceled,
-            Errors = _state.Errors,
-            Warnings = _state.Warnings,
-            Events = new List<string>(_state.Events.Where(x => DateTime.Parse(x.Split('#')[0]).Ticks > fromDate)),
-            Uptime = _stopwatch.Elapsed,
-            CurrentUser = _state.CurrentUser,
-            IsLoggedIn = _state.IsLoggedIn,
-        };
-        return serviceStateCopy;
-    }
-
-    private void OnError(Exception exception)
-    {
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.Error,
-            Time = DateTime.UtcNow,
-            Info = $"Message: {exception.Message}, StackTrace: {exception.StackTrace}"
-        });
-        _state.Errors++;
-    }
-
-    private void OnItemAnalyzed(ItemPage itemPage)
-    {
-        _state.ItemsAnalyzed++;
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemAnalyzed,
-            CurrentBalance = itemPage.Balance,
-            Time = DateTime.UtcNow,
-            Info = itemPage.EngItemName
-        });
-    }
-
-    private void OnItemSelling(SellOrder order)
-    {
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemSold,
-            Time = DateTime.UtcNow,
-            Info = order.EngItemName,
-            SellPrice = order.Price,
-            Profit = order.Price - order.Price
-        });
-        _state.ItemsSold++;
-        _state.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Sold#{order.Price}");
-    }
-
-    private void OnItemBuying(BuyOrder order)
-    {
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemBought,
-            Time = DateTime.UtcNow,
-            Info = order.EngItemName,
-            BuyPrice = order.Price
-        });
-        _state.ItemsBought++;
-        _state.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Bought#{order.Price}");
-    }
-
-    private void OnItemCancelling(BuyOrder order)
-    {
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemCanceled,
-            Time = DateTime.UtcNow,
-            Info = order.EngItemName
-        });
-        _state.ItemCanceled++;
-        _state.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Canceled#{order.Price}");
-    }
-
-    #endregion
 
     #endregion
 }

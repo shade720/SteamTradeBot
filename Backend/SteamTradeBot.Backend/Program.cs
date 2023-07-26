@@ -42,9 +42,10 @@ builder.Configuration.SetBasePath(Environment.CurrentDirectory)
 var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? builder.Configuration["PostgresConnectionString"];
 var sqlServerConnectionString = builder.Configuration["SqlServerConnectionString"];
 
-builder.Services.AddDbContextFactory<MarketDataContext>(options => options.UseSqlServer(sqlServerConnectionString));
-//builder.Services.AddDbContextFactory<MarketDataContext>(options => options.UseNpgsql(postgresConnectionString));
+builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseSqlServer(sqlServerConnectionString));
+//builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseNpgsql(postgresConnectionString));
 
+builder.Services.AddSingleton<StateManager>();
 builder.Services.AddSingleton<TradeBot>();
 
 var app = builder.Build();

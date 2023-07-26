@@ -10,13 +10,13 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
 
 public class FitPriceRule : ICancelRule
 {
-    private readonly DbAccess _db;
+    private readonly MarketDbAccess _marketDb;
     private readonly IConfiguration _configuration;
 
-    public FitPriceRule(IConfiguration configuration, DbAccess db)
+    public FitPriceRule(IConfiguration configuration, MarketDbAccess marketDb)
     {
         _configuration = configuration;
-        _db = db;
+        _marketDb = marketDb;
     }
     public bool IsFollowed(ItemPage itemPage)
     {
@@ -25,7 +25,7 @@ public class FitPriceRule : ICancelRule
         Log.Information("Checking if order obsolete...");
         var fitPriceRange = double.Parse(_configuration["FitPriceRange"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
         var listingPosition = int.Parse(_configuration["ListingPosition"]!);
-        var existingBuyOrder = _db.GetBuyOrders().FirstOrDefault(order => order.EngItemName == itemPage.EngItemName);
+        var existingBuyOrder = _marketDb.GetBuyOrders().FirstOrDefault(order => order.EngItemName == itemPage.EngItemName);
         return existingBuyOrder is not null && itemPage.BuyOrderBook.Take(listingPosition).Any(x => Math.Abs(x.Price - existingBuyOrder.Price) > fitPriceRange);
     }
 }

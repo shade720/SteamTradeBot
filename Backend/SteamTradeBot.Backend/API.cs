@@ -37,7 +37,7 @@ public static class API
             tradeBot.SetConfiguration(configurationJson);
         });
         app.MapPost("api/orderscanceling", async (TradeBot tradeBot) => await ClearBuyOrders(tradeBot));
-        app.MapGet("api/state", async (TradeBot tradeBot, [FromQuery] long fromTicks) => await GetServiceState(tradeBot, fromTicks));
+        app.MapGet("api/state", async (StateManager stateManager, [FromQuery] long fromTicks) => await GetServiceState(stateManager, fromTicks));
         app.MapGet("api/logs", async (TradeBot tradeBot) => await GetLogs(tradeBot));
     }
 
@@ -70,9 +70,9 @@ public static class API
         return await Task.Run(tradeBot.ClearBuyOrders)
             .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok() : Results.Problem(task.Exception?.Message));
     }
-    private static async Task<IResult> GetServiceState(TradeBot tradeBot, long fromTicks)
+    private static async Task<IResult> GetServiceState(StateManager stateManager, long fromTicks)
     {
-        return await Task.Run(() => tradeBot.GetServiceState(fromTicks))
+        return await Task.Run(() => stateManager.GetServiceState(fromTicks))
             .ContinueWith(task => task.IsCompletedSuccessfully ? Results.Ok(task.Result) : Results.Problem(task.Exception?.Message));
     }
     private static async Task<IResult> GetLogs(TradeBot tradeBot)
