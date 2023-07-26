@@ -28,7 +28,7 @@ public class MarketClient
             if (_api.PlaceSellOrder(order.EngItemName, order.Price, _configuration["SteamUserId"]!))
                 Log.Information("Place sell order {0} (Price: {1})", order.EngItemName, order.Price);
             else
-                Log.Information("Can't place sell order {0} (Price: {1})", order.EngItemName, order.Price);
+                Log.Error("Can't place sell order {0} (Price: {1}). Item not found in inventory!", order.EngItemName, order.Price);
         }
     }
 
