@@ -17,9 +17,6 @@ public class CurrentQuantityCheckRule : ISellRule
     {
         Log.Information("Checking if order satisfied...");
         var localOrder = _db.GetBuyOrders().FirstOrDefault(order => order.EngItemName == itemPage.EngItemName);
-        if (localOrder is null)
-            return false;
-
-        return itemPage.MyBuyOrder is null || itemPage.MyBuyOrder.Quantity < localOrder.Quantity;
+        return localOrder is not null && (itemPage.MyBuyOrder is null || itemPage.MyBuyOrder.Quantity < localOrder.Quantity);
     }
 }
