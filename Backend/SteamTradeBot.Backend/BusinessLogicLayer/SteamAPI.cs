@@ -48,21 +48,6 @@ public class SteamAPI : IDisposable
         Log.Logger.Information("Steam Api created!");
     }
 
-    #region GetToken
-
-    public string GetToken(string secret)
-    {
-        return SafeConnect(() =>
-        {
-            SetPage("https://www.chescos.me/js-steam-authcode-generator/?");
-            SendKey(By.Id("secret"), secret);
-            ClickOnElement(By.Id("generate"));
-            return ReadFromElement(By.Id("result"));
-        }, true);
-    }
-
-    #endregion
-
     #region Balance
 
     public double GetBalance()
@@ -451,6 +436,17 @@ public class SteamAPI : IDisposable
             Log.Information("Authentication failed");
             return false;
         }
+    }
+
+    public string GetToken(string secret)
+    {
+        return SafeConnect(() =>
+        {
+            SetPage("https://www.chescos.me/js-steam-authcode-generator/?");
+            SendKey(By.Id("secret"), secret);
+            ClickOnElement(By.Id("generate"));
+            return ReadFromElement(By.Id("result"));
+        }, true);
     }
 
     public void LogOut()
