@@ -382,7 +382,7 @@ public class TradeBot : IDisposable
             CultureInfo.InvariantCulture);
         var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any,
             CultureInfo.InvariantCulture);
-        var price = item.BuyOrderBook.Take(5).FirstOrDefault(buyOrder => item.SellOrderBook.Any(sellOrder => sellOrder.Price + requiredProfit > buyOrder.Price * (1 + steamCommission)));
+        var price = item.BuyOrderBook.Take(int.Parse(_configuration["ListingPosition"]!)).FirstOrDefault(buyOrder => item.SellOrderBook.Any(sellOrder => sellOrder.Price + requiredProfit > buyOrder.Price * (1 + steamCommission)));
         if (price is not null)
         {
             var buyOrder = new BuyOrder
