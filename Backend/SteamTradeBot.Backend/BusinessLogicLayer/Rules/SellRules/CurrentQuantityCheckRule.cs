@@ -7,16 +7,16 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
 
 public class CurrentQuantityCheckRule : ISellRule
 {
-    private readonly DbAccess _db;
+    private readonly MarketDbAccess _marketDb;
 
-    public CurrentQuantityCheckRule(DbAccess db)
+    public CurrentQuantityCheckRule(MarketDbAccess marketDb)
     {
-        _db = db;
+        _marketDb = marketDb;
     }
     public bool IsFollowed(ItemPage itemPage)
     {
         Log.Information("Checking if order satisfied...");
-        var localOrder = _db.GetBuyOrders().FirstOrDefault(order => order.EngItemName == itemPage.EngItemName);
+        var localOrder = _marketDb.GetBuyOrders().FirstOrDefault(order => order.EngItemName == itemPage.EngItemName);
         return localOrder is not null && (itemPage.MyBuyOrder is null || itemPage.MyBuyOrder.Quantity < localOrder.Quantity);
     }
 }

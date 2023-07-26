@@ -21,10 +21,9 @@ public class RequiredProfitRule : IBuyRule
             CultureInfo.InvariantCulture);
         var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any,
             CultureInfo.InvariantCulture);
-        var listingPosition = int.Parse(_configuration["ListingPosition"]!);
-
+        
         Log.Information("Finding profitable order...");
-        if (itemPage.BuyOrderBook.Take(listingPosition).Any(buyOrder => itemPage.SellOrderBook.Any(sellOrder => sellOrder.Price + requiredProfit > buyOrder.Price * (1 + steamCommission)))) 
+        if (itemPage.BuyOrderBook.Any(buyOrder => itemPage.SellOrderBook.Any(sellOrder => sellOrder.Price + requiredProfit > buyOrder.Price * (1 + steamCommission)))) 
             return true;
         Log.Information("Item is not profitable. Reason: profitable sell order is not found. Required price: {0}, Available price: {1}", 
             itemPage.SellOrderBook.Max(sellOrder => sellOrder.Price) + requiredProfit, itemPage.BuyOrderBook.Min(order => order.Price) + steamCommission);
