@@ -381,7 +381,9 @@ public class TradeBot : IDisposable
 
     private void FormSellOrder(ItemPage item)
     {
-        var buyOrder = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName && x.RusItemName == item.RusItemName && x.ItemUrl == item.ItemUrl);
+        var buyOrder = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName);
+        if (buyOrder is null)
+            throw new Exception("Can't find local buy order for sell order forming");
         var steamCommission = double.Parse(_configuration["SteamCommission"]!, NumberStyles.Any,
             CultureInfo.InvariantCulture);
         var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any,
@@ -391,10 +393,20 @@ public class TradeBot : IDisposable
             EngItemName = item.EngItemName,
             RusItemName = item.RusItemName,
             ItemUrl = item.ItemUrl,
-            Price = buyOrder.Price * (1 + steamCommission) + requiredProfit
+            Price = buyOrder.Price * (1 + steamCommission) + requiredProfit,
+            Quantity = item.MyBuyOrder is null ? buyOrder.Quantity : buyOrder.Quantity - item.MyBuyOrder.Quantity
         };
 
         _marketClient.Sell(sellOrder);
+
+        if (item.MyBuyOrder is null)
+            _db.RemoveBuyOrder(buyOrder);
+        if (item.MyBuyOrder is not null && item.MyBuyOrder.Quantity > 0)
+        {
+            buyOrder.Quantity = item.MyBuyOrder.Quantity;
+            _db.AddOrUpdateBuyOrder(buyOrder);
+        }
+
         _db.AddOrUpdateSellOrder(sellOrder);
         _db.AddNewEvent(new TradingEvent
         {

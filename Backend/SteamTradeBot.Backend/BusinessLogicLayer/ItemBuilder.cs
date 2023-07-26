@@ -31,17 +31,17 @@ public class ItemBuilder
         var quantity = _api.GetBuyOrderQuantity(_itemPage.ItemUrl);
         var price = _api.GetBuyOrderPrice(_itemPage.ItemUrl);
 
-        if (!quantity.HasValue || !price.HasValue)
-            _itemPage.MyBuyOrder = null;
-
-        _itemPage.MyBuyOrder = new BuyOrder
+        if (quantity.HasValue && price.HasValue)
         {
-            EngItemName = _itemPage.EngItemName,
-            RusItemName = _itemPage.RusItemName,
-            ItemUrl = _itemPage.ItemUrl,
-            Price = price!.Value,
-            Quantity = quantity!.Value
-        };
+            _itemPage.MyBuyOrder = new BuyOrder
+            {
+                EngItemName = _itemPage.EngItemName,
+                RusItemName = _itemPage.RusItemName,
+                ItemUrl = _itemPage.ItemUrl,
+                Price = price.Value,
+                Quantity = quantity.Value
+            };
+        }
         return this;
     }
 
