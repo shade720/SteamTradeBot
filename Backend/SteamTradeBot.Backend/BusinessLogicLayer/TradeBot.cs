@@ -348,14 +348,7 @@ public class TradeBot : IDisposable
                 FormSellOrder(itemPage);
                 return;
             }
-            _state.ItemsAnalyzed++;
-            _db.AddNewEvent(new TradingEvent
-            {
-                Type = InfoType.ItemAnalyzed,
-                CurrentBalance = itemPage.Balance,
-                Time = DateTime.UtcNow,
-                Info = itemPage.EngItemName
-            });
+            OnItemAnalyzed(itemPage);
         }
         catch (Exception e)
         {
@@ -369,14 +362,7 @@ public class TradeBot : IDisposable
         var order = _db.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName);
         _marketClient.CancelBuyOrder(order);
         _db.RemoveBuyOrder(order);
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemCanceled,
-            Time = DateTime.UtcNow,
-            Info = order.EngItemName
-        });
-        _state.ItemCanceled++;
-        _state.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Canceled#{order.Price}");
+        OnItemCancelling(order);
     }
 
     private void FormSellOrder(ItemPage item)
@@ -400,7 +386,9 @@ public class TradeBot : IDisposable
         _marketClient.Sell(sellOrder);
 
         if (item.MyBuyOrder is null)
+        {
             _db.RemoveBuyOrder(buyOrder);
+        }
         if (item.MyBuyOrder is not null && item.MyBuyOrder.Quantity > 0)
         {
             buyOrder.Quantity = item.MyBuyOrder.Quantity;
@@ -408,16 +396,7 @@ public class TradeBot : IDisposable
         }
 
         _db.AddOrUpdateSellOrder(sellOrder);
-        _db.AddNewEvent(new TradingEvent
-        {
-            Type = InfoType.ItemSold,
-            Time = DateTime.UtcNow,
-            Info = sellOrder.EngItemName,
-            SellPrice = sellOrder.Price,
-            Profit = sellOrder.Price - buyOrder.Price
-        });
-        _state.ItemsSold++;
-        _state.Events.Add($"{DateTime.UtcNow}#{sellOrder.EngItemName}#Sold#{sellOrder.Price}");
+        OnItemSell(sellOrder);
     }
 
     private void FormBuyOrder(ItemPage item)
@@ -440,22 +419,13 @@ public class TradeBot : IDisposable
             _marketClient.Buy(buyOrder);
 
             _db.AddOrUpdateBuyOrder(buyOrder);
-            _db.AddNewEvent(new TradingEvent
-            {
-                Type = InfoType.ItemBought,
-                Time = DateTime.UtcNow,
-                Info = buyOrder.EngItemName,
-                BuyPrice = buyOrder.Price
-            });
-            _state.ItemsBought++;
-            _state.Events.Add($"{DateTime.UtcNow}#{buyOrder.EngItemName}#Bought#{buyOrder.Price}");
+            OnItemBuy(buyOrder);
         }
         else
         {
             throw new Exception("Sell order not found");
         }
     }
-
 
     private IEnumerable<string> GetItemNames()
     {
@@ -468,7 +438,7 @@ public class TradeBot : IDisposable
                     double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
                     int.Parse(_configuration["SalesPerWeek"]!) * 7,
                     int.Parse(_configuration["ItemListSize"]!))
-                .Where(itemName => ordersNames.All(order => order != itemName))
+                .Where(itemName => ordersNames.Any(orderItemName => orderItemName == itemName))
                 .ToList();
             Log.Information("Pipeline initialized");
             return loadedItemList;
@@ -480,7 +450,7 @@ public class TradeBot : IDisposable
         }
     }
 
-    #region WorkerEventHandlers
+    #region StateRefreshingEvents
 
     private void OnError(Exception exception)
     {
@@ -491,6 +461,57 @@ public class TradeBot : IDisposable
             Info = $"Message: {exception.Message}, StackTrace: {exception.StackTrace}"
         });
         _state.Errors++;
+    }
+
+    private void OnItemAnalyzed(ItemPage itemPage)
+    {
+        _state.ItemsAnalyzed++;
+        _db.AddNewEvent(new TradingEvent
+        {
+            Type = InfoType.ItemAnalyzed,
+            CurrentBalance = itemPage.Balance,
+            Time = DateTime.UtcNow,
+            Info = itemPage.EngItemName
+        });
+    }
+
+    private void OnItemSell(SellOrder order)
+    {
+        _db.AddNewEvent(new TradingEvent
+        {
+            Type = InfoType.ItemSold,
+            Time = DateTime.UtcNow,
+            Info = order.EngItemName,
+            SellPrice = order.Price,
+            Profit = order.Price - order.Price
+        });
+        _state.ItemsSold++;
+        _state.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Sold#{order.Price}");
+    }
+
+    private void OnItemBuy(BuyOrder order)
+    {
+        _db.AddNewEvent(new TradingEvent
+        {
+            Type = InfoType.ItemBought,
+            Time = DateTime.UtcNow,
+            Info = order.EngItemName,
+            BuyPrice = order.Price
+        });
+        _state.ItemsBought++;
+        _state.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Bought#{order.Price}");
+    }
+
+    private void OnItemCancelling(BuyOrder order)
+    {
+        _db.AddNewEvent(new TradingEvent
+        {
+            Type = InfoType.ItemCanceled,
+            Time = DateTime.UtcNow,
+            Info = order.EngItemName
+        });
+        _state.ItemCanceled++;
+        _state.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Canceled#{order.Price}");
     }
 
     #endregion
