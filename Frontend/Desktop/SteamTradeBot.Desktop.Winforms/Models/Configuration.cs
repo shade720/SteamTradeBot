@@ -5,7 +5,8 @@ public class Configuration
     public int SalesPerWeek { get; set; }
     public string SteamUserId { get; set; } = string.Empty;
     public double SteamCommission { get; set; }
-    public int ListingFindRange { get; set; }
+    public int SellListingFindRange { get; set; }
+    public int BuyListingFindRange { get; set; }
     public double RequiredProfit { get; set; }
     public double AvailableBalance { get; set; }
     public double FitPriceRange { get; set; }
@@ -16,7 +17,6 @@ public class Configuration
     public double MinPrice { get; set; }
     public double MaxPrice { get; set; }
     public int ItemListSize { get; set; }
-    public int ListingPosition { get; set; }
     public bool RememberMe { get; set; }
 
     public bool CheckIntegrity()
