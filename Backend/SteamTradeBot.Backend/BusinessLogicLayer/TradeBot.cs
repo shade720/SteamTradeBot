@@ -250,29 +250,6 @@ public class TradeBot : IDisposable
 
     #endregion
 
-    #region State
-
-    public ServiceState GetServiceState(DateTime fromDate)
-    {
-        var serviceStateCopy = new ServiceState
-        {
-            WorkingState = _state.WorkingState,
-            ItemsAnalyzed = _state.ItemsAnalyzed,
-            ItemsBought = _state.ItemsBought,
-            ItemsSold = _state.ItemsSold,
-            ItemCanceled = _state.ItemCanceled,
-            Errors = _state.Errors,
-            Warnings = _state.Warnings,
-            Events = new List<string>(_state.Events.Where(x => DateTime.Parse(x.Split('#')[0]) > fromDate)),
-            Uptime = _stopwatch.Elapsed,
-            CurrentUser = _state.CurrentUser,
-            IsLoggedIn = _state.IsLoggedIn,
-        };
-        return serviceStateCopy;
-    }
-
-    #endregion
-
     public void Dispose()
     {
         Log.Logger.Information("Disposing trade bot singleton...");
@@ -451,6 +428,25 @@ public class TradeBot : IDisposable
     }
 
     #region StateRefreshingEvents
+
+    public ServiceState GetServiceState(DateTime fromDate)
+    {
+        var serviceStateCopy = new ServiceState
+        {
+            WorkingState = _state.WorkingState,
+            ItemsAnalyzed = _state.ItemsAnalyzed,
+            ItemsBought = _state.ItemsBought,
+            ItemsSold = _state.ItemsSold,
+            ItemCanceled = _state.ItemCanceled,
+            Errors = _state.Errors,
+            Warnings = _state.Warnings,
+            Events = new List<string>(_state.Events.Where(x => DateTime.Parse(x.Split('#')[0]) > fromDate)),
+            Uptime = _stopwatch.Elapsed,
+            CurrentUser = _state.CurrentUser,
+            IsLoggedIn = _state.IsLoggedIn,
+        };
+        return serviceStateCopy;
+    }
 
     private void OnError(Exception exception)
     {
