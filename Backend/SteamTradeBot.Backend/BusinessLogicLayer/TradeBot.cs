@@ -384,24 +384,19 @@ public class TradeBot : IDisposable
             CultureInfo.InvariantCulture);
         var price = item.BuyOrderBook.FirstOrDefault(buyOrder => item.SellOrderBook.Any(sellOrder => sellOrder.Price + requiredProfit > buyOrder.Price * (1 + steamCommission)));
         if (price is not null)
-        {
-            var buyOrder = new BuyOrder
-            {
-                EngItemName = item.EngItemName,
-                RusItemName = item.RusItemName,
-                ItemUrl = item.ItemUrl,
-                Price = price.Price,
-                Quantity = int.Parse(_configuration["OrderQuantity"]!)
-            };
-            _marketClient.Buy(buyOrder);
-
-            _db.AddOrUpdateBuyOrder(buyOrder);
-            OnItemBuying(buyOrder);
-        }
-        else
-        {
             throw new Exception("Sell order not found");
-        }
+        var buyOrder = new BuyOrder
+        {
+            EngItemName = item.EngItemName,
+            RusItemName = item.RusItemName,
+            ItemUrl = item.ItemUrl,
+            Price = price.Price,
+            Quantity = int.Parse(_configuration["OrderQuantity"]!)
+        };
+        _marketClient.Buy(buyOrder);
+
+        _db.AddOrUpdateBuyOrder(buyOrder);
+        OnItemBuying(buyOrder);
     }
 
     private IEnumerable<string> GetItemNames()
@@ -415,7 +410,7 @@ public class TradeBot : IDisposable
                     double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
                     int.Parse(_configuration["SalesPerWeek"]!) * 7,
                     int.Parse(_configuration["ItemListSize"]!))
-                .Where(itemName => ordersNames.Any(orderItemName => orderItemName == itemName))
+                .Where(itemName => ordersNames.All(orderItemName => orderItemName != itemName))
                 .ToList();
             Log.Information("Pipeline initialized");
             return loadedItemList;
@@ -429,7 +424,7 @@ public class TradeBot : IDisposable
 
     #region StateRefreshingEvents
 
-    public ServiceState GetServiceState(DateTime fromDate)
+    public ServiceState GetServiceState(long fromDate)
     {
         var serviceStateCopy = new ServiceState
         {
@@ -440,7 +435,7 @@ public class TradeBot : IDisposable
             ItemCanceled = _state.ItemCanceled,
             Errors = _state.Errors,
             Warnings = _state.Warnings,
-            Events = new List<string>(_state.Events.Where(x => DateTime.Parse(x.Split('#')[0]) > fromDate)),
+            Events = new List<string>(_state.Events.Where(x => DateTime.Parse(x.Split('#')[0]).Ticks > fromDate)),
             Uptime = _stopwatch.Elapsed,
             CurrentUser = _state.CurrentUser,
             IsLoggedIn = _state.IsLoggedIn,

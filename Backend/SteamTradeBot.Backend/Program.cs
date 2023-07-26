@@ -39,8 +39,11 @@ builder.Configuration.SetBasePath(Environment.CurrentDirectory)
     .AddJsonFile($"appsettings.{Environment.UserDomainName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? builder.Configuration["ConnectionString"];
-builder.Services.AddDbContextFactory<MarketDataContext>(options => options.UseNpgsql(postgresConnectionString));
+var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? builder.Configuration["PostgresConnectionString"];
+var sqlServerConnectionString = builder.Configuration["SqlServerConnectionString"];
+
+builder.Services.AddDbContextFactory<MarketDataContext>(options => options.UseSqlServer(sqlServerConnectionString));
+//builder.Services.AddDbContextFactory<MarketDataContext>(options => options.UseNpgsql(postgresConnectionString));
 
 builder.Services.AddSingleton<TradeBot>();
 

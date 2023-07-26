@@ -7,9 +7,10 @@ using System.Net.NetworkInformation;
 using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Microsoft.AspNetCore.Connections;
+using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
@@ -37,9 +38,13 @@ public class SteamAPI : IDisposable
         chromeOptions.AddArgument("--start-maximized");
         chromeOptions.AddArgument("--window-size=1920,1080");
         chromeOptions.AddArgument("--headless");
-        _chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
-        //var driverService = ChromeDriverService.CreateDefaultService();
-        //_chromeBrowser = new ChromeDriver(driverService, chromeOptions);
+        chromeOptions.AddArgument("--disable-logging");
+        chromeOptions.AddArgument("--log-level=3");
+        //_chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
+        var driverService = ChromeDriverService.CreateDefaultService();
+        driverService.EnableVerboseLogging = false;
+        driverService.SuppressInitialDiagnosticInformation = true;
+        _chromeBrowser = new ChromeDriver(driverService, chromeOptions);
         Log.Logger.Information("Steam Api created!");
     }
 
@@ -310,7 +315,7 @@ public class SteamAPI : IDisposable
 
     #endregion
 
-    #region RefreshWorkingSet
+    #region GetItemList
 
     public IEnumerable<string> GetItemNamesList(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
     {
