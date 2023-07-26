@@ -24,8 +24,7 @@ public class FitPriceRule : ICancelRule
             return false;
         Log.Information("Checking if order obsolete...");
         var fitPriceRange = double.Parse(_configuration["FitPriceRange"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
-        var listingPosition = int.Parse(_configuration["ListingPosition"]!);
         var existingBuyOrder = _marketDb.GetBuyOrders().FirstOrDefault(order => order.EngItemName == itemPage.EngItemName);
-        return existingBuyOrder is not null && itemPage.BuyOrderBook.Take(listingPosition).Any(x => Math.Abs(x.Price - existingBuyOrder.Price) > fitPriceRange);
+        return existingBuyOrder is not null && itemPage.BuyOrderBook.Any(x => Math.Abs(x.Price - existingBuyOrder.Price) > fitPriceRange);
     }
 }
