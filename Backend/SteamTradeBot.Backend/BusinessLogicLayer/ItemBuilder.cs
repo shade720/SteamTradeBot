@@ -124,15 +124,15 @@ public class ItemBuilder
         return item1 / item2;
     }
 
-    public ItemBuilder SetBuyOrderBook()
+    public ItemBuilder SetBuyOrderBook(int buyListingFindRange)
     {
-        _itemPage.BuyOrderBook = _api.GetBuyOrdersBook(_itemPage.ItemUrl);
+        _itemPage.BuyOrderBook = _api.GetBuyOrdersBook(_itemPage.ItemUrl).Take(buyListingFindRange).ToList();
         return this;
     }
 
-    public ItemBuilder SetSellOrderBook(int listingFindRange)
+    public ItemBuilder SetSellOrderBook(int sellListingFindRange)
     {
-        _itemPage.SellOrderBook = _api.GetSellOrdersBook(_itemPage.ItemUrl, listingFindRange);
+        _itemPage.SellOrderBook = _api.GetSellOrdersBook(_itemPage.ItemUrl, sellListingFindRange);
         return this;
     }
 }

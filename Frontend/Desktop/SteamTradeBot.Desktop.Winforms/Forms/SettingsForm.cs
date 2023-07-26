@@ -21,7 +21,7 @@ public partial class SettingsForm : Form
         OrderQuantityTextBox.Text = Configuration.OrderQuantity.ToString(CultureInfo.InvariantCulture);
         FitRangePriceTextBox.Text = Configuration.FitPriceRange.ToString(CultureInfo.InvariantCulture);
         ItemListSizeTextBox.Text = Configuration.ItemListSize.ToString(CultureInfo.InvariantCulture);
-        ListingFindRangeTextBox.Text = Configuration.ListingFindRange.ToString(CultureInfo.InvariantCulture);
+        SellListingFindRangeTextBox.Text = Configuration.SellListingFindRange.ToString(CultureInfo.InvariantCulture);
         MaxPriceTextBox.Text = Configuration.MaxPrice.ToString(CultureInfo.InvariantCulture);
         MinPriceTextBox.Text = Configuration.MinPrice.ToString(CultureInfo.InvariantCulture);
         RequiredProfitTextBox.Text = Configuration.RequiredProfit.ToString(CultureInfo.InvariantCulture);
@@ -29,7 +29,7 @@ public partial class SettingsForm : Form
         SalesPerWeekTextBox.Text = Configuration.SalesPerWeek.ToString(CultureInfo.InvariantCulture);
         SteamUserIdTextBox.Text = Configuration.SteamUserId;
         SteamCommissionTextBox.Text = Configuration.SteamCommission.ToString(CultureInfo.InvariantCulture);
-        ListingPositionTextBox.Text = Configuration.ListingPosition.ToString();
+        BuyListingFindRangeTextBox.Text = Configuration.BuyListingFindRange.ToString();
     }
 
     private async void UploadSettingsButton_Click(object sender, EventArgs e)
@@ -56,7 +56,7 @@ public partial class SettingsForm : Form
             OrderQuantity = int.Parse(OrderQuantityTextBox.Text),
             FitPriceRange = double.Parse(FitRangePriceTextBox.Text, CultureInfo.InvariantCulture),
             ItemListSize = int.Parse(ItemListSizeTextBox.Text),
-            ListingFindRange = int.Parse(ListingFindRangeTextBox.Text),
+            SellListingFindRange = int.Parse(SellListingFindRangeTextBox.Text),
             MaxPrice = double.Parse(MaxPriceTextBox.Text, CultureInfo.InvariantCulture),
             MinPrice = double.Parse(MinPriceTextBox.Text, CultureInfo.InvariantCulture),
             RequiredProfit = double.Parse(RequiredProfitTextBox.Text, CultureInfo.InvariantCulture),
@@ -64,8 +64,8 @@ public partial class SettingsForm : Form
             SalesPerWeek = int.Parse(SalesPerWeekTextBox.Text),
             SteamUserId = SteamUserIdTextBox.Text,
             SteamCommission = double.Parse(SteamCommissionTextBox.Text, CultureInfo.InvariantCulture),
-            ListingPosition = int.Parse(ListingPositionTextBox.Text)
-    };
+            BuyListingFindRange = int.Parse(BuyListingFindRangeTextBox.Text)
+        };
     }
 
     private void ResetSettingsButton_Click(object sender, EventArgs e)
@@ -77,14 +77,14 @@ public partial class SettingsForm : Form
         OrderQuantityTextBox.Text = string.Empty;
         FitRangePriceTextBox.Text = string.Empty;
         ItemListSizeTextBox.Text = string.Empty;
-        ListingFindRangeTextBox.Text = string.Empty;
+        SellListingFindRangeTextBox.Text = string.Empty;
         MaxPriceTextBox.Text = string.Empty;
         MinPriceTextBox.Text = string.Empty;
         RequiredProfitTextBox.Text = string.Empty;
         TrendTextBox.Text = string.Empty;
         SalesPerWeekTextBox.Text = string.Empty;
         SteamCommissionTextBox.Text = string.Empty;
-        ListingPositionTextBox.Text = string.Empty;
+        BuyListingFindRangeTextBox.Text = string.Empty;
         Configuration = null;
         Program.EraseConfiguration();
         MessageBox.Show(@"Settings was erased!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);

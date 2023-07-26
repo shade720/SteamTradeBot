@@ -213,7 +213,7 @@ public class TradeBot : IDisposable
         if (int.TryParse(_configuration["OrderQuantity"], out _) &&
             int.TryParse(_configuration["SalesPerWeek"], out _) &&
             _configuration["SteamUserId"] is not null &&
-            int.TryParse(_configuration["ListingFindRange"], out _) &&
+            int.TryParse(_configuration["SellListingFindRange"], out _) &&
             int.TryParse(_configuration["AnalysisIntervalDays"], out _) &&
             double.TryParse(_configuration["FitPriceRange"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
             double.TryParse(_configuration["AveragePrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
@@ -290,8 +290,8 @@ public class TradeBot : IDisposable
                 .SetAvgPrice()
                 .SetItemSales()
                 .SetTrend()
-                .SetBuyOrderBook()
-                .SetSellOrderBook(int.Parse(_configuration["ListingFindRange"]!))
+                .SetBuyOrderBook(int.Parse(_configuration["BuyListingFindRange"]!))
+                .SetSellOrderBook(int.Parse(_configuration["SellListingFindRange"]!))
                 .SetBalance()
                 .SetMyBuyOrder()
                 .Build();
@@ -382,7 +382,7 @@ public class TradeBot : IDisposable
             CultureInfo.InvariantCulture);
         var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any,
             CultureInfo.InvariantCulture);
-        var price = item.BuyOrderBook.Take(int.Parse(_configuration["ListingPosition"]!)).FirstOrDefault(buyOrder => item.SellOrderBook.Any(sellOrder => sellOrder.Price + requiredProfit > buyOrder.Price * (1 + steamCommission)));
+        var price = item.BuyOrderBook.FirstOrDefault(buyOrder => item.SellOrderBook.Any(sellOrder => sellOrder.Price + requiredProfit > buyOrder.Price * (1 + steamCommission)));
         if (price is not null)
         {
             var buyOrder = new BuyOrder

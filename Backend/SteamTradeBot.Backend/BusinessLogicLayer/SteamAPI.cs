@@ -89,7 +89,7 @@ public class SteamAPI : IDisposable
         });
     }
 
-    public List<OrderBookItem> GetSellOrdersBook(string itemUrl, int listingFindRange)
+    public List<OrderBookItem> GetSellOrdersBook(string itemUrl, int sellListingFindRange)
     {
         const int sellListingPageSize = 10;
         SafeConnect(() =>
@@ -99,7 +99,7 @@ public class SteamAPI : IDisposable
         });
 
         var orderBook = new List<OrderBookItem>();
-        for (var pageIdx = 1; pageIdx <= listingFindRange; pageIdx++)
+        for (var pageIdx = 1; pageIdx <= sellListingFindRange; pageIdx++)
         {
             for (var itemIdx = 0; itemIdx < sellListingPageSize; itemIdx++)
             {
