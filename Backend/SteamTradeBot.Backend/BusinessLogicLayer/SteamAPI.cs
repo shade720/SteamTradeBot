@@ -37,7 +37,7 @@ public class SteamAPI : IDisposable
         chromeOptions.AddArgument("--disable-dev-shm-usage");
         chromeOptions.AddArgument("--start-maximized");
         chromeOptions.AddArgument("--window-size=1920,1080");
-        //chromeOptions.AddArgument("--headless");
+        chromeOptions.AddArgument("--headless");
         chromeOptions.AddArgument("--disable-logging");
         chromeOptions.AddArgument("--log-level=3");
         //_chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
@@ -399,11 +399,6 @@ public class SteamAPI : IDisposable
     {
         Log.Information("Signing in...");
         Log.Information($"Incoming user data {login}, {password}, {token}");
-        //if (CheckIncomingData(login, password, token))
-        //{
-        //    Log.Error("Authorization failed. Fields was null or empty.");
-        //    throw new ArgumentException("Authorization failed. Fields was null or empty.");
-        //}
 
         if (string.IsNullOrEmpty(token))
             token = GetToken(secret);
@@ -440,12 +435,6 @@ public class SteamAPI : IDisposable
         }
         Log.Information("Authentication completed successful");
         _logState = true;
-    }
-
-    private static bool CheckIncomingData(string login, string password, string token)
-    {
-        Log.Information("Check incoming data...");
-        return string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(token);
     }
 
     private bool IsAuthenticationSuccessful()
