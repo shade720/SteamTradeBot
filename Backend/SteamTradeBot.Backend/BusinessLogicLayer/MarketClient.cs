@@ -25,8 +25,10 @@ public class MarketClient
     {
         for (var i = 0; i < order.Quantity; i++)
         {
-            _api.PlaceSellOrder(order.EngItemName, order.Price, _configuration["SteamUserId"]!);
-            Log.Information("Place sell order {0} (Price: {1})", order.EngItemName, order.Price);
+            if (_api.PlaceSellOrder(order.EngItemName, order.Price, _configuration["SteamUserId"]!))
+                Log.Information("Place sell order {0} (Price: {1})", order.EngItemName, order.Price);
+            else
+                Log.Information("Can't place sell order {0} (Price: {1})", order.EngItemName, order.Price);
         }
     }
 

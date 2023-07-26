@@ -37,7 +37,7 @@ public class SteamAPI : IDisposable
         chromeOptions.AddArgument("--disable-dev-shm-usage");
         chromeOptions.AddArgument("--start-maximized");
         chromeOptions.AddArgument("--window-size=1920,1080");
-        chromeOptions.AddArgument("--headless");
+        //chromeOptions.AddArgument("--headless");
         chromeOptions.AddArgument("--disable-logging");
         chromeOptions.AddArgument("--log-level=3");
         //_chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
@@ -188,20 +188,20 @@ public class SteamAPI : IDisposable
 
     #region SellOrder
 
-    public bool PlaceSellOrder(string itemNeedToSell, double price, string userId, int inventoryFindRange = 10)
+    public bool PlaceSellOrder(string itemName, double price, string userId, int inventoryFindRange = 10)
     {
         return SafeConnect(() =>
         {
             SetPage($"https://steamcommunity.com/profiles/{userId}/inventory/#730");
             for (var i = 0; i < inventoryFindRange; i++)
             {
-                ClickOnElement(By.XPath($"//*[@id='inventory_{userId}_730_2']/div[1]/div[{i + 1}]"));
-                var itemName = ReadFromElement(By.Id("iteminfo0_item_name")).Trim();
-                var itemQuality = string.Join("", ReadFromElement(By.XPath("//*[@id='iteminfo0_item_descriptors']/div[1]")).SkipWhile(x => x != ':').Skip(2)).Trim();
-                var fullItemName = $"{itemName} ({itemQuality})";
-                if (itemNeedToSell != fullItemName) continue;
+                ClickOnElement(By.XPath($"//*[@id='inventory_{userId}_730_2']/div[{i + 1}]/div/div/a"));
+                var currentItemName = ReadFromElement(By.Id("iteminfo0_item_name")).Trim();
+                var currentItemQuality = string.Join("", ReadFromElement(By.XPath("//*[@id='iteminfo0_item_descriptors']/div[1]")).SkipWhile(x => x != ':').Skip(2)).Trim();
+                var fullItemName = $"{currentItemName} ({currentItemQuality})";
+                if (itemName != fullItemName) continue;
                 ExecuteJs("scroll(0, 20000000);");
-                ClickOnElement(By.XPath("//*[@class='inventory_page_right']/div[2]/div[3]/div/a"));
+                ExecuteJs("javascript:SellCurrentSelection()");
                 SendKey(By.Id("market_sell_buyercurrency_input"), $"\b\b\b\b\b{price}");
                 ClickOnElement(By.Id("market_sell_dialog_accept_ssa"));
                 ClickOnElement(By.Id("market_sell_dialog_accept"));
@@ -405,7 +405,8 @@ public class SteamAPI : IDisposable
         //    throw new ArgumentException("Authorization failed. Fields was null or empty.");
         //}
 
-        token = GetToken(secret);
+        if (string.IsNullOrEmpty(token))
+            token = GetToken(secret);
 
         if (_logState)
         {
