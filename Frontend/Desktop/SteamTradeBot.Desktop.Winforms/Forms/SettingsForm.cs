@@ -29,6 +29,7 @@ public partial class SettingsForm : Form
         SalesPerWeekTextBox.Text = Configuration.SalesPerWeek.ToString(CultureInfo.InvariantCulture);
         SteamUserIdTextBox.Text = Configuration.SteamUserId;
         SteamCommissionTextBox.Text = Configuration.SteamCommission.ToString(CultureInfo.InvariantCulture);
+        ListingPositionTextBox.Text = Configuration.ListingPosition.ToString();
     }
 
     private async void UploadSettingsButton_Click(object sender, EventArgs e)
@@ -62,8 +63,9 @@ public partial class SettingsForm : Form
             Trend = double.Parse(TrendTextBox.Text, CultureInfo.InvariantCulture),
             SalesPerWeek = int.Parse(SalesPerWeekTextBox.Text),
             SteamUserId = SteamUserIdTextBox.Text,
-            SteamCommission = double.Parse(SteamCommissionTextBox.Text, CultureInfo.InvariantCulture)
-        };
+            SteamCommission = double.Parse(SteamCommissionTextBox.Text, CultureInfo.InvariantCulture),
+            ListingPosition = int.Parse(ListingPositionTextBox.Text)
+    };
     }
 
     private void ResetSettingsButton_Click(object sender, EventArgs e)
@@ -82,7 +84,7 @@ public partial class SettingsForm : Form
         TrendTextBox.Text = string.Empty;
         SalesPerWeekTextBox.Text = string.Empty;
         SteamCommissionTextBox.Text = string.Empty;
-        SteamCommissionTextBox.Text = string.Empty;
+        ListingPositionTextBox.Text = string.Empty;
         Configuration = null;
         Program.EraseConfiguration();
         MessageBox.Show(@"Settings was erased!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);

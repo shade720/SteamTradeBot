@@ -16,6 +16,7 @@ public class Configuration
     public double MinPrice { get; set; }
     public double MaxPrice { get; set; }
     public int ItemListSize { get; set; }
+    public int ListingPosition { get; set; }
     public bool RememberMe { get; set; }
 
     public bool CheckIntegrity()
