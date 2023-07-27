@@ -160,12 +160,13 @@ public class TradeBot : IDisposable
         }
 
         var newConfigDict = (IDictionary<string, object>)newConfig;
-        var currentConfigDict = (IDictionary<string, object>)((IDictionary<string, object>)currentConfig)["TradeBotSettings"];
+        var currentConfigDict = (IDictionary<string, object>)currentConfig;
+        var targetSection = (IDictionary<string, object>)currentConfigDict["TradeBotSettings"];
 
         foreach (var pair in newConfigDict)
         {
-            if (currentConfigDict.ContainsKey(pair.Key))
-                currentConfigDict[pair.Key] = pair.Value;
+            if (targetSection.ContainsKey(pair.Key))
+                targetSection[pair.Key] = pair.Value;
         }
 
         var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
