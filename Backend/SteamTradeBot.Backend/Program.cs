@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using SteamTradeBot.Backend;
 using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.DataAccessLayer;
+using SteamTradeBot.Backend.Models;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
@@ -39,12 +40,14 @@ builder.Configuration.SetBasePath(Environment.CurrentDirectory)
     .AddJsonFile($"appsettings.{Environment.UserDomainName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+
 var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? builder.Configuration["PostgresConnectionString"];
 var sqlServerConnectionString = builder.Configuration["SqlServerConnectionString"];
 
 builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseSqlServer(sqlServerConnectionString));
 //builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseNpgsql(postgresConnectionString));
 
+builder.Services.AddSingleton<Settings>();
 builder.Services.AddSingleton<StateManager>();
 builder.Services.AddSingleton<TradeBot>();
 

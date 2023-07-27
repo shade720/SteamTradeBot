@@ -1,24 +1,22 @@
-﻿using Microsoft.Extensions.Configuration;
-using Serilog;
+﻿using Serilog;
 using SteamTradeBot.Backend.Models;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.ProfitRules;
 
 public class SalesCountRule : IBuyRule
 {
-    private readonly IConfiguration _configuration;
+    private readonly Settings _settings;
 
-    public SalesCountRule(IConfiguration configuration)
+    public SalesCountRule(Settings settings)
     {
-        _configuration = configuration;
+        _settings = settings;
     }
     public bool IsFollowed(ItemPage itemPage)
     {
         Log.Information("Checking sales per week...");
-        var sales = int.Parse(_configuration["SalesPerWeek"]!);
-        if (itemPage.Sales > sales) 
+        if (itemPage.Sales > _settings.SalesPerWeek) 
             return true;
-        Log.Information("Item is not profitable. Reason: sales volume is lower than needed. Current sales: {0} < Required sales: {1}", itemPage.Sales, sales);
+        Log.Information("Item is not profitable. Reason: sales volume is lower than needed. Current sales: {0} < Required sales: {1}", itemPage.Sales, _settings.SalesPerWeek);
         return false;
     }
 }
