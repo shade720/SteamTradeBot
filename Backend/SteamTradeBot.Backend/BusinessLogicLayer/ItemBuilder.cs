@@ -126,7 +126,7 @@ public class ItemBuilder
 
     public ItemBuilder SetBuyOrderBook(int buyListingFindRange)
     {
-        _itemPage.BuyOrderBook = _api.GetBuyOrdersBook(_itemPage.ItemUrl).Take(buyListingFindRange).ToList();
+        _itemPage.BuyOrderBook = _api.GetBuyOrdersBook(_itemPage.ItemUrl, buyListingFindRange);
         return this;
     }
 

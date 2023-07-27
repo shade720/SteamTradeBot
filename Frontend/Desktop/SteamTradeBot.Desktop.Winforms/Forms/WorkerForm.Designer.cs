@@ -444,7 +444,7 @@
             ViewLogsButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             ViewLogsButton.BackColor = Color.DodgerBlue;
             ViewLogsButton.FlatStyle = FlatStyle.Flat;
-            ViewLogsButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            ViewLogsButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
             ViewLogsButton.ForeColor = Color.White;
             ViewLogsButton.Location = new Point(191, 63);
             ViewLogsButton.Margin = new Padding(2);
@@ -460,7 +460,7 @@
             CheckConnectionButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             CheckConnectionButton.BackColor = Color.DodgerBlue;
             CheckConnectionButton.FlatStyle = FlatStyle.Flat;
-            CheckConnectionButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            CheckConnectionButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
             CheckConnectionButton.ForeColor = Color.White;
             CheckConnectionButton.Location = new Point(26, 63);
             CheckConnectionButton.Margin = new Padding(2);
@@ -476,7 +476,7 @@
             CancelOrdersButtons.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             CancelOrdersButtons.BackColor = Color.DodgerBlue;
             CancelOrdersButtons.FlatStyle = FlatStyle.Flat;
-            CancelOrdersButtons.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            CancelOrdersButtons.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
             CancelOrdersButtons.ForeColor = Color.White;
             CancelOrdersButtons.Location = new Point(26, 116);
             CancelOrdersButtons.Margin = new Padding(2);
@@ -492,7 +492,7 @@
             StartButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             StartButton.BackColor = Color.DodgerBlue;
             StartButton.FlatStyle = FlatStyle.Flat;
-            StartButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            StartButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
             StartButton.ForeColor = Color.White;
             StartButton.Location = new Point(191, 116);
             StartButton.Margin = new Padding(2);
@@ -508,7 +508,7 @@
             StopButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             StopButton.BackColor = Color.Red;
             StopButton.FlatStyle = FlatStyle.Flat;
-            StopButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            StopButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
             StopButton.ForeColor = Color.White;
             StopButton.Location = new Point(191, 116);
             StopButton.Margin = new Padding(2);

@@ -96,10 +96,13 @@ public class TradeBot : IDisposable
     {
         Log.Logger.Information("Start buy orders canceling...");
         var itemsWithPurchaseOrders = _marketDb.GetBuyOrders();
-        foreach (var item in itemsWithPurchaseOrders)
+        foreach (var order in itemsWithPurchaseOrders)
         {
-            _marketClient.CancelBuyOrder(item);
-            Log.Logger.Information("Item {0} with buy price {1} was canceled", item.EngItemName, item.Price);
+            Log.Logger.Information("Cancelling item {0} with buy price {1}", order.EngItemName, order.Price);
+            _marketClient.CancelBuyOrder(order);
+            _marketDb.RemoveBuyOrder(order);
+            _stateManager.OnItemCancelling(order);
+            Log.Logger.Information("Item {0} with buy price {1} was canceled", order.EngItemName, order.Price);
         }
         Log.Logger.Information("All buy orders have been canceled!");
     }
