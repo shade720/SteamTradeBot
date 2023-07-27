@@ -61,24 +61,27 @@
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(LogInTextBox);
             groupBox1.Controls.Add(label1);
-            groupBox1.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
-            groupBox1.ForeColor = Color.Red;
-            groupBox1.Location = new Point(407, 60);
+            groupBox1.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox1.ForeColor = Color.DodgerBlue;
+            groupBox1.Location = new Point(356, 45);
+            groupBox1.Margin = new Padding(3, 2, 3, 2);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(616, 601);
+            groupBox1.Padding = new Padding(3, 2, 3, 2);
+            groupBox1.Size = new Size(539, 451);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Log In";
             // 
             // ResetButton
             // 
-            ResetButton.BackColor = Color.Red;
+            ResetButton.BackColor = Color.DodgerBlue;
             ResetButton.FlatStyle = FlatStyle.Flat;
-            ResetButton.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+            ResetButton.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             ResetButton.ForeColor = Color.White;
-            ResetButton.Location = new Point(505, 15);
+            ResetButton.Location = new Point(442, 13);
+            ResetButton.Margin = new Padding(3, 2, 3, 2);
             ResetButton.Name = "ResetButton";
-            ResetButton.Size = new Size(111, 31);
+            ResetButton.Size = new Size(97, 29);
             ResetButton.TabIndex = 12;
             ResetButton.Text = "Reset";
             ResetButton.UseVisualStyleBackColor = false;
@@ -86,13 +89,14 @@
             // 
             // ChooseMaFileButton
             // 
-            ChooseMaFileButton.BackColor = Color.Red;
+            ChooseMaFileButton.BackColor = Color.DodgerBlue;
             ChooseMaFileButton.FlatStyle = FlatStyle.Flat;
-            ChooseMaFileButton.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+            ChooseMaFileButton.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             ChooseMaFileButton.ForeColor = Color.White;
-            ChooseMaFileButton.Location = new Point(505, 310);
+            ChooseMaFileButton.Location = new Point(441, 231);
+            ChooseMaFileButton.Margin = new Padding(3, 2, 3, 2);
             ChooseMaFileButton.Name = "ChooseMaFileButton";
-            ChooseMaFileButton.Size = new Size(111, 31);
+            ChooseMaFileButton.Size = new Size(97, 29);
             ChooseMaFileButton.TabIndex = 11;
             ChooseMaFileButton.Text = "Path";
             ChooseMaFileButton.UseVisualStyleBackColor = false;
@@ -100,13 +104,14 @@
             // 
             // LogInButton
             // 
-            LogInButton.BackColor = Color.Red;
+            LogInButton.BackColor = Color.DodgerBlue;
             LogInButton.FlatStyle = FlatStyle.Flat;
             LogInButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
             LogInButton.ForeColor = Color.White;
-            LogInButton.Location = new Point(210, 470);
+            LogInButton.Location = new Point(184, 352);
+            LogInButton.Margin = new Padding(3, 2, 3, 2);
             LogInButton.Name = "LogInButton";
-            LogInButton.Size = new Size(200, 60);
+            LogInButton.Size = new Size(175, 45);
             LogInButton.TabIndex = 10;
             LogInButton.Text = "Log In";
             LogInButton.UseVisualStyleBackColor = false;
@@ -114,31 +119,32 @@
             // 
             // MaFilePathTextBox
             // 
-            MaFilePathTextBox.BorderStyle = BorderStyle.None;
+            MaFilePathTextBox.BackColor = SystemColors.ControlLight;
+            MaFilePathTextBox.BorderStyle = BorderStyle.FixedSingle;
             MaFilePathTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            MaFilePathTextBox.Location = new Point(210, 314);
+            MaFilePathTextBox.Location = new Point(184, 231);
+            MaFilePathTextBox.Margin = new Padding(3, 2, 3, 2);
             MaFilePathTextBox.Name = "MaFilePathTextBox";
-            MaFilePathTextBox.PlaceholderText = "________________________________";
-            MaFilePathTextBox.Size = new Size(266, 27);
+            MaFilePathTextBox.Size = new Size(233, 29);
             MaFilePathTextBox.TabIndex = 9;
             // 
             // label5
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label5.Location = new Point(43, 313);
+            label5.Location = new Point(38, 235);
             label5.Name = "label5";
-            label5.Size = new Size(161, 28);
+            label5.Size = new Size(128, 21);
             label5.TabIndex = 8;
             label5.Text = "SDA maFile path:";
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(294, 260);
+            label4.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            label4.Location = new Point(257, 195);
             label4.Name = "label4";
-            label4.Size = new Size(34, 28);
+            label4.Size = new Size(26, 20);
             label4.TabIndex = 7;
             label4.Text = "Or";
             // 
@@ -146,71 +152,75 @@
             // 
             RememberMeCheckBox.AutoSize = true;
             RememberMeCheckBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            RememberMeCheckBox.Location = new Point(231, 536);
+            RememberMeCheckBox.Location = new Point(202, 402);
+            RememberMeCheckBox.Margin = new Padding(3, 2, 3, 2);
             RememberMeCheckBox.Name = "RememberMeCheckBox";
-            RememberMeCheckBox.Size = new Size(160, 32);
+            RememberMeCheckBox.Size = new Size(132, 25);
             RememberMeCheckBox.TabIndex = 6;
             RememberMeCheckBox.Text = "Remember me";
             RememberMeCheckBox.UseVisualStyleBackColor = true;
             // 
             // TokenTextBox
             // 
-            TokenTextBox.BorderStyle = BorderStyle.None;
+            TokenTextBox.BackColor = SystemColors.ControlLight;
+            TokenTextBox.BorderStyle = BorderStyle.FixedSingle;
             TokenTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TokenTextBox.Location = new Point(210, 201);
+            TokenTextBox.Location = new Point(184, 148);
+            TokenTextBox.Margin = new Padding(3, 2, 3, 2);
             TokenTextBox.Name = "TokenTextBox";
-            TokenTextBox.PlaceholderText = "________________________________";
-            TokenTextBox.Size = new Size(266, 27);
+            TokenTextBox.Size = new Size(233, 29);
             TokenTextBox.TabIndex = 5;
             // 
             // label3
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(141, 200);
+            label3.Location = new Point(123, 150);
             label3.Name = "label3";
-            label3.Size = new Size(63, 28);
+            label3.Size = new Size(50, 21);
             label3.TabIndex = 4;
             label3.Text = "Token";
             // 
             // PasswordTextBox
             // 
-            PasswordTextBox.BorderStyle = BorderStyle.None;
+            PasswordTextBox.BackColor = SystemColors.ControlLight;
+            PasswordTextBox.BorderStyle = BorderStyle.FixedSingle;
             PasswordTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            PasswordTextBox.Location = new Point(210, 142);
+            PasswordTextBox.Location = new Point(184, 104);
+            PasswordTextBox.Margin = new Padding(3, 2, 3, 2);
             PasswordTextBox.Name = "PasswordTextBox";
             PasswordTextBox.PasswordChar = '*';
-            PasswordTextBox.PlaceholderText = "________________________________";
-            PasswordTextBox.Size = new Size(266, 27);
+            PasswordTextBox.Size = new Size(233, 29);
             PasswordTextBox.TabIndex = 3;
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(111, 141);
+            label2.Location = new Point(97, 106);
             label2.Name = "label2";
-            label2.Size = new Size(93, 28);
+            label2.Size = new Size(76, 21);
             label2.TabIndex = 2;
             label2.Text = "Password";
             // 
             // LogInTextBox
             // 
-            LogInTextBox.BorderStyle = BorderStyle.None;
+            LogInTextBox.BackColor = SystemColors.ControlLight;
+            LogInTextBox.BorderStyle = BorderStyle.FixedSingle;
             LogInTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            LogInTextBox.Location = new Point(210, 84);
+            LogInTextBox.Location = new Point(184, 60);
+            LogInTextBox.Margin = new Padding(3, 2, 3, 2);
             LogInTextBox.Name = "LogInTextBox";
-            LogInTextBox.PlaceholderText = "________________________________";
-            LogInTextBox.Size = new Size(266, 27);
+            LogInTextBox.Size = new Size(233, 29);
             LogInTextBox.TabIndex = 1;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label1.Location = new Point(143, 83);
+            label1.Location = new Point(125, 62);
             label1.Name = "label1";
-            label1.Size = new Size(61, 28);
+            label1.Size = new Size(49, 21);
             label1.TabIndex = 0;
             label1.Text = "Login";
             // 
@@ -220,11 +230,13 @@
             // 
             // LogInForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1507, 733);
+            BackColor = Color.White;
+            ClientSize = new Size(1319, 550);
             Controls.Add(groupBox1);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(3, 2, 3, 2);
             Name = "LogInForm";
             Text = "LogInForm";
             groupBox1.ResumeLayout(false);

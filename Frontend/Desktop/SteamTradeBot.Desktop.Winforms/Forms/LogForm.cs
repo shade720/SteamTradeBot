@@ -25,7 +25,7 @@ public partial class LogForm : Form
         var logRecords = logFile.Split("`~");
         foreach (var log in logRecords)
         {
-            if (string.IsNullOrEmpty(log) || log.Length < 10) 
+            if (string.IsNullOrEmpty(log) || log.Length < 10)
                 continue;
             var date = log[..(log.IndexOf('+') - 2)];
             var level = log[log.IndexOf('[')..(log.IndexOf(']') + 1)];

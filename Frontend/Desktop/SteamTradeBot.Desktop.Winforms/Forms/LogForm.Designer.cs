@@ -49,7 +49,8 @@
             LogDataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             LogDataGrid.Columns.AddRange(new DataGridViewColumn[] { Date, Level, Message });
             LogDataGrid.GridColor = SystemColors.ControlLightLight;
-            LogDataGrid.Location = new Point(1, 29);
+            LogDataGrid.Location = new Point(1, 22);
+            LogDataGrid.Margin = new Padding(3, 2, 3, 2);
             LogDataGrid.MultiSelect = false;
             LogDataGrid.Name = "LogDataGrid";
             LogDataGrid.ReadOnly = true;
@@ -57,7 +58,7 @@
             LogDataGrid.RowHeadersWidth = 51;
             LogDataGrid.RowTemplate.Height = 29;
             LogDataGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            LogDataGrid.Size = new Size(1209, 445);
+            LogDataGrid.Size = new Size(1058, 334);
             LogDataGrid.TabIndex = 0;
             LogDataGrid.CellClick += LogDataGrid_CellClick;
             // 
@@ -87,10 +88,11 @@
             // 
             // SearchTextbox
             // 
-            SearchTextbox.Location = new Point(152, 2);
+            SearchTextbox.Location = new Point(133, 2);
+            SearchTextbox.Margin = new Padding(3, 2, 3, 2);
             SearchTextbox.Name = "SearchTextbox";
             SearchTextbox.PlaceholderText = "Search for...";
-            SearchTextbox.Size = new Size(958, 27);
+            SearchTextbox.Size = new Size(839, 23);
             SearchTextbox.TabIndex = 1;
             // 
             // LogLevel
@@ -99,41 +101,45 @@
             LogLevel.FormattingEnabled = true;
             LogLevel.Items.AddRange(new object[] { "All", "Error", "Warning", "Information" });
             LogLevel.Location = new Point(1, 1);
+            LogLevel.Margin = new Padding(3, 2, 3, 2);
             LogLevel.Name = "LogLevel";
-            LogLevel.Size = new Size(151, 28);
+            LogLevel.Size = new Size(133, 23);
             LogLevel.TabIndex = 2;
             LogLevel.SelectedIndexChanged += LogLevel_SelectedIndexChanged;
             // 
             // MessageTextbox
             // 
-            MessageTextbox.Location = new Point(1, 480);
+            MessageTextbox.Location = new Point(1, 360);
+            MessageTextbox.Margin = new Padding(3, 2, 3, 2);
             MessageTextbox.Name = "MessageTextbox";
             MessageTextbox.RightMargin = 600;
-            MessageTextbox.Size = new Size(1209, 320);
+            MessageTextbox.Size = new Size(1058, 241);
             MessageTextbox.TabIndex = 3;
             MessageTextbox.Text = "";
             // 
             // SearchButton
             // 
-            SearchButton.Location = new Point(1116, 1);
+            SearchButton.Location = new Point(978, 1);
+            SearchButton.Margin = new Padding(3, 2, 3, 2);
             SearchButton.Name = "SearchButton";
-            SearchButton.Size = new Size(94, 29);
+            SearchButton.Size = new Size(80, 22);
             SearchButton.TabIndex = 4;
             SearchButton.Text = "Search";
             SearchButton.UseVisualStyleBackColor = true;
             SearchButton.Click += SearchButton_Click;
             // 
-            // LogsForm
+            // LogForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1211, 802);
+            ClientSize = new Size(1060, 602);
             Controls.Add(SearchTextbox);
             Controls.Add(SearchButton);
             Controls.Add(MessageTextbox);
             Controls.Add(LogLevel);
             Controls.Add(LogDataGrid);
-            Name = "LogsForm";
+            Margin = new Padding(3, 2, 3, 2);
+            Name = "LogForm";
             Text = "LogViewerWindow";
             Load += LogViewerWindow_Load;
             ((System.ComponentModel.ISupportInitialize)LogDataGrid).EndInit();

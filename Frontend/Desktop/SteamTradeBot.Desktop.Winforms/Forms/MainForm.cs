@@ -22,8 +22,11 @@ public partial class MainForm : Form
         _logInForm = new LogInForm(_steamTradeBotRestClient);
 
         _settingsForm.TopLevel = false;
+        _settingsForm.Dock = DockStyle.Fill;
         _workerForm.TopLevel = false;
+        _workerForm.Dock = DockStyle.Fill;
         _logInForm.TopLevel = false;
+        _logInForm.Dock = DockStyle.Fill;
 
         Frame.Controls.Add(_workerForm);
         Frame.Controls.Add(_settingsForm);
