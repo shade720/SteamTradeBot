@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Serilog;
@@ -12,7 +11,6 @@ using SteamTradeBot.Backend.Models;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,7 +22,7 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer;
 public class TradeBot : IDisposable
 {
     private readonly SteamAPI _steamApi;
-    private readonly IConfiguration _configuration;
+    private readonly Settings _settings;
     private readonly StateManager _stateManager;
     private readonly MarketDbAccess _marketDb;
     
@@ -38,24 +36,24 @@ public class TradeBot : IDisposable
 
     public TradeBot
     (
-        IConfiguration configuration,
+        Settings settings,
         IDbContextFactory<TradeBotDataContext> tradeBotDataContextFactory,
         StateManager stateManager)
     {
-        _configuration = configuration;
+        _settings = settings;
         _marketDb = new MarketDbAccess(tradeBotDataContextFactory);
         _stateManager = stateManager;
 
         _steamApi = new SteamAPI();
         _itemBuilder = new ItemBuilder(_steamApi);
-        _marketClient = new MarketClient(_steamApi, _configuration);
+        _marketClient = new MarketClient(_steamApi, _settings);
         var buyRules = new List<IBuyRule>
         {
-            new SalesCountRule(_configuration),
-            new AveragePriceRule(_configuration),
-            new TrendRule(_configuration),
-            new RequiredProfitRule(_configuration),
-            new AvailableBalanceRule(_configuration),
+            new SalesCountRule(_settings),
+            new AveragePriceRule(_settings),
+            new TrendRule(_settings),
+            new RequiredProfitRule(_settings),
+            new AvailableBalanceRule(_settings),
             new OrderAlreadyExistRule()
         };
         var sellRules = new List<ISellRule>
@@ -64,7 +62,7 @@ public class TradeBot : IDisposable
         };
         var cancelRules = new List<ICancelRule>
         {
-            new FitPriceRule(_configuration, _marketDb)
+            new FitPriceRule(_settings, _marketDb)
         };
         _rules = new MarketRules(buyRules, sellRules, cancelRules);
 
@@ -75,7 +73,7 @@ public class TradeBot : IDisposable
 
     public void StartTrading()
     {
-        if (!CheckConfigurationIntegrity())
+        if (!_settings.CheckIntegrity())
         {
             throw new ApplicationException("Configuration is corrupted. Trading not started!");
         }
@@ -162,7 +160,7 @@ public class TradeBot : IDisposable
         }
 
         var newConfigDict = (IDictionary<string, object>)newConfig;
-        var currentConfigDict = (IDictionary<string, object>)currentConfig;
+        var currentConfigDict = (IDictionary<string, object>)((IDictionary<string, object>)currentConfig)["TradeBotSettings"];
 
         foreach (var pair in newConfigDict)
         {
@@ -173,37 +171,12 @@ public class TradeBot : IDisposable
         var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
         File.WriteAllText(ConfigurationPath, updatedSettings);
 
-        if (!CheckConfigurationIntegrity())
+        if (!_settings.CheckIntegrity())
         {
             File.WriteAllText(ConfigurationPath, currentSettings);
             Log.Logger.Information("Settings have not been updated. Configuration was corrupted.");
         }
         Log.Logger.Information("Settings have been updated!");
-    }
-
-    private bool CheckConfigurationIntegrity()
-    {
-        Log.Information("Check configuration integrity...");
-        try
-        {
-            var orderQuantity = int.Parse(_configuration["OrderQuantity"]);
-            var salesPerWeek = int.Parse(_configuration["SalesPerWeek"]);
-            var steamUserId = string.IsNullOrEmpty(_configuration["SteamUserId"]);
-            var sellListingFindRange = int.Parse(_configuration["SellListingFindRange"]);
-            var analysisIntervalDays = int.Parse(_configuration["AnalysisIntervalDays"]);
-            var fitPriceRange = double.Parse(_configuration["FitPriceRange"], NumberStyles.Any, CultureInfo.InvariantCulture);
-            var averagePrice = double.Parse(_configuration["AveragePrice"], NumberStyles.Any, CultureInfo.InvariantCulture);
-            var trend = double.Parse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture);
-            var steamCommission = double.Parse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture);
-            var requiredProfit = double.Parse(_configuration["RequiredProfit"], NumberStyles.Any, CultureInfo.InvariantCulture);
-            Log.Information("Check configuration integrity -> OK");
-            return true;
-        }
-        catch (Exception e)
-        {
-            Log.Fatal("Configuration error:\r\nMessage: {0}\r\nStackTrace: {1}", e.Message, e.StackTrace);
-            return false;
-        }
     }
 
     #endregion
@@ -264,12 +237,12 @@ public class TradeBot : IDisposable
             var itemPage = _itemBuilder.Create(itemName)
                 .SetItemUrl()
                 .SetRusItemName()
-                .SetGraph(int.Parse(_configuration["AnalysisIntervalDays"]!))
+                .SetGraph(_settings.AnalysisIntervalDays)
                 .SetAvgPrice()
                 .SetItemSales()
                 .SetTrend()
-                .SetBuyOrderBook(int.Parse(_configuration["BuyListingFindRange"]!))
-                .SetSellOrderBook(int.Parse(_configuration["SellListingFindRange"]!))
+                .SetBuyOrderBook(_settings.BuyListingFindRange)
+                .SetSellOrderBook(_settings.SellListingFindRange)
                 .SetBalance()
                 .SetMyBuyOrder()
                 .Build();
@@ -325,16 +298,12 @@ public class TradeBot : IDisposable
         var buyOrder = _marketDb.GetBuyOrders().FirstOrDefault(x => x.EngItemName == item.EngItemName);
         if (buyOrder is null)
             throw new Exception("Can't find local buy order for sell order forming");
-        var steamCommission = double.Parse(_configuration["SteamCommission"]!, NumberStyles.Any,
-            CultureInfo.InvariantCulture);
-        var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any,
-            CultureInfo.InvariantCulture);
         var sellOrder = new SellOrder
         {
             EngItemName = item.EngItemName,
             RusItemName = item.RusItemName,
             ItemUrl = item.ItemUrl,
-            Price = buyOrder.Price * (1 + steamCommission) + requiredProfit,
+            Price = buyOrder.Price * (1 + _settings.SteamCommission) + _settings.RequiredProfit,
             Quantity = item.MyBuyOrder is null ? buyOrder.Quantity : buyOrder.Quantity - item.MyBuyOrder.Quantity
         };
 
@@ -356,11 +325,7 @@ public class TradeBot : IDisposable
 
     private void FormBuyOrder(ItemPage item)
     {
-        var steamCommission = double.Parse(_configuration["SteamCommission"]!, NumberStyles.Any,
-            CultureInfo.InvariantCulture);
-        var requiredProfit = double.Parse(_configuration["RequiredProfit"]!, NumberStyles.Any,
-            CultureInfo.InvariantCulture);
-        var price = item.BuyOrderBook.FirstOrDefault(buyOrder => item.SellOrderBook.Any(sellOrder => sellOrder.Price + requiredProfit > buyOrder.Price * (1 + steamCommission)));
+        var price = item.BuyOrderBook.FirstOrDefault(buyOrder => item.SellOrderBook.Any(sellOrder => sellOrder.Price + _settings.RequiredProfit > buyOrder.Price * (1 + _settings.SteamCommission)));
         if (price is null)
             throw new Exception("Sell order not found");
         var buyOrder = new BuyOrder
@@ -369,7 +334,7 @@ public class TradeBot : IDisposable
             RusItemName = item.RusItemName,
             ItemUrl = item.ItemUrl,
             Price = price.Price,
-            Quantity = int.Parse(_configuration["OrderQuantity"]!)
+            Quantity = _settings.OrderQuantity
         };
         _marketClient.Buy(buyOrder);
         _marketDb.AddOrUpdateBuyOrder(buyOrder);
@@ -382,10 +347,10 @@ public class TradeBot : IDisposable
         {
             Log.Information("Load items for analysis....");
             var loadedItemNamesList = _steamApi.GetItemNamesList(
-                    double.Parse(_configuration["MinPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
-                    double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
-                    int.Parse(_configuration["SalesPerWeek"]!) * 7,
-                    int.Parse(_configuration["ItemListSize"]!))
+                    _settings.MinPrice,
+                    _settings.MaxPrice,
+                    _settings.SalesPerWeek * 7,
+                    _settings.ItemListSize)
                 .ToList();
             var existingOrdersItemNames = _marketDb.GetBuyOrders().Select(x => x.EngItemName);
             foreach (var itemName in existingOrdersItemNames)

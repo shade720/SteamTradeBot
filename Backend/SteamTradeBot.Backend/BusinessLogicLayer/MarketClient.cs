@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Serilog;
+﻿using Serilog;
 using SteamTradeBot.Backend.Models;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer;
@@ -7,12 +6,12 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer;
 public class MarketClient
 {
     private readonly SteamAPI _api;
-    private readonly IConfiguration _configuration;
+    private readonly Settings _settings;
 
-    public MarketClient(SteamAPI api, IConfiguration configuration)
+    public MarketClient(SteamAPI api, Settings settings)
     {
         _api = api;
-        _configuration = configuration;
+        _settings = settings;
     }
 
     public void Buy(BuyOrder order)
@@ -25,7 +24,7 @@ public class MarketClient
     {
         for (var i = 0; i < order.Quantity; i++)
         {
-            if (_api.PlaceSellOrder(order.EngItemName, order.Price, _configuration["SteamUserId"]!))
+            if (_api.PlaceSellOrder(order.EngItemName, order.Price, _settings.SteamUserId))
                 Log.Information("Place sell order {0} (Price: {1})", order.EngItemName, order.Price);
             else
                 Log.Error("Can't place sell order {0} (Price: {1}). Item not found in inventory!", order.EngItemName, order.Price);

@@ -1,27 +1,24 @@
-﻿using Microsoft.Extensions.Configuration;
-using Serilog;
+﻿using Serilog;
 using SteamTradeBot.Backend.Models;
-using System.Globalization;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.ProfitRules;
 
 public class TrendRule : IBuyRule
 {
-    private readonly IConfiguration _configuration;
+    private readonly Settings _settings;
 
-    public TrendRule(IConfiguration configuration)
+    public TrendRule(Settings settings)
     {
-        _configuration = configuration;
+        _settings = settings;
     }
 
     public bool IsFollowed(ItemPage itemPage)
     {
         Log.Information("Checking trend...");
-        var trendForCompare = double.Parse(_configuration["Trend"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
-        if (itemPage.Trend > trendForCompare)
+        if (itemPage.Trend > _settings.Trend)
             return true;
         Log.Information("Item is not profitable. Reason: trend is lower than needed. Current trend: {0} < Required trend: {1}", 
-            itemPage.Trend.ToString("F10"), trendForCompare);
+            itemPage.Trend.ToString("F10"), _settings.Trend);
         return false;
     }
 }

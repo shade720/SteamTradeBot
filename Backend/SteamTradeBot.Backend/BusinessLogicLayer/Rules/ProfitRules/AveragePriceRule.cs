@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using System.Linq;
-using Microsoft.Extensions.Configuration;
+﻿using System.Linq;
 using Serilog;
 using SteamTradeBot.Backend.Models;
 
@@ -8,21 +6,20 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.ProfitRules;
 
 public class AveragePriceRule : IBuyRule
 {
-    private readonly IConfiguration _configuration;
+    private readonly Settings _settings;
 
-    public AveragePriceRule(IConfiguration configuration)
+    public AveragePriceRule(Settings settings)
     {
-        _configuration = configuration;
+        _settings = settings;
     }
     public bool IsFollowed(ItemPage itemPage)
     {
         Log.Information("Checking average price...");
 
-        var averagePriceRange = double.Parse(_configuration["AveragePrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture);
-        if (itemPage.SellOrderBook.Any(sellOrder => sellOrder.Price > itemPage.AvgPrice + averagePriceRange)) 
+        if (itemPage.SellOrderBook.Any(sellOrder => sellOrder.Price > itemPage.AvgPrice + _settings.AveragePrice)) 
             return true;
         Log.Information("Item is not profitable. Reason: average price is higher than needed. Max sell price: {0} < Required average price: {1}", 
-            itemPage.SellOrderBook.Max(sellOrder => sellOrder.Price), itemPage.AvgPrice + averagePriceRange);
+            itemPage.SellOrderBook.Max(sellOrder => sellOrder.Price), itemPage.AvgPrice + _settings.AveragePrice);
         return false;
     }
 }
