@@ -176,7 +176,7 @@ public class TradeBot : IDisposable
         if (!CheckConfigurationIntegrity())
         {
             File.WriteAllText(ConfigurationPath, currentSettings);
-            Log.Logger.Information("Settings have not been updated!");
+            Log.Logger.Information("Settings have not been updated. Configuration was corrupted.");
         }
         Log.Logger.Information("Settings have been updated!");
     }
@@ -184,22 +184,26 @@ public class TradeBot : IDisposable
     private bool CheckConfigurationIntegrity()
     {
         Log.Information("Check configuration integrity...");
-        if (int.TryParse(_configuration["OrderQuantity"], out _) &&
-            int.TryParse(_configuration["SalesPerWeek"], out _) &&
-            _configuration["SteamUserId"] is not null &&
-            int.TryParse(_configuration["SellListingFindRange"], out _) &&
-            int.TryParse(_configuration["AnalysisIntervalDays"], out _) &&
-            double.TryParse(_configuration["FitPriceRange"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
-            double.TryParse(_configuration["AveragePrice"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
-            double.TryParse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
-            double.TryParse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture, out _) &&
-            double.TryParse(_configuration["RequiredProfit"], NumberStyles.Any, CultureInfo.InvariantCulture, out _))
+        try
         {
+            var orderQuantity = int.Parse(_configuration["OrderQuantity"]);
+            var salesPerWeek = int.Parse(_configuration["SalesPerWeek"]);
+            var steamUserId = string.IsNullOrEmpty(_configuration["SteamUserId"]);
+            var sellListingFindRange = int.Parse(_configuration["SellListingFindRange"]);
+            var analysisIntervalDays = int.Parse(_configuration["AnalysisIntervalDays"]);
+            var fitPriceRange = double.Parse(_configuration["FitPriceRange"], NumberStyles.Any, CultureInfo.InvariantCulture);
+            var averagePrice = double.Parse(_configuration["AveragePrice"], NumberStyles.Any, CultureInfo.InvariantCulture);
+            var trend = double.Parse(_configuration["Trend"], NumberStyles.Any, CultureInfo.InvariantCulture);
+            var steamCommission = double.Parse(_configuration["SteamCommission"], NumberStyles.Any, CultureInfo.InvariantCulture);
+            var requiredProfit = double.Parse(_configuration["RequiredProfit"], NumberStyles.Any, CultureInfo.InvariantCulture);
             Log.Information("Check configuration integrity -> OK");
             return true;
         }
-        Log.Fatal("Configuration error");
-        return false;
+        catch (Exception e)
+        {
+            Log.Fatal("Configuration error:\r\nMessage: {0}\r\nStackTrace: {1}", e.Message, e.StackTrace);
+            return false;
+        }
     }
 
     #endregion
