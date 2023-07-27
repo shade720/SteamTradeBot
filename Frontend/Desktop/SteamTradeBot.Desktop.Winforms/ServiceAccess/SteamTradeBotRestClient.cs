@@ -9,8 +9,8 @@ namespace SteamTradeBot.Desktop.Winforms.ServiceAccess;
 public class SteamTradeBotRestClient : IDisposable
 {
     private readonly HttpClient _restClient;
-    //private const string BaseAddress = "http://192.168.0.107:5050/api/";
-    private const string BaseAddress = "http://localhost:5050/api/";
+    private const string BaseAddress = "http://192.168.0.107:5050/api/";
+    //private const string BaseAddress = "http://localhost:5050/api/";
     private DateTime _lastStateCheck = DateTime.MinValue;
 
     public SteamTradeBotRestClient()
@@ -63,7 +63,7 @@ public class SteamTradeBotRestClient : IDisposable
         try
         {
             var response = await _restClient.GetAsync($"state?fromTicks={_lastStateCheck.Ticks}");
-            _lastStateCheck = DateTime.Now;
+            _lastStateCheck = DateTime.UtcNow;
             var stateInfoJson = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<StateInfo>(stateInfoJson)!;
         }

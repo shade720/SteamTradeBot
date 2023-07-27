@@ -59,23 +59,20 @@ public class SteamAPI : IDisposable
 
     #region OrderBooks
 
-    public List<OrderBookItem> GetBuyOrdersBook(string itemUrl)
+    public List<OrderBookItem> GetBuyOrdersBook(string itemUrl, int buyListingFindRange)
     {
-        const int buyListingPageSize = 8;
         return SafeConnect(() =>
         {
             SetPage(itemUrl);
             var orderBook = new List<OrderBookItem>();
-
             ClickOnElement(By.CssSelector("#market_buyorder_info_show_details > span"));
-
-            for (var itemIdx = 2; itemIdx < buyListingPageSize; itemIdx++)
+            for (var itemIdx = 2; itemIdx < buyListingFindRange + 2; itemIdx++)
             {
                 var price = ParsePrice(ReadFromElement(By.CssSelector($"#market_commodity_buyreqeusts_table > table > tbody > tr:nth-child({itemIdx}) > td:nth-child(1)")));
                 var quantity = int.Parse(ReadFromElement(By.CssSelector($"#market_commodity_buyreqeusts_table > table > tbody > tr:nth-child({itemIdx}) > td:nth-child(2)")));
                 orderBook.Add(new OrderBookItem { Price = price, Quantity = quantity });
             }
-            return orderBook.OrderBy(x => x.Price).ToList();
+            return orderBook.OrderByDescending(x => x.Price).ToList();
         });
     }
 
@@ -112,13 +109,10 @@ public class SteamAPI : IDisposable
         return orderBook.OrderBy(x => x.Price).ToList();
     }
 
-    private const string CurrencyName = "руб";
     private static double ParsePrice(string priceStr)
     {
         if (string.IsNullOrEmpty(priceStr))
             return 0;
-        //if (!priceStr.Contains(CurrencyName))
-        //    return 0;
         priceStr = string.Join("", priceStr.SkipWhile(x => !char.IsDigit(x)).TakeWhile(x => !char.IsWhiteSpace(x))).Replace(',','.');
         return double.TryParse(priceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0;
     }
@@ -311,7 +305,7 @@ public class SteamAPI : IDisposable
             try
             {
                 Log.Logger.Information("Check if we are already logged in...");
-                ClickOnElement(By.XPath("/html/body/div[1]/div[4]/div/div/center/div/div/div[2]/form/div[2]/a"));
+                ClickOnElement(By.XPath("/html/body/div[1]/div[4]/div/div/center/div/div/div[2]/form/div[2]/a"), true);
                 ClickOnElement(By.Id("imageLogin"));
                 Log.Logger.Information("Logged in successfully on skins-table.xyz");
             }
