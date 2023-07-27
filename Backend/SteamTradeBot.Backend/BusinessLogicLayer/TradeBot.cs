@@ -56,6 +56,7 @@ public class TradeBot : IDisposable
             new TrendRule(_configuration),
             new RequiredProfitRule(_configuration),
             new AvailableBalanceRule(_configuration),
+            new OrderAlreadyExistRule()
         };
         var sellRules = new List<ISellRule>
         {
@@ -243,13 +244,12 @@ public class TradeBot : IDisposable
             var itemNames = GetItemNames();
             foreach (var itemPage in itemNames.Select(ConstructItemPage).Where(item => item is not null))
             {
-                var actionBasedOnCondition = CheckCondition(itemPage!);
-                actionBasedOnCondition?.Invoke(itemPage!);
+                CheckCondition(itemPage!);
                 if (_cancellationTokenSource.IsCancellationRequested)
                     break;
             }
         }
-        Log.Information("Worker has ended");
+        Log.Information("Worker has stopped");
     }
 
     private ItemPage? ConstructItemPage(string itemName)
@@ -281,25 +281,31 @@ public class TradeBot : IDisposable
         }
     }
 
-    private Action<ItemPage>? CheckCondition(ItemPage itemPage)
+    private void CheckCondition(ItemPage itemPage)
     {
         try
         {
-            if (_rules.CanBuyItem(itemPage))
-                return FormBuyOrder;
-
-            if (_rules.IsNeedCancelItem(itemPage))
-                return FormOrderCancelling;
-            
             if (_rules.CanSellItem(itemPage))
-                return FormSellOrder;
+            {
+                FormSellOrder(itemPage);
+                return;
+            }
+            if (_rules.IsNeedCancelItem(itemPage))
+            {
+                FormOrderCancelling(itemPage);
+                return;
+            }
+            if (_rules.CanBuyItem(itemPage))
+            {
+                FormBuyOrder(itemPage);
+                return;
+            }
         }
         catch (Exception e)
         {
             Log.Error("The item was skipped due to an error ->\r\nMessage: {0}\r\nStack trace: {1}", e.Message, e.StackTrace);
             _stateManager.OnError(e);
         }
-        return null;
     }
 
     private void FormOrderCancelling(ItemPage item)
@@ -371,16 +377,20 @@ public class TradeBot : IDisposable
         try
         {
             Log.Information("Load items for analysis....");
-            var ordersNames = _marketDb.GetBuyOrders().Select(x => x.EngItemName);
-            var loadedItemList = _steamApi.GetItemNamesList(
+            var loadedItemNamesList = _steamApi.GetItemNamesList(
                     double.Parse(_configuration["MinPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
                     double.Parse(_configuration["MaxPrice"]!, NumberStyles.Any, CultureInfo.InvariantCulture),
                     int.Parse(_configuration["SalesPerWeek"]!) * 7,
                     int.Parse(_configuration["ItemListSize"]!))
-                .Where(itemName => ordersNames.All(orderItemName => orderItemName != itemName))
                 .ToList();
+            var existingOrdersItemNames = _marketDb.GetBuyOrders().Select(x => x.EngItemName);
+            foreach (var itemName in existingOrdersItemNames)
+            {
+                loadedItemNamesList.Insert(0, itemName);
+                Log.Logger.Information("Add {0} as existing order",itemName);
+            }
             Log.Information("Pipeline initialized");
-            return loadedItemList;
+            return loadedItemNamesList;
         }
         catch (Exception e)
         {

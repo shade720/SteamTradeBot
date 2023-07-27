@@ -180,7 +180,7 @@ public class SteamAPI : IDisposable
             SetPage($"https://steamcommunity.com/profiles/{userId}/inventory/#730");
             for (var i = 0; i < inventoryFindRange; i++)
             {
-                ClickOnElement(By.XPath($"//*[@id='inventory_{userId}_730_2']/div[{i + 1}]/div/div/a"));
+                ClickOnElement(By.XPath($"//*[@id='inventory_{userId}_730_2']/div[{i + 1}]/div/div"));
                 var currentItemName = ReadFromElement(By.Id("iteminfo0_item_name")).Trim();
                 var currentItemQuality = string.Join("", ReadFromElement(By.XPath("//*[@id='iteminfo0_item_descriptors']/div[1]")).SkipWhile(x => x != ':').Skip(2)).Trim();
                 var fullItemName = $"{currentItemName} ({currentItemQuality})";
@@ -261,7 +261,7 @@ public class SteamAPI : IDisposable
             SetPage(itemUrl);
             try
             {
-                var quantity = int.Parse(ReadFromElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[2]/div[2]/div[3]/span/span"), true));
+                var quantity = int.Parse(ReadFromElement(By.XPath("//*[@id='tabContentsMyListings']/div/div[2]/div[3]/span/span"), true));
                 return quantity;
             }
             catch
@@ -278,7 +278,7 @@ public class SteamAPI : IDisposable
             SetPage(itemUrl);
             try
             {
-                var price = ReadFromElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[2]/div[2]/div[2]/span/span"), true);
+                var price = ReadFromElement(By.XPath("//*[@id='tabContentsMyListings']/div/div[2]/div[2]/span/span"), true);
                 return ParsePrice(price);
             }
             catch
@@ -293,7 +293,7 @@ public class SteamAPI : IDisposable
         return SafeConnect(() =>
         {
             SetPage(itemUrl);
-            ClickOnElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[2]/div[2]/div[5]/div/a/span[2]"));
+            ClickOnElement(By.XPath("//*[@id='tabContentsMyListings']/div/div[2]/div[5]/div/a/span[2]"));
             return true;
         }, true);
     }
