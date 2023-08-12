@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models;
+using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
 
 public class FitPriceRule : ICancelRule
 {
     private readonly MarketDbAccess _marketDb;
-    private readonly Settings _settings;
+    private readonly ConfigurationManager _configurationManager;
 
-    public FitPriceRule(Settings settings, MarketDbAccess marketDb)
+    public FitPriceRule(ConfigurationManager configurationManager, MarketDbAccess marketDb)
     {
-        _settings = settings;
+        _configurationManager = configurationManager;
         _marketDb = marketDb;
     }
     public bool IsFollowed(ItemPage itemPage)
@@ -23,7 +23,8 @@ public class FitPriceRule : ICancelRule
         if (itemPage.MyBuyOrder is null) 
             return false;
         Log.Information("Checking if order obsolete...");
+        var currentConfiguration = _configurationManager.GetConfiguration();
         var existingBuyOrder = _marketDb.GetBuyOrders().FirstOrDefault(order => order.EngItemName == itemPage.EngItemName);
-        return existingBuyOrder is not null && itemPage.BuyOrderBook.Any(x => Math.Abs(x.Price - existingBuyOrder.Price) > _settings.FitPriceRange);
+        return existingBuyOrder is not null && itemPage.BuyOrderBook.Any(x => Math.Abs(x.Price - existingBuyOrder.Price) > currentConfiguration.FitPriceRange);
     }
 }

@@ -3,7 +3,7 @@ using System;
 
 namespace SteamTradeBot.Backend.Models;
 
-public class ServiceState
+public partial class ServiceState
 {
     public ServiceWorkingState WorkingState { get; set; } = ServiceWorkingState.Down;
     public LogInState IsLoggedIn { get; set; }
@@ -16,17 +16,4 @@ public class ServiceState
     public int Warnings { get; set; }
     public TimeSpan Uptime { get; set; }
     public List<string> Events { get; set; } = new();
-
-    public enum ServiceWorkingState
-    {
-        Up,
-        Down
-    }
-
-    public enum LogInState
-    {
-        NotLoggedIn,
-        LoggedIn,
-        Pending
-    }
 }

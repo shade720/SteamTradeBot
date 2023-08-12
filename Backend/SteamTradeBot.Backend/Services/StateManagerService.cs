@@ -4,19 +4,18 @@ using System.Diagnostics;
 using System.Linq;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models;
-using Microsoft.EntityFrameworkCore;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer;
+namespace SteamTradeBot.Backend.Services;
 
-public class StateManager
+public class StateManagerService
 {
     private readonly HistoryDbAccess _historyDb;
     private readonly ServiceState _serviceState;
     private readonly Stopwatch _stopwatch;
 
-    public StateManager(IDbContextFactory<TradeBotDataContext> tradeBotDataContextFactory)
+    public StateManagerService(HistoryDbAccess historyDb)
     {
-        _historyDb = new HistoryDbAccess(tradeBotDataContextFactory);
+        _historyDb = historyDb;
         var previousMarketEvents = _historyDb.GetHistory();
         _serviceState = new ServiceState
         {
@@ -59,31 +58,31 @@ public class StateManager
 
     public void OnTradingStarted()
     {
-        _serviceState.WorkingState = ServiceState.ServiceWorkingState.Up;
+        _serviceState.WorkingState = ServiceWorkingState.Up;
         _stopwatch.Start();
     }
 
     public void OnTradingStopped()
     {
-        _serviceState.WorkingState = ServiceState.ServiceWorkingState.Down;
+        _serviceState.WorkingState = ServiceWorkingState.Down;
         _stopwatch.Stop();
         _stopwatch.Reset();
     }
 
     public void OnLogInPending()
     {
-        _serviceState.IsLoggedIn = ServiceState.LogInState.Pending;
+        _serviceState.IsLoggedIn = LogInState.Pending;
     }
 
     public void OnLoggedIn(string login)
     {
-        _serviceState.IsLoggedIn = ServiceState.LogInState.LoggedIn;
+        _serviceState.IsLoggedIn = LogInState.LoggedIn;
         _serviceState.CurrentUser = login;
     }
 
     public void OnLoggedOut()
     {
-        _serviceState.IsLoggedIn = ServiceState.LogInState.NotLoggedIn;
+        _serviceState.IsLoggedIn = LogInState.NotLoggedIn;
         _serviceState.CurrentUser = string.Empty;
     }
 
@@ -104,7 +103,7 @@ public class StateManager
         _historyDb.AddNewEvent(new TradingEvent
         {
             Type = InfoType.ItemAnalyzed,
-            CurrentBalance = itemPage.Balance,
+            CurrentBalance = itemPage.CurrentBalance,
             Time = DateTime.UtcNow,
             Info = itemPage.EngItemName
         });
