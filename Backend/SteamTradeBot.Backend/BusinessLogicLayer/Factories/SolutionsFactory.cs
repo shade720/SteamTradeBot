@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Services;
+using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 

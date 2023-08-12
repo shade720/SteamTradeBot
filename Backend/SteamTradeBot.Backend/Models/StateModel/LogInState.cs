@@ -1,4 +1,4 @@
-﻿namespace SteamTradeBot.Backend.Models;
+﻿namespace SteamTradeBot.Backend.Models.StateModel;
 
 public enum LogInState
 {

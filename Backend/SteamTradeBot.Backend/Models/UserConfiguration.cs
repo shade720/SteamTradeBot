@@ -1,10 +1,9 @@
-﻿namespace SteamTradeBot.Backend.Models.Configuration;
+﻿namespace SteamTradeBot.Backend.Models;
 
-public class Configuration
+public class UserConfiguration
 {
     public string Login { get; set; }
     public string Password { get; set; }
-    public string Token { get; set; }
     public string Secret { get; set; }
     public double Trend { get; set; }
     public double AveragePrice { get; set; }

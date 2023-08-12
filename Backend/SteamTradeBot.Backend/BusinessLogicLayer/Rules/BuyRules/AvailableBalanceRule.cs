@@ -1,6 +1,8 @@
 ﻿using Serilog;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
+using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Services;
+using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
@@ -17,8 +19,7 @@ public class AvailableBalanceRule : IBuyRule
     public bool IsFollowed(ItemPage itemPage)
     {
         Log.Information("Checking available balance...");
-        var currentConfiguration = _configurationManager.GetConfiguration();
-        var availableBalance = _api.GetBalance() * currentConfiguration.AvailableBalance;
+        var availableBalance = _api.GetBalance() * _configurationManager.AvailableBalance;
         if (availableBalance > itemPage.EstimatedBuyPrice) 
             return true;
         Log.Information("Item is not profitable. Reason: no money for this item. Available balance: {0} < Price: {1}", availableBalance, itemPage.EstimatedBuyPrice);

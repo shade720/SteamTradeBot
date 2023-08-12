@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using Serilog;
+using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
 

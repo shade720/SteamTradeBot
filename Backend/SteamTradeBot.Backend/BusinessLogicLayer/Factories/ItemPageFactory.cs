@@ -1,7 +1,8 @@
 ﻿using System;
 using Serilog;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Services;
+using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
@@ -38,12 +39,11 @@ public class ItemPageFactory
             };
         }
 
-        var configuration = _configurationManager.GetConfiguration();
-        var fromDate = DateTime.Now.AddDays(-configuration.AnalysisIntervalDays);
+        var fromDate = DateTime.Now.AddDays(-_configurationManager.AnalysisIntervalDays);
         itemPage.SalesChart = _api.GetGraph(itemPage.ItemUrl, fromDate);
 
-        itemPage.BuyOrderBook = _api.GetBuyOrdersBook(itemPage.ItemUrl, configuration.BuyListingFindRange);
-        itemPage.SellOrderBook = _api.GetSellOrdersBook(itemPage.ItemUrl, configuration.SellListingFindRange);
+        itemPage.BuyOrderBook = _api.GetBuyOrdersBook(itemPage.ItemUrl, _configurationManager.BuyListingFindRange);
+        itemPage.SellOrderBook = _api.GetSellOrdersBook(itemPage.ItemUrl, _configurationManager.SellListingFindRange);
 
         return itemPage;
     }

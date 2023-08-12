@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.ItemModel;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
+namespace SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 
 public interface ICancelRule
 {

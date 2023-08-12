@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.Models;
-using SteamTradeBot.Backend.Models.Configuration;
+using SteamTradeBot.Backend.Models.StateModel;
 using SteamTradeBot.Backend.Services;
 
 namespace SteamTradeBot.Backend;
@@ -16,10 +16,10 @@ public class TradeBotController : ControllerBase
 {
     [HttpPost]
     [Route("activation")]
-    public async Task StartBot(WorkerService worker, ConfigurationManager configurationManager, SteamAPI api, Configuration configuration)
+    public async Task StartBot(WorkerService worker, ConfigurationManager configurationManager, SteamAPI api, UserConfiguration userConfiguration)
     {
-        configurationManager.SetForUser(configuration.Login, configuration);
-        api.LogIn(configuration.Login, configuration.Password, configuration.Token, configuration.Secret);
+        configurationManager.SetConfigurationContextForUser(userConfiguration.Login, userConfiguration);
+        api.LogIn(configurationManager.Login, configurationManager.Password, configurationManager.Secret);
         await worker.Start();
     }
 
@@ -32,10 +32,10 @@ public class TradeBotController : ControllerBase
     }
 
     [HttpPost]
-    [Route("configuration")]
-    public async Task SetConfiguration(ConfigurationManager configurationManager, [FromBody] Configuration configuration)
+    [Route("userConfiguration")]
+    public async Task SetConfiguration(ConfigurationManager configurationManager, UserConfiguration userConfiguration)
     {
-        configurationManager.RefreshConfiguration(configuration);
+        configurationManager.RefreshConfiguration(userConfiguration);
     }
 
     [HttpPost]

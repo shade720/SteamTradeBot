@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.StateModel;
 using System.Collections.Generic;
 using System.Linq;
 

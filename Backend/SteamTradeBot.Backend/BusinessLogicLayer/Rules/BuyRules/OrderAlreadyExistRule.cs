@@ -1,5 +1,6 @@
 ﻿using Serilog;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
+using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 

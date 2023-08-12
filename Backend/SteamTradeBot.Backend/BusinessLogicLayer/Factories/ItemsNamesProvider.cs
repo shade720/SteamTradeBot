@@ -25,13 +25,12 @@ public class ItemsNamesProvider
         {
             while (true)
             {
-                var currentConfiguration = _configurationManager.GetConfiguration();
                 Log.Information("Load items for analysis....");
                 var loadedItemNamesList = _api.GetItemNamesList(
-                        currentConfiguration.MinPrice,
-                        currentConfiguration.MaxPrice,
-                        currentConfiguration.SalesPerWeek * 7,
-                        currentConfiguration.ItemListSize)
+                        _configurationManager.MinPrice,
+                        _configurationManager.MaxPrice,
+                        _configurationManager.SalesPerWeek * 7,
+                        _configurationManager.ItemListSize)
                     .ToList();
                 var existingOrdersItemNames = _marketDb.GetBuyOrders().Select(x => x.EngItemName);
                 foreach (var itemName in existingOrdersItemNames)

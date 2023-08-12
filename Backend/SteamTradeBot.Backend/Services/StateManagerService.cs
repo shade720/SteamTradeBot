@@ -3,7 +3,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.ItemModel;
+using SteamTradeBot.Backend.Models.StateModel;
 
 namespace SteamTradeBot.Backend.Services;
 

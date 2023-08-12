@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SteamTradeBot.Backend.Models;
+namespace SteamTradeBot.Backend.Models.StateModel;
 
 public class TradingEvent
 {
@@ -12,14 +12,4 @@ public class TradingEvent
     public double SellPrice { get; set; }
     public double Profit { get; set; }
     public double CurrentBalance { get; set; }
-}
-
-public enum InfoType
-{
-    ItemAnalyzed,
-    ItemBought,
-    ItemSold,
-    ItemCanceled,
-    Error,
-    Warning
 }

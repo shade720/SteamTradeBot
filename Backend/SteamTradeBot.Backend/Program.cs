@@ -16,7 +16,6 @@ using SteamTradeBot.Backend.BusinessLogicLayer.Rules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
 using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Models;
 using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 using SteamTradeBot.Backend.Services;
 using Microsoft.AspNetCore.Diagnostics;
@@ -25,8 +24,9 @@ using Newtonsoft.Json;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
+using SteamTradeBot.Backend.BusinessLogicLayer.Extensions;
 using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
-using SteamTradeBot.Backend.Models.Configuration;
+using SteamTradeBot.Backend.Models.StateModel;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
@@ -47,13 +47,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Log.Logger);
 
-builder.Configuration.SetBasePath(Environment.CurrentDirectory)
-    .AddJsonFile("UserConfigurations.json", true, true)
-    .AddJsonFile($"UserConfigurations.{Environment.UserDomainName}.json", true, true)
-    .AddEnvironmentVariables();
+builder.Configuration.AddUsersConfigurations();
 
-builder.Services.AddScoped<ConfigurationManager>();
-builder.Services.Configure<UserConfigurations>(builder.Configuration);
 
 var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? builder.Configuration["PostgresConnectionString"];
 var sqlServerConnectionString = builder.Configuration["SqlServerConnectionString"];
@@ -85,6 +80,7 @@ builder.Services.AddScoped(_ => new SteamAPI(() =>
 builder.Services.AddScoped<MarketDbAccess>();
 builder.Services.AddScoped<HistoryDbAccess>();
 
+builder.Services.AddScoped<ConfigurationManager>();
 builder.Services.AddScoped<StateManagerService>();
 builder.Services.AddTransient<LogsProviderService>();
 builder.Services.AddTransient<OrderCancellingService>();

@@ -1,8 +1,9 @@
 ﻿using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Services;
+using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
+namespace SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 
 public abstract class MarketSolution
 {

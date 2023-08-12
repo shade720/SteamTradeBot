@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.ItemModel;
+using SteamTradeBot.Backend.Models.StateModel;
 
 namespace SteamTradeBot.Backend.DataAccessLayer;
 

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SteamTradeBot.Backend.Models;
+namespace SteamTradeBot.Backend.Models.ItemModel;
 
-public class BuyOrder
+public class SellOrder
 {
     [Key]
     public int Id { get; set; }

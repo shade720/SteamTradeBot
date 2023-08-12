@@ -3,7 +3,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Serilog;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.ItemModel;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -349,13 +349,12 @@ public class SteamAPI : IDisposable
 
     #endregion
 
-    public void LogIn(string login, string password, string token, string secret)
+    public void LogIn(string login, string password, string secret)
     {
         Log.Information("Signing in...");
-        Log.Information($"Incoming user data {login}, {password}, {token}");
+        Log.Information($"Incoming user data {login}, {password}, {secret}");
 
-        if (string.IsNullOrEmpty(token))
-            token = GetToken(secret);
+        var token = GetToken(secret);
 
         if (_logState)
         {

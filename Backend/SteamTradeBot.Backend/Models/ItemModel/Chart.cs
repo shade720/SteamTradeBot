@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using static SteamTradeBot.Backend.Models.Chart;
+using static SteamTradeBot.Backend.Models.ItemModel.Chart;
 
-namespace SteamTradeBot.Backend.Models;
+namespace SteamTradeBot.Backend.Models.ItemModel;
 
 public class Chart : IEnumerable<PointInfo>
 {

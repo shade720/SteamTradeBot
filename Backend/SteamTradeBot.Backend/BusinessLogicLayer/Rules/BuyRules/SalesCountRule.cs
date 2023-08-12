@@ -1,7 +1,9 @@
 ﻿using System.Linq;
 using Serilog;
-using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
+using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Services;
+using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
@@ -16,12 +18,11 @@ public class SalesCountRule : IBuyRule
     public bool IsFollowed(ItemPage itemPage)
     {
         Log.Information("Checking sales per week...");
-        var currentConfiguration = _configurationManager.GetConfiguration();
 
         var salesByDay = SalesByDay(itemPage.SalesChart);
-        if (salesByDay > currentConfiguration.SalesPerWeek) 
+        if (salesByDay > _configurationManager.SalesPerWeek) 
             return true;
-        Log.Information("Item is not profitable. Reason: sales volume is lower than needed. Current sales: {0} < Required sales: {1}", salesByDay, currentConfiguration.SalesPerWeek);
+        Log.Information("Item is not profitable. Reason: sales volume is lower than needed. Current sales: {0} < Required sales: {1}", salesByDay, _configurationManager.SalesPerWeek);
         return false;
     }
 

@@ -1,4 +1,4 @@
-﻿namespace SteamTradeBot.Backend.Models;
+﻿namespace SteamTradeBot.Backend.Models.ItemModel;
 
 public class OrderBookItem
 {
