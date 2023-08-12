@@ -1,20 +1,16 @@
-﻿#nullable enable
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
+using Serilog;
+using SteamTradeBot.Backend.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Microsoft.Extensions.Options;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Remote;
-using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.WaitHelpers;
-using Serilog;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
@@ -26,25 +22,10 @@ public class SteamAPI : IDisposable
     private const int RequestDelayMs = 5000;
     private const int RetryWaitTimeMs = 2000;
     private const int RetriesCount = 5;
-    private readonly string _webDriverHost = Environment.GetEnvironmentVariable("SELENIUM_HOST") ?? "http://localhost:5051";
 
-    public SteamAPI()
+    public SteamAPI(Func<IWebDriver> webDriver)
     {
-        var chromeOptions = new ChromeOptions();
-        chromeOptions.AddArgument("--disable-gpu");
-        chromeOptions.AddArgument("--no-sandbox");
-        chromeOptions.AddArgument("--disable-setuid-sandbox");
-        chromeOptions.AddArgument("--disable-dev-shm-usage");
-        chromeOptions.AddArgument("--start-maximized");
-        chromeOptions.AddArgument("--window-size=1920,1080");
-        chromeOptions.AddArgument("--headless");
-        chromeOptions.AddArgument("--disable-logging");
-        chromeOptions.AddArgument("--log-level=3");
-        //_chromeBrowser = new RemoteWebDriver(new Uri(_webDriverHost), chromeOptions.ToCapabilities());
-        var driverService = ChromeDriverService.CreateDefaultService();
-        driverService.EnableVerboseLogging = false;
-        driverService.SuppressInitialDiagnosticInformation = true;
-        _chromeBrowser = new ChromeDriver(driverService, chromeOptions);
+        _chromeBrowser = webDriver.Invoke();
         Log.Logger.Information("Steam Api created!");
     }
 
@@ -88,9 +69,10 @@ public class SteamAPI : IDisposable
         var orderBook = new List<OrderBookItem>();
         for (var pageIdx = 1; pageIdx <= sellListingFindRange; pageIdx++)
         {
+            var idx = pageIdx;
             for (var itemIdx = 0; itemIdx < sellListingPageSize; itemIdx++)
             {
-                var sellPriceStr = SafeConnect(() => ReadFromElement(By.XPath($"//*[@id='searchResultsRows']/div[{itemIdx + 2}]/div[2]/div[2]/span[1]/span[1]")));
+                var sellPriceStr = SafeConnect(() => ReadFromElement(By.XPath($"//*[@id='searchResultsRows']/div[{idx + 2}]/div[2]/div[2]/span[1]/span[1]")));
                 var price = ParsePrice(sellPriceStr);
                 if (price == 0)
                     continue;
@@ -100,9 +82,10 @@ public class SteamAPI : IDisposable
                 else
                     orderBook.Add(new OrderBookItem { Price = price, Quantity = 1 });
             }
+
             SafeConnect(() =>
             {
-                ClickOnElement(By.XPath($"//*[@id='searchResults_links']/span[{pageIdx + 1}]"));
+                ClickOnElement(By.XPath($"//*[@id='searchResults_links']/span[{idx + 1}]"));
                 return true;
             }, true);
         }
@@ -113,42 +96,40 @@ public class SteamAPI : IDisposable
     {
         if (string.IsNullOrEmpty(priceStr))
             return 0;
-        priceStr = string.Join("", priceStr.SkipWhile(x => !char.IsDigit(x)).TakeWhile(x => !char.IsWhiteSpace(x))).Replace(',','.');
+        priceStr = string.Join("", priceStr.SkipWhile(x => !char.IsDigit(x)).TakeWhile(x => !char.IsWhiteSpace(x))).Replace(',', '.');
         return double.TryParse(priceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0;
-    }
-
-    public class OrderBookItem
-    {
-        public double Price { get; init; }
-        public int Quantity { get; set; }
     }
 
     #endregion
 
-    #region Graph
+    #region Chart
 
-    public IEnumerable<PointInfo> GetGraph(string itemUrl)
+    public Chart GetGraph(string itemUrl, DateTime fromDate)
     {
         if (!SafeConnect(() =>
-        {
-            SetPage(itemUrl);
-            ClickOnElement(By.CssSelector("#mainContents > div.market_page_fullwidth.market_listing_firstsection > div > div.zoom_controls.pricehistory_zoom_controls > a:nth-child(3)"));
-            return true;
-        })) return new List<PointInfo>();
+            {
+                SetPage(itemUrl);
+                ClickOnElement(By.CssSelector("#mainContents > div.market_page_fullwidth.market_listing_firstsection > div > div.zoom_controls.pricehistory_zoom_controls > a:nth-child(3)"));
+                return true;
+            })) return new Chart();
 
-        return string.Join("", _chromeBrowser.PageSource
-                 .Split("\n")
-                 .First(x => x.StartsWith("\t\t\tvar line1="))
-                 .SkipWhile(x => x != '['))
-             .Split(",")
-             .Select(DeleteServiceCharacters)
-             .Chunk(3)
-             .Select(x => new PointInfo
-             {
-                 Date = DateTime.ParseExact(x[0], "MMM dd yyyy HH: z", CultureInfo.InvariantCulture),
-                 Price = double.Parse(x[1], NumberStyles.Any, CultureInfo.InvariantCulture),
-                 Quantity = int.Parse(x[2])
-             });
+        var graphHtmlString = string.Join("", _chromeBrowser.PageSource
+            .Split("\n")
+            .First(x => x.StartsWith("\t\t\tvar line1="))
+            .SkipWhile(x => x != '['));
+
+        var graphPoints = graphHtmlString
+            .Split(",")
+            .Select(DeleteServiceCharacters)
+            .Chunk(3)
+            .Select(x => new Chart.PointInfo
+            {
+                Date = DateTime.ParseExact(x[0], "MMM dd yyyy HH: z", CultureInfo.InvariantCulture),
+                Price = double.Parse(x[1], NumberStyles.Any, CultureInfo.InvariantCulture),
+                Quantity = int.Parse(x[2])
+            })
+            .Where(x => x.Date > fromDate);
+        return new Chart(graphPoints);
     }
 
     private static string DeleteServiceCharacters(string line)
@@ -156,12 +137,6 @@ public class SteamAPI : IDisposable
         return line.Replace("\"", "").Replace("\r", "").Replace("\t", "").Replace(";", "").TrimStart('[').TrimEnd(']');
     }
 
-    public class PointInfo
-    {
-        public DateTime Date { get; init; }
-        public double Price { get; init; }
-        public int Quantity { get; init; }
-    }
 
     #endregion
 
@@ -296,7 +271,7 @@ public class SteamAPI : IDisposable
 
     #region GetItemList
 
-    public IEnumerable<string> GetItemNamesList(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
+    public List<string> GetItemNamesList(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
     {
         return SafeConnect(() =>
         {

@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.IO;
+using System.Runtime;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
 using Serilog;
 
 namespace SteamTradeBot.Backend.Models;
@@ -7,6 +13,8 @@ namespace SteamTradeBot.Backend.Models;
 public class Settings
 {
     private readonly IConfiguration _configuration;
+    private const string SettingsFileName = "appsettings.json";
+    private static readonly string ConfigurationPath = Path.Combine(Environment.CurrentDirectory, SettingsFileName);
 
     public Settings(IConfiguration configuration)
     {
@@ -90,5 +98,49 @@ public class Settings
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    public void SetConfiguration(string newSettings)
+    {
+        Log.Logger.Information("Start settings update...");
+        var currentSettings = File.ReadAllText(ConfigurationPath);
+
+        var jsonSettings = new JsonSerializerSettings();
+        jsonSettings.Converters.Add(new ExpandoObjectConverter());
+        jsonSettings.Converters.Add(new StringEnumConverter());
+
+        dynamic? currentConfig = JsonConvert.DeserializeObject<ExpandoObject>(currentSettings, jsonSettings);
+        dynamic? newConfig = JsonConvert.DeserializeObject<ExpandoObject>(newSettings, jsonSettings);
+
+        if (currentConfig is null)
+        {
+            Log.Logger.Error("Cannot deserialize appsettings.json file");
+            return;
+        }
+        if (newConfig is null)
+        {
+            Log.Logger.Error("Cannot deserialize new settings file");
+            return;
+        }
+
+        var newConfigDict = (IDictionary<string, object>)newConfig;
+        var currentConfigDict = (IDictionary<string, object>)currentConfig;
+        var targetSection = (IDictionary<string, object>)currentConfigDict["TradeBotSettings"];
+
+        foreach (var pair in newConfigDict)
+        {
+            if (targetSection.ContainsKey(pair.Key))
+                targetSection[pair.Key] = pair.Value;
+        }
+
+        var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
+        File.WriteAllText(ConfigurationPath, updatedSettings);
+
+        if (!CheckIntegrity())
+        {
+            File.WriteAllText(ConfigurationPath, currentSettings);
+            Log.Logger.Information("Settings have not been updated. Configuration was corrupted.");
+        }
+        Log.Logger.Information("Settings have been updated!");
     }
 }

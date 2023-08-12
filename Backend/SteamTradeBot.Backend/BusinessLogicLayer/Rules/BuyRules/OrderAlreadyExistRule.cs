@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using SteamTradeBot.Backend.Models;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.ProfitRules;
+namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
 public class OrderAlreadyExistRule : IBuyRule
 {
