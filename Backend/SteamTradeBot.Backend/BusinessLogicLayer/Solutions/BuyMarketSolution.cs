@@ -1,16 +1,16 @@
 ﻿using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models.ItemModel;
-using SteamTradeBot.Backend.Services;
 using System;
 using System.Linq;
+using SteamTradeBot.Backend.Services;
 using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 
 public class BuyMarketSolution : MarketSolution
 {
-    public BuyMarketSolution(SteamAPI api, MarketDbAccess marketDb, ConfigurationManager configurationManager) : base(api, marketDb, configurationManager) { }
+    public BuyMarketSolution(SteamAPI api, MarketDbAccess marketDb, ConfigurationManager configurationManager, StateManagerService stateManager) : base(api, marketDb, configurationManager, stateManager) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -27,5 +27,6 @@ public class BuyMarketSolution : MarketSolution
         };
         SteamApi.PlaceBuyOrder(buyOrder.ItemUrl, buyOrder.Price, buyOrder.Quantity);
         MarketDb.AddOrUpdateBuyOrder(buyOrder);
+        StateManager.OnItemBuying(buyOrder);
     }
 }

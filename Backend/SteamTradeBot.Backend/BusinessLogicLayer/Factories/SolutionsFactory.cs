@@ -12,22 +12,25 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 public class SolutionsFactory
 {
     private readonly MarketRules _rules;
-
+    private readonly StateManagerService _stateManager;
     private static Dictionary<string, MarketSolution> _solutions;
 
-    public SolutionsFactory(SteamAPI api, MarketDbAccess marketDb, ConfigurationManager configurationManager, MarketRules rules)
+    public SolutionsFactory(SteamAPI api, MarketDbAccess marketDb, ConfigurationManager configurationManager, MarketRules rules, StateManagerService stateManager)
     {
         _rules = rules;
+        _stateManager = stateManager;
         _solutions = new Dictionary<string, MarketSolution>
         {
-            { nameof(BuyMarketSolution), new BuyMarketSolution(api, marketDb, configurationManager) },
-            { nameof(SellMarketSolution), new SellMarketSolution(api, marketDb, configurationManager) },
-            { nameof(CancelMarketSolution), new CancelMarketSolution(api, marketDb, configurationManager) },
+            { nameof(BuyMarketSolution), new BuyMarketSolution(api, marketDb, configurationManager, stateManager) },
+            { nameof(SellMarketSolution), new SellMarketSolution(api, marketDb, configurationManager, stateManager) },
+            { nameof(CancelMarketSolution), new CancelMarketSolution(api, marketDb, configurationManager, stateManager) },
         };
     }
 
     public MarketSolution? GetSolution(ItemPage itemPage)
     {
+        _stateManager.OnItemAnalyzed(itemPage);
+
         if (_rules.CanSellItem(itemPage))
             return _solutions[nameof(SellMarketSolution)];
 

@@ -12,7 +12,7 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 
 public class SellMarketSolution : MarketSolution
 {
-    public SellMarketSolution(SteamAPI api, MarketDbAccess marketDb, ConfigurationManager configurationManager) : base(api, marketDb, configurationManager) { }
+    public SellMarketSolution(SteamAPI api, MarketDbAccess marketDb, ConfigurationManager configurationManager, StateManagerService stateManager) : base(api, marketDb, configurationManager, stateManager) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -46,5 +46,6 @@ public class SellMarketSolution : MarketSolution
             MarketDb.AddOrUpdateBuyOrder(buyOrder);
         }
         MarketDb.AddOrUpdateSellOrder(sellOrder);
+        StateManager.OnItemSelling(sellOrder);
     }
 }

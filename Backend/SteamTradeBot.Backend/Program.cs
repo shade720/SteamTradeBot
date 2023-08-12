@@ -27,6 +27,7 @@ using OpenQA.Selenium.Remote;
 using SteamTradeBot.Backend.BusinessLogicLayer.Extensions;
 using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 using SteamTradeBot.Backend.Models.StateModel;
+using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
@@ -48,7 +49,6 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Log.Logger);
 
 builder.Configuration.AddUsersConfigurations();
-
 
 var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? builder.Configuration["PostgresConnectionString"];
 var sqlServerConnectionString = builder.Configuration["SqlServerConnectionString"];
@@ -97,7 +97,7 @@ builder.Services.AddTransient<ICancelRule, FitPriceRule>();
 builder.Services.AddTransient<MarketRules>();
 builder.Services.AddTransient<SolutionsFactory>();
 builder.Services.AddTransient<ItemPageFactory>();
-builder.Services.AddTransient<ItemsNamesProvider>();
+builder.Services.AddScoped<ItemsNamesProvider>();
 
 builder.Services.AddScoped<WorkerService>();
 
