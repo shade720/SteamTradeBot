@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SteamTradeBot.Backend.Models.ItemModel;
 
@@ -16,58 +17,64 @@ public class MarketDbAccess
 
     #region BuyOrders
 
-    public void AddOrUpdateBuyOrder(BuyOrder order)
+    public async Task AddOrUpdateBuyOrderAsync(BuyOrder order)
     {
-        using var context = _tradeBotDataContextFactory.CreateDbContext();
-        if (context.BuyOrders.Contains(order))
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        if (await context.BuyOrders.ContainsAsync(order))
             context.BuyOrders.Update(order);
         else
-            context.BuyOrders.Add(order);
-        context.SaveChanges();
+            await context.BuyOrders.AddAsync(order);
+        await context.SaveChangesAsync();
     }
 
-    public void RemoveBuyOrder(BuyOrder order)
+    public async Task RemoveBuyOrderAsync(BuyOrder order)
     {
-        using var context = _tradeBotDataContextFactory.CreateDbContext();
-        var itemSetToRemove = context.BuyOrders.FirstOrDefault(i => i.EngItemName == order.EngItemName && i.RusItemName == order.RusItemName);
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        var itemSetToRemove = await context.BuyOrders.FirstOrDefaultAsync(i => i.EngItemName == order.EngItemName && i.RusItemName == order.RusItemName && i.UserName == order.UserName);
         if (itemSetToRemove is not null)
             context.BuyOrders.Remove(itemSetToRemove);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
     }
 
-    public List<BuyOrder> GetBuyOrders()
+    public async Task<List<BuyOrder>> GetBuyOrdersAsync()
     {
-        using var context = _tradeBotDataContextFactory.CreateDbContext();
-        return context.BuyOrders.ToList();
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        return await context.BuyOrders.ToListAsync();
+    }
+
+    public async Task<BuyOrder?> GetBuyOrderAsync(string engName, string username)
+    {
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        return await context.BuyOrders.FirstOrDefaultAsync(i => i.EngItemName == engName && i.UserName == username);
     }
 
     #endregion
 
     #region SellOrders
 
-    public void AddOrUpdateSellOrder(SellOrder order)
+    public async Task AddOrUpdateSellOrderAsync(SellOrder order)
     {
-        using var context = _tradeBotDataContextFactory.CreateDbContext();
-        if (context.SellOrders.Contains(order))
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        if (await context.SellOrders.ContainsAsync(order))
             context.SellOrders.Update(order);
         else
-            context.SellOrders.Add(order);
-        context.SaveChanges();
+            await context.SellOrders.AddAsync(order);
+        await context.SaveChangesAsync();
     }
 
-    public void RemoveSellOrder(SellOrder order)
+    public async Task RemoveSellOrderAsync(SellOrder order)
     {
-        using var context = _tradeBotDataContextFactory.CreateDbContext();
-        var itemSetToRemove = context.SellOrders.FirstOrDefault(i => i.EngItemName == order.EngItemName && i.RusItemName == order.RusItemName);
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        var itemSetToRemove = await context.SellOrders.FirstOrDefaultAsync(i => i.EngItemName == order.EngItemName && i.RusItemName == order.RusItemName && i.UserName == order.UserName);
         if (itemSetToRemove is not null)
             context.SellOrders.Remove(itemSetToRemove);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
     }
 
-    public List<SellOrder> GetSellOrders()
+    public async Task<List<SellOrder>> GetSellOrdersAsync()
     {
-        using var context = _tradeBotDataContextFactory.CreateDbContext();
-        return context.SellOrders.ToList();
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        return await context.SellOrders.ToListAsync();
     }
 
     #endregion

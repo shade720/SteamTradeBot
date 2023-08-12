@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamTradeBot.Backend.Models.StateModel;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.DataAccessLayer;
 
@@ -14,23 +14,23 @@ public class HistoryDbAccess
         _tradeBotDataContextFactory = tradeBotDataContextFactory;
     }
 
-    public void AddNewEvent(TradingEvent tradingEvent)
+    public async Task AddNewEventAsync(TradingEvent tradingEvent)
     {
-        using var context = _tradeBotDataContextFactory.CreateDbContext();
-        context.History.Add(tradingEvent);
-        context.SaveChanges();
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        await context.History.AddAsync(tradingEvent);
+        await context.SaveChangesAsync();
     }
 
-    public List<TradingEvent> GetHistory()
+    public async Task<List<TradingEvent>> GetHistoryAsync()
     {
-        using var context = _tradeBotDataContextFactory.CreateDbContext();
-        return context.History.ToList();
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        return await context.History.ToListAsync();
     }
 
-    public void ClearHistory()
+    public async Task ClearHistoryAsync()
     {
-        using var context = _tradeBotDataContextFactory.CreateDbContext();
-        context.History.ExecuteDelete();
-        context.SaveChanges();
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        await context.History.ExecuteDeleteAsync();
+        await context.SaveChangesAsync();
     }
 }

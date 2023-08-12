@@ -1,8 +1,8 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Serilog;
 using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
-using SteamTradeBot.Backend.Services;
 using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
@@ -17,15 +17,23 @@ public class AveragePriceRule : IBuyRule
     }
     public bool IsFollowed(ItemPage itemPage)
     {
-        Log.Information("Checking average price...");
+        throw new System.NotImplementedException();
+    }
 
-        var avgPriceFromChart = AveragePrice(itemPage.SalesChart);
+    public async Task<bool> IsFollowedAsync(ItemPage itemPage)
+    {
+        return await Task.Run(() =>
+        {
+            Log.Information("Checking average price...");
 
-        if (itemPage.SellOrderBook.Any(sellOrder => sellOrder.Price > avgPriceFromChart + _configurationManager.AveragePrice)) 
-            return true;
-        Log.Information("Item is not profitable. Reason: average price is higher than needed. Max sell price: {0} < Required average price: {1}", 
-            itemPage.SellOrderBook.Max(sellOrder => sellOrder.Price), avgPriceFromChart + _configurationManager.AveragePrice);
-        return false;
+            var avgPriceFromChart = AveragePrice(itemPage.SalesChart);
+
+            if (itemPage.SellOrderBook.Any(sellOrder => sellOrder.Price > avgPriceFromChart + _configurationManager.AveragePrice))
+                return true;
+            Log.Information("Item is not profitable. Reason: average price is higher than needed. Max sell price: {0} < Required average price: {1}",
+                itemPage.SellOrderBook.Max(sellOrder => sellOrder.Price), avgPriceFromChart + _configurationManager.AveragePrice);
+            return false;
+        });
     }
 
     private static double AveragePrice(Chart salesChart)

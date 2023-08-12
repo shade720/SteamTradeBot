@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using System.Threading.Tasks;
+using Serilog;
 using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Services;
@@ -18,9 +19,14 @@ public class AvailableBalanceRule : IBuyRule
     }
     public bool IsFollowed(ItemPage itemPage)
     {
+        throw new System.NotImplementedException();
+    }
+
+    public async Task<bool> IsFollowedAsync(ItemPage itemPage)
+    {
         Log.Information("Checking available balance...");
-        var availableBalance = _api.GetBalance() * _configurationManager.AvailableBalance;
-        if (availableBalance > itemPage.EstimatedBuyPrice) 
+        var availableBalance = await _api.GetBalanceAsync() * _configurationManager.AvailableBalance;
+        if (availableBalance > itemPage.EstimatedBuyPrice)
             return true;
         Log.Information("Item is not profitable. Reason: no money for this item. Available balance: {0} < Price: {1}", availableBalance, itemPage.EstimatedBuyPrice);
         return false;

@@ -33,28 +33,32 @@ public class WorkerService
         await Task.Run(WorkerLoop);
     }
 
-    private void WorkerLoop()
+    private async Task WorkerLoop()
     {
         _cancellationTokenSource = new CancellationTokenSource();
         Log.Information("Worker has started");
-        foreach (var name in _itemsNamesProvider.Names)
+        _stateManager.OnTradingStarted();
+        await foreach (var name in _itemsNamesProvider.GetNamesAsync())
         {
             try
             {
-                var itemPage = _itemPageFactory.Create(name);
-                var solution = _solutionsFactory.GetSolution(itemPage);
-                solution?.Perform(itemPage);
+                var itemPage = await _itemPageFactory.CreateAsync(name);
+                var solution = await _solutionsFactory.GetSolutionAsync(itemPage);
+                if (solution is null)
+                    continue;
+                await solution.PerformAsync(itemPage);
             }
             catch (Exception e)
             {
                 Log.Logger.Error("Item skipped due to error -> \r\nMessage: {0}, StackTrace: {1}", e.Message, e.StackTrace);
-                _stateManager.OnError(e);
+                await _stateManager.OnErrorAsync(e);
                 continue;
             }
 
             if (_cancellationTokenSource.IsCancellationRequested) 
                 break;
         }
+        _stateManager.OnTradingStopped();
         Log.Information("Worker has stopped");
     }
 

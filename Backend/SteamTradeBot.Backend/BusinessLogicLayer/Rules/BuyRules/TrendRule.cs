@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Serilog;
 using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
-using SteamTradeBot.Backend.Services;
 using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
@@ -19,13 +19,22 @@ public class TrendRule : IBuyRule
 
     public bool IsFollowed(ItemPage itemPage)
     {
-        Log.Information("Checking trend...");
-        var trend = PriceTrend(itemPage.SalesChart);
-        if (trend > _configurationManager.Trend)
-            return true;
-        Log.Information("Item is not profitable. Reason: trend is lower than needed. Current trend: {0} < Required trend: {1}",
-            trend.ToString("F10"), _configurationManager.Trend);
-        return false;
+        
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> IsFollowedAsync(ItemPage itemPage)
+    {
+        return await Task.Run(() =>
+        {
+            Log.Information("Checking trend...");
+            var trend = PriceTrend(itemPage.SalesChart);
+            if (trend > _configurationManager.Trend)
+                return true;
+            Log.Information("Item is not profitable. Reason: trend is lower than needed. Current trend: {0} < Required trend: {1}",
+                trend.ToString("F10"), _configurationManager.Trend);
+            return false;
+        });
     }
 
     private static double PriceTrend(Chart salesChart)

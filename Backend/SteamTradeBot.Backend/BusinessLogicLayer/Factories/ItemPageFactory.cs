@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Serilog;
 using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Services;
@@ -17,15 +18,15 @@ public class ItemPageFactory
         _configurationManager = configurationManager;
     }
 
-    public ItemPage Create(string engItemName)
+    public async Task<ItemPage> CreateAsync(string engItemName)
     {
         Log.Information("Get {0} page...", engItemName);
         var itemPage = new ItemPage { EngItemName = engItemName };
-        itemPage.ItemUrl = _api.GetItemUrl(itemPage.EngItemName);
-        itemPage.RusItemName = _api.GetRusItemName(itemPage.ItemUrl);
+        itemPage.ItemUrl = await _api.GetItemUrlAsync(itemPage.EngItemName);
+        itemPage.RusItemName = await _api.GetRusItemNameAsync(itemPage.ItemUrl);
 
-        var quantity = _api.GetBuyOrderQuantity(itemPage.ItemUrl);
-        var price = _api.GetBuyOrderPrice(itemPage.ItemUrl);
+        var quantity = await _api.GetBuyOrderQuantityAsync(itemPage.ItemUrl);
+        var price = await _api.GetBuyOrderPriceAsync(itemPage.ItemUrl);
 
         if (quantity.HasValue && price.HasValue)
         {
@@ -40,10 +41,10 @@ public class ItemPageFactory
         }
 
         var fromDate = DateTime.Now.AddDays(-_configurationManager.AnalysisIntervalDays);
-        itemPage.SalesChart = _api.GetGraph(itemPage.ItemUrl, fromDate);
+        itemPage.SalesChart = await _api.GetGraphAsync(itemPage.ItemUrl, fromDate);
 
-        itemPage.BuyOrderBook = _api.GetBuyOrdersBook(itemPage.ItemUrl, _configurationManager.BuyListingFindRange);
-        itemPage.SellOrderBook = _api.GetSellOrdersBook(itemPage.ItemUrl, _configurationManager.SellListingFindRange);
+        itemPage.BuyOrderBook = await _api.GetBuyOrdersBookAsync(itemPage.ItemUrl, _configurationManager.BuyListingFindRange);
+        itemPage.SellOrderBook = await _api.GetSellOrdersBookAsync(itemPage.ItemUrl, _configurationManager.SellListingFindRange);
 
         return itemPage;
     }

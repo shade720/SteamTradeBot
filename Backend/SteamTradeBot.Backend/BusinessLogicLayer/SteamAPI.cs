@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Serilog;
@@ -11,6 +10,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer;
 
@@ -31,18 +31,18 @@ public class SteamAPI : IDisposable
 
     #region Balance
 
-    public double GetBalance()
+    public async Task<double> GetBalanceAsync()
     {
-        return SafeConnect(() => ParsePrice(ReadFromElement(By.Id("header_wallet_balance"), true)));
+        return await SafeConnect(() => ParsePrice(ReadFromElement(By.Id("header_wallet_balance"), true)));
     }
 
     #endregion
 
     #region OrderBooks
 
-    public List<OrderBookItem> GetBuyOrdersBook(string itemUrl, int buyListingFindRange)
+    public async Task<List<OrderBookItem>> GetBuyOrdersBookAsync(string itemUrl, int buyListingFindRange)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             SetPage(itemUrl);
             var orderBook = new List<OrderBookItem>();
@@ -57,10 +57,10 @@ public class SteamAPI : IDisposable
         });
     }
 
-    public List<OrderBookItem> GetSellOrdersBook(string itemUrl, int sellListingFindRange)
+    public async Task<List<OrderBookItem>> GetSellOrdersBookAsync(string itemUrl, int sellListingFindRange)
     {
         const int sellListingPageSize = 10;
-        SafeConnect(() =>
+        await SafeConnect(() =>
         {
             SetPage(itemUrl);
             return true;
@@ -72,7 +72,7 @@ public class SteamAPI : IDisposable
             var idx = pageIdx;
             for (var itemIdx = 0; itemIdx < sellListingPageSize; itemIdx++)
             {
-                var sellPriceStr = SafeConnect(() => ReadFromElement(By.XPath($"//*[@id='searchResultsRows']/div[{idx + 2}]/div[2]/div[2]/span[1]/span[1]")));
+                var sellPriceStr = await SafeConnect(() => ReadFromElement(By.XPath($"//*[@id='searchResultsRows']/div[{idx + 2}]/div[2]/div[2]/span[1]/span[1]")));
                 var price = ParsePrice(sellPriceStr);
                 if (price == 0)
                     continue;
@@ -83,7 +83,7 @@ public class SteamAPI : IDisposable
                     orderBook.Add(new OrderBookItem { Price = price, Quantity = 1 });
             }
 
-            SafeConnect(() =>
+            await SafeConnect(() =>
             {
                 ClickOnElement(By.XPath($"//*[@id='searchResults_links']/span[{idx + 1}]"));
                 return true;
@@ -104,9 +104,9 @@ public class SteamAPI : IDisposable
 
     #region Chart
 
-    public Chart GetGraph(string itemUrl, DateTime fromDate)
+    public async Task<Chart> GetGraphAsync(string itemUrl, DateTime fromDate)
     {
-        if (!SafeConnect(() =>
+        if (!await SafeConnect(() =>
             {
                 SetPage(itemUrl);
                 ClickOnElement(By.CssSelector("#mainContents > div.market_page_fullwidth.market_listing_firstsection > div > div.zoom_controls.pricehistory_zoom_controls > a:nth-child(3)"));
@@ -142,9 +142,9 @@ public class SteamAPI : IDisposable
 
     #region SellOrder
 
-    public bool PlaceSellOrder(string itemName, double price, string userId, int inventoryFindRange = 10)
+    public async Task<bool> PlaceSellOrderAsync(string itemName, double price, string userId, int inventoryFindRange = 10)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             SetPage($"https://steamcommunity.com/profiles/{userId}/inventory/#730");
             for (var i = 0; i < inventoryFindRange; i++)
@@ -166,9 +166,9 @@ public class SteamAPI : IDisposable
         });
     }
 
-    public double? GetSellOrderPrice(string itemUrl)
+    public async Task<double?> GetSellOrderPriceAsync(string itemUrl)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             SetPage(itemUrl);
             try
@@ -183,9 +183,9 @@ public class SteamAPI : IDisposable
         });
     }
 
-    public bool CancelSellOrder(string itemUrl)
+    public async Task<bool> CancelSellOrderAsync(string itemUrl)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             SetPage(itemUrl);
             ClickOnElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[1]/div[2]/div/div[5]/div/a/span[2]"));
@@ -198,9 +198,9 @@ public class SteamAPI : IDisposable
 
     #region BuyOrder
 
-    public string GetRusItemName(string itemUrl)
+    public async Task<string> GetRusItemNameAsync(string itemUrl)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             SetPage(itemUrl);
             var itemName = ReadFromElement(By.Id("largeiteminfo_item_name"));
@@ -209,9 +209,9 @@ public class SteamAPI : IDisposable
         });
     }
 
-    public bool PlaceBuyOrder(string itemUrl, double price, int quantity)
+    public async Task<bool> PlaceBuyOrderAsync(string itemUrl, double price, int quantity)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             SetPage(itemUrl);
             ClickOnElement(By.XPath("//*[@id='market_buyorder_info']/div/div/a"));
@@ -223,9 +223,9 @@ public class SteamAPI : IDisposable
         }, true);
     }
 
-    public int? GetBuyOrderQuantity(string itemUrl)
+    public async Task<int?> GetBuyOrderQuantityAsync(string itemUrl)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             SetPage(itemUrl);
             try
@@ -240,9 +240,9 @@ public class SteamAPI : IDisposable
         });
     }
 
-    public double? GetBuyOrderPrice(string itemUrl)
+    public async Task<double?> GetBuyOrderPriceAsync(string itemUrl)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             SetPage(itemUrl);
             try
@@ -257,9 +257,9 @@ public class SteamAPI : IDisposable
         });
     }
 
-    public bool CancelBuyOrder(string itemUrl)
+    public async Task<bool> CancelBuyOrderAsync(string itemUrl)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             SetPage(itemUrl);
             ClickOnElement(By.XPath("//*[@id='tabContentsMyListings']/div/div[2]/div[5]/div/a/span[2]"));
@@ -271,9 +271,9 @@ public class SteamAPI : IDisposable
 
     #region GetItemList
 
-    public List<string> GetItemNamesList(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
+    public async Task<List<string>> GetItemNamesListAsync(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             var result = new List<string>();
             SetPage("https://skins-table.xyz/table/");
@@ -326,9 +326,9 @@ public class SteamAPI : IDisposable
         });
     }
 
-    public string GetItemUrl(string itemName)
+    public async Task<string> GetItemUrlAsync(string itemName)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             _chromeBrowser.Navigate().GoToUrl($"https://steamcommunity.com/market/listings/730/{itemName}");
             return _chromeBrowser.Url;
@@ -349,12 +349,12 @@ public class SteamAPI : IDisposable
 
     #endregion
 
-    public void LogIn(string login, string password, string secret)
+    public async Task LogIn(string login, string password, string secret)
     {
         Log.Information("Signing in...");
         Log.Information($"Incoming user data {login}, {password}, {secret}");
 
-        var token = GetToken(secret);
+        var token = await GetTokenAsync(secret);
 
         if (_logState)
         {
@@ -362,7 +362,7 @@ public class SteamAPI : IDisposable
             throw new AuthenticationException("Authorization failed. You're already logged in.");
         }
 
-        SafeConnect(() =>
+        await SafeConnect(() =>
         {
             SetPage("https://steamcommunity.com/login/home/?goto=");
             WriteToElement(LoginField, login);
@@ -406,9 +406,9 @@ public class SteamAPI : IDisposable
         }
     }
 
-    public string GetToken(string secret)
+    private async Task<string> GetTokenAsync(string secret)
     {
-        return SafeConnect(() =>
+        return await SafeConnect(() =>
         {
             SetPage("https://www.chescos.me/js-steam-authcode-generator/?");
             SendKey(By.Id("secret"), secret);
@@ -485,7 +485,7 @@ public class SteamAPI : IDisposable
 
     #endregion
 
-    private T SafeConnect<T>(Func<T> unsafeFunc, bool isDelayNeeded = false)
+    private async Task<T> SafeConnect<T>(Func<T> unsafeFunc, bool isDelayNeeded = false)
     {
         var retryWaitTimeMs = isDelayNeeded ? RequestDelayMs : 0;
         for (var attempt = 0; attempt < RetriesCount; attempt++)
@@ -493,7 +493,7 @@ public class SteamAPI : IDisposable
             try
             {
                 Thread.Sleep(retryWaitTimeMs);
-                return unsafeFunc();
+                return await Task.Run(unsafeFunc);
             }
             catch (Exception e)
             {
@@ -509,7 +509,7 @@ public class SteamAPI : IDisposable
     public void Dispose()
     {
         Log.Logger.Information("Disposing steam Api...");
-        _chromeBrowser?.Quit();
+        _chromeBrowser.Quit();
         Log.Logger.Information("Steam Api disposed!");
     }
 }

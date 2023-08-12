@@ -12,6 +12,7 @@ public class ItemPage
     public Chart SalesChart { get; set; }
     public List<OrderBookItem> SellOrderBook { get; set; }
     public List<OrderBookItem> BuyOrderBook { get; set; }
+    public string UserName { get; set; }
 
     //Temp
     public double EstimatedBuyPrice { get; set; }

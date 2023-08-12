@@ -74,7 +74,6 @@ builder.Services.AddScoped(_ => new SteamAPI(() =>
     driverService.EnableVerboseLogging = false;
     driverService.SuppressInitialDiagnosticInformation = true;
     return new ChromeDriver(driverService, chromeOptions);
-
 }));
 
 builder.Services.AddScoped<MarketDbAccess>();

@@ -2,6 +2,7 @@
 using SteamTradeBot.Backend.Models;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Serilog;
 using SteamTradeBot.Backend.Services;
 using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
@@ -16,7 +17,12 @@ public class SellMarketSolution : MarketSolution
 
     public override void Perform(ItemPage itemPage)
     {
-        var buyOrder = MarketDb.GetBuyOrders().FirstOrDefault(x => x.EngItemName == itemPage.EngItemName);
+        throw new NotImplementedException();
+    }
+
+    public override async Task PerformAsync(ItemPage itemPage)
+    {
+        var buyOrder = await MarketDb.GetBuyOrderAsync(itemPage.EngItemName, itemPage.UserName);
         if (buyOrder is null)
             throw new Exception("Can't find local buy order for sell order forming");
         var sellOrder = new SellOrder
@@ -30,7 +36,7 @@ public class SellMarketSolution : MarketSolution
 
         for (var i = 0; i < sellOrder.Quantity; i++)
         {
-            if (SteamApi.PlaceSellOrder(sellOrder.EngItemName, sellOrder.Price, ConfigurationManager.SteamUserId))
+            if (await SteamApi.PlaceSellOrderAsync(sellOrder.EngItemName, sellOrder.Price, ConfigurationManager.SteamUserId))
                 Log.Information("Place sell order {0} (Price: {1})", sellOrder.EngItemName, sellOrder.Price);
             else
                 Log.Error("Can't place sell order {0} (Price: {1}). Item not found in inventory!", sellOrder.EngItemName, sellOrder.Price);
@@ -38,14 +44,14 @@ public class SellMarketSolution : MarketSolution
 
         if (itemPage.MyBuyOrder is null)
         {
-            MarketDb.RemoveBuyOrder(buyOrder);
+            await MarketDb.RemoveBuyOrderAsync(buyOrder);
         }
         if (itemPage.MyBuyOrder is not null && itemPage.MyBuyOrder.Quantity > 0)
         {
             buyOrder.Quantity = itemPage.MyBuyOrder.Quantity;
-            MarketDb.AddOrUpdateBuyOrder(buyOrder);
+            await MarketDb.AddOrUpdateBuyOrderAsync(buyOrder);
         }
-        MarketDb.AddOrUpdateSellOrder(sellOrder);
+        await MarketDb.AddOrUpdateSellOrderAsync(sellOrder);
         StateManager.OnItemSelling(sellOrder);
     }
 }

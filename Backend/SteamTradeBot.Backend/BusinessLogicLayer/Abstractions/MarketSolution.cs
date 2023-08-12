@@ -1,4 +1,5 @@
-﻿using SteamTradeBot.Backend.DataAccessLayer;
+﻿using System.Threading.Tasks;
+using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Services;
 using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
@@ -21,4 +22,6 @@ public abstract class MarketSolution
     }
 
     public abstract void Perform(ItemPage itemPage);
+
+    public abstract Task PerformAsync(ItemPage itemPage);
 }

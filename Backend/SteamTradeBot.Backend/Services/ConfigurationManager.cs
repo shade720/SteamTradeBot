@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
@@ -54,10 +55,10 @@ public class ConfigurationManager
         _configuration = _configuration.GetSection(username);
     }
 
-    public void RefreshConfiguration(UserConfiguration userConfiguration)
+    public async Task RefreshConfigurationAsync(UserConfiguration userConfiguration)
     {
         Log.Logger.Information("Start settings update...");
-        var currentSettings = File.ReadAllText(GetFilePathForUser(_currentUser));
+        var currentSettings = await File.ReadAllTextAsync(GetFilePathForUser(_currentUser));
 
         var jsonSettings = new JsonSerializerSettings();
         jsonSettings.Converters.Add(new ExpandoObjectConverter());
@@ -87,11 +88,11 @@ public class ConfigurationManager
         }
 
         var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
-        File.WriteAllText(GetFilePathForUser(_currentUser), updatedSettings);
+        await File.WriteAllTextAsync(GetFilePathForUser(_currentUser), updatedSettings);
 
         if (!CheckIntegrity())
         {
-            File.WriteAllText(GetFilePathForUser(_currentUser), currentSettings);
+            await File.WriteAllTextAsync(GetFilePathForUser(_currentUser), currentSettings);
             Log.Logger.Information("Settings have not been updated. UserConfiguration was corrupted.");
         }
         Log.Logger.Information("Settings have been updated!");

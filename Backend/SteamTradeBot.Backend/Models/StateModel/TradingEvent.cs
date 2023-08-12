@@ -12,4 +12,5 @@ public class TradingEvent
     public double SellPrice { get; set; }
     public double Profit { get; set; }
     public double CurrentBalance { get; set; }
+    public string UserName { get; set; } = string.Empty;
 }

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Serilog;
+﻿using Serilog;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Services;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
@@ -19,34 +20,28 @@ public class ItemsNamesProvider
         _marketDb = marketDb;
     }
 
-    public IEnumerable<string> Names
+    public async IAsyncEnumerable<string> GetNamesAsync()
     {
-        get
+        while (true)
         {
-            while (true)
+            Log.Information("Load items for analysis....");
+            var loadedItemNamesList = await _api.GetItemNamesListAsync(
+                    _configurationManager.MinPrice,
+                    _configurationManager.MaxPrice,
+                    _configurationManager.SalesPerWeek * 7,
+                    _configurationManager.ItemListSize);
+            var existingOrdersItemNames = await _marketDb.GetBuyOrdersAsync();
+            foreach (var itemName in existingOrdersItemNames.Select(x => x.EngItemName))
             {
-                Log.Information("Load items for analysis....");
-                var loadedItemNamesList = _api.GetItemNamesList(
-                        _configurationManager.MinPrice,
-                        _configurationManager.MaxPrice,
-                        _configurationManager.SalesPerWeek * 7,
-                        _configurationManager.ItemListSize)
-                    .ToList();
-                var existingOrdersItemNames = _marketDb.GetBuyOrders().Select(x => x.EngItemName);
-                foreach (var itemName in existingOrdersItemNames)
-                {
-                    loadedItemNamesList.Insert(0, itemName);
-                    Log.Logger.Information("Add {0} as existing order", itemName);
-                }
-                Log.Information("Pipeline initialized");
+                loadedItemNamesList.Insert(0, itemName);
+                Log.Logger.Information("Add {0} as existing order", itemName);
+            }
+            Log.Information("Pipeline initialized");
 
-                foreach (var name in loadedItemNamesList)
-                {
-                    yield return name;
-                }
+            foreach (var name in loadedItemNamesList)
+            {
+                yield return name;
             }
         }
     }
-
-    
 }

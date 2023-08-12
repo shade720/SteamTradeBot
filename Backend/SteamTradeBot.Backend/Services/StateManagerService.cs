@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Models.StateModel;
@@ -17,7 +18,7 @@ public class StateManagerService
     public StateManagerService(HistoryDbAccess historyDb)
     {
         _historyDb = historyDb;
-        var previousMarketEvents = _historyDb.GetHistory();
+        var previousMarketEvents = _historyDb.GetHistoryAsync().Result;
         _serviceState = new ServiceState
         {
             Warnings = previousMarketEvents.Count(x => x.Type == InfoType.Warning),
@@ -38,23 +39,26 @@ public class StateManagerService
         _stopwatch = new Stopwatch();
     }
 
-    public ServiceState GetServiceState(long fromDate)
+    public async Task<ServiceState> GetServiceStateAsync(long fromDate)
     {
-        var serviceStateCopy = new ServiceState
+        return await Task.Run(() =>
         {
-            WorkingState = _serviceState.WorkingState,
-            ItemsAnalyzed = _serviceState.ItemsAnalyzed,
-            ItemsBought = _serviceState.ItemsBought,
-            ItemsSold = _serviceState.ItemsSold,
-            ItemCanceled = _serviceState.ItemCanceled,
-            Errors = _serviceState.Errors,
-            Warnings = _serviceState.Warnings,
-            Events = new List<string>(_serviceState.Events.Where(x => DateTime.Parse(x.Split('#')[0]).Ticks > fromDate)),
-            Uptime = _stopwatch.Elapsed,
-            CurrentUser = _serviceState.CurrentUser,
-            IsLoggedIn = _serviceState.IsLoggedIn,
-        };
-        return serviceStateCopy;
+            var serviceStateCopy = new ServiceState
+            {
+                WorkingState = _serviceState.WorkingState,
+                ItemsAnalyzed = _serviceState.ItemsAnalyzed,
+                ItemsBought = _serviceState.ItemsBought,
+                ItemsSold = _serviceState.ItemsSold,
+                ItemCanceled = _serviceState.ItemCanceled,
+                Errors = _serviceState.Errors,
+                Warnings = _serviceState.Warnings,
+                Events = new List<string>(_serviceState.Events.Where(x => DateTime.Parse(x.Split('#')[0]).Ticks > fromDate)),
+                Uptime = _stopwatch.Elapsed,
+                CurrentUser = _serviceState.CurrentUser,
+                IsLoggedIn = _serviceState.IsLoggedIn,
+            };
+            return serviceStateCopy;
+        });
     }
 
     public void OnTradingStarted()
@@ -87,9 +91,9 @@ public class StateManagerService
         _serviceState.CurrentUser = string.Empty;
     }
 
-    public void OnError(Exception exception)
+    public async Task OnErrorAsync(Exception exception)
     {
-        _historyDb.AddNewEvent(new TradingEvent
+        await _historyDb.AddNewEventAsync(new TradingEvent
         {
             Type = InfoType.Error,
             Time = DateTime.UtcNow,
@@ -98,10 +102,10 @@ public class StateManagerService
         _serviceState.Errors++;
     }
 
-    public void OnItemAnalyzed(ItemPage itemPage)
+    public async Task OnItemAnalyzed(ItemPage itemPage)
     {
         _serviceState.ItemsAnalyzed++;
-        _historyDb.AddNewEvent(new TradingEvent
+        await _historyDb.AddNewEventAsync(new TradingEvent
         {
             Type = InfoType.ItemAnalyzed,
             CurrentBalance = itemPage.CurrentBalance,
@@ -110,9 +114,9 @@ public class StateManagerService
         });
     }
 
-    public void OnItemSelling(SellOrder order)
+    public async Task OnItemSelling(SellOrder order)
     {
-        _historyDb.AddNewEvent(new TradingEvent
+        await _historyDb.AddNewEventAsync(new TradingEvent
         {
             Type = InfoType.ItemSold,
             Time = DateTime.UtcNow,
@@ -124,9 +128,9 @@ public class StateManagerService
         _serviceState.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Sold#{order.Price}");
     }
 
-    public void OnItemBuying(BuyOrder order)
+    public async Task OnItemBuying(BuyOrder order)
     {
-        _historyDb.AddNewEvent(new TradingEvent
+        await _historyDb.AddNewEventAsync(new TradingEvent
         {
             Type = InfoType.ItemBought,
             Time = DateTime.UtcNow,
@@ -137,9 +141,9 @@ public class StateManagerService
         _serviceState.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Bought#{order.Price}");
     }
 
-    public void OnItemCancelling(BuyOrder order)
+    public async Task OnItemCancelling(BuyOrder order)
     {
-        _historyDb.AddNewEvent(new TradingEvent
+        await _historyDb.AddNewEventAsync(new TradingEvent
         {
             Type = InfoType.ItemCanceled,
             Time = DateTime.UtcNow,

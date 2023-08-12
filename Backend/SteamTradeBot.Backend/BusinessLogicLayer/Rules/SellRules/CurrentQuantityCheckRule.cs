@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Serilog;
 using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.DataAccessLayer;
@@ -14,10 +15,16 @@ public class CurrentQuantityCheckRule : ISellRule
     {
         _marketDb = marketDb;
     }
+
     public bool IsFollowed(ItemPage itemPage)
     {
+        throw new System.NotImplementedException();
+    }
+
+    public async Task<bool> IsFollowedAsync(ItemPage itemPage)
+    {
         Log.Information("Checking if order satisfied...");
-        var localOrder = _marketDb.GetBuyOrders().FirstOrDefault(order => order.EngItemName == itemPage.EngItemName);
+        var localOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, itemPage.UserName);
         return localOrder is not null && (itemPage.MyBuyOrder is null || itemPage.MyBuyOrder.Quantity < localOrder.Quantity);
     }
 }

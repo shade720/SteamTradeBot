@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.Models;
@@ -25,7 +23,7 @@ public class TradeBotController : ControllerBase
     {
         configurationManager.SetConfigurationContextForUser(userConfiguration.Login, userConfiguration);
         stateManager.OnLogInPending();
-        api.LogIn(configurationManager.Login, configurationManager.Password, configurationManager.Secret);
+        await api.LogIn(configurationManager.Login, configurationManager.Password, configurationManager.Secret);
         stateManager.OnLoggedIn(configurationManager.Login);
         await worker.Start();
     }
@@ -48,7 +46,7 @@ public class TradeBotController : ControllerBase
         ConfigurationManager configurationManager, 
         UserConfiguration userConfiguration)
     {
-        configurationManager.RefreshConfiguration(userConfiguration);
+        await configurationManager.RefreshConfigurationAsync(userConfiguration);
     }
 
     [HttpPost]
@@ -56,7 +54,7 @@ public class TradeBotController : ControllerBase
     public async Task CancelOrders(
         OrderCancellingService cancellingService)
     {
-        cancellingService.ClearBuyOrders();
+        await cancellingService.ClearBuyOrdersAsync();
     }
 
     [HttpGet]
@@ -64,7 +62,7 @@ public class TradeBotController : ControllerBase
     public async Task<ServiceState> GetState(
         StateManagerService stateManager, [FromQuery] long fromTicks)
     {
-        return stateManager.GetServiceState(fromTicks);
+        return await stateManager.GetServiceStateAsync(fromTicks);
     }
 
     [HttpGet]

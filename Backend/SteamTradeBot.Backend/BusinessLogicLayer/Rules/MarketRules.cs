@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
 
@@ -18,18 +19,24 @@ public class MarketRules
         _cancelRules = cancelRules;
     }
 
-    public bool CanBuyItem(ItemPage itemPage)
+    public async Task<bool> CanBuyItemAsync(ItemPage itemPage)
     {
-        return _buyRules.All(rule => rule.IsFollowed(itemPage));
+        var tasks = _buyRules.Select(rule => rule.IsFollowedAsync(itemPage));
+        var results = await Task.WhenAll(tasks);
+        return results.All(x => x);
     }
 
-    public bool CanSellItem(ItemPage itemPage)
+    public async Task<bool> CanSellItemAsync(ItemPage itemPage)
     {
-        return _sellRules.All(rule => rule.IsFollowed(itemPage));
+        var tasks = _sellRules.Select(rule => rule.IsFollowedAsync(itemPage));
+        var results = await Task.WhenAll(tasks);
+        return results.All(x => x);
     }
 
-    public bool IsNeedCancelItem(ItemPage itemPage)
+    public async Task<bool> IsNeedCancelItemAsync(ItemPage itemPage)
     {
-        return _cancelRules.All(rule => rule.IsFollowed(itemPage));
+        var tasks = _cancelRules.Select(rule => rule.IsFollowedAsync(itemPage));
+        var results = await Task.WhenAll(tasks);
+        return results.All(x => x);
     }
 }
