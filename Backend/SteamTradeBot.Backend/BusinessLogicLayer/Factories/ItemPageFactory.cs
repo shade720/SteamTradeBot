@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Serilog;
+using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
-using SteamTradeBot.Backend.Services;
-using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
 public class ItemPageFactory
 {
-    private readonly SteamAPI _api;
-    private readonly ConfigurationManager _configurationManager;
+    private readonly ISteamApi _api;
+    private readonly IConfigurationManager _configurationManager;
 
-    public ItemPageFactory(SteamAPI api, ConfigurationManager configurationManager)
+    public ItemPageFactory(ISteamApi api, IConfigurationManager configurationManager)
     {
         _api = api;
         _configurationManager = configurationManager;

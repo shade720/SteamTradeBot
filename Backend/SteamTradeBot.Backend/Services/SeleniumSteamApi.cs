@@ -11,10 +11,11 @@ using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using SteamTradeBot.Backend.Models.Abstractions;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer;
+namespace SteamTradeBot.Backend.Services;
 
-public class SteamAPI : IDisposable
+public class SeleniumSteamApi : IDisposable, ISteamApi
 {
     private readonly IWebDriver _chromeBrowser;
     private bool _logState;
@@ -23,7 +24,7 @@ public class SteamAPI : IDisposable
     private const int RetryWaitTimeMs = 2000;
     private const int RetriesCount = 5;
 
-    public SteamAPI(Func<IWebDriver> webDriver)
+    public SeleniumSteamApi(Func<IWebDriver> webDriver)
     {
         _chromeBrowser = webDriver.Invoke();
         Log.Logger.Information("Steam Api created!");

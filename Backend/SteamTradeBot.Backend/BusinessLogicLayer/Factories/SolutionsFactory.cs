@@ -1,36 +1,34 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 using SteamTradeBot.Backend.DataAccessLayer;
+using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
-using SteamTradeBot.Backend.Services;
-using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
 public class SolutionsFactory
 {
     private readonly MarketRules _rules;
-    private readonly StateManagerService _stateManager;
+    private readonly IStateManager _stateManager;
     private static Dictionary<string, MarketSolution> _solutions;
 
-    public SolutionsFactory(SteamAPI api, MarketDbAccess marketDb, ConfigurationManager configurationManager, MarketRules rules, StateManagerService stateManager)
+    public SolutionsFactory(ISteamApi api, MarketDbAccess marketDb, IConfigurationManager configurationManager, MarketRules rules, IStateManager stateManager)
     {
         _rules = rules;
         _stateManager = stateManager;
         _solutions = new Dictionary<string, MarketSolution>
         {
-            { nameof(BuyMarketSolution), new BuyMarketSolution(api, marketDb, configurationManager, stateManager) },
-            { nameof(SellMarketSolution), new SellMarketSolution(api, marketDb, configurationManager, stateManager) },
-            { nameof(CancelMarketSolution), new CancelMarketSolution(api, marketDb, configurationManager, stateManager) },
+            { nameof(BuyMarketSolution), new BuyMarketSolution(api, configurationManager, stateManager, marketDb) },
+            { nameof(SellMarketSolution), new SellMarketSolution(api, configurationManager, stateManager, marketDb) },
+            { nameof(CancelMarketSolution), new CancelMarketSolution(api, configurationManager, stateManager, marketDb) },
         };
     }
 
     public async Task<MarketSolution?> GetSolutionAsync(ItemPage itemPage)
     {
-        _stateManager.OnItemAnalyzed(itemPage);
+        await _stateManager.OnItemAnalyzedAsync(itemPage);
 
         if (await _rules.CanSellItemAsync(itemPage))
             return _solutions[nameof(SellMarketSolution)];

@@ -3,15 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SteamTradeBot.Backend;
-using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
@@ -20,14 +14,11 @@ using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 using SteamTradeBot.Backend.Services;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
-using SteamTradeBot.Backend.BusinessLogicLayer.Extensions;
-using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 using SteamTradeBot.Backend.Models.StateModel;
-using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
+using SteamTradeBot.Backend.Models.Abstractions;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
@@ -48,16 +39,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Log.Logger);
 
-builder.Configuration.AddUsersConfigurations();
-
 var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? builder.Configuration["PostgresConnectionString"];
 var sqlServerConnectionString = builder.Configuration["SqlServerConnectionString"];
 
-builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseSqlServer(sqlServerConnectionString));
-//builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseNpgsql(postgresConnectionString));
+//builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseSqlServer(sqlServerConnectionString));
+builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseNpgsql(postgresConnectionString));
 
 var remoteWebDriverHost = Environment.GetEnvironmentVariable("SELENIUM_HOST") ?? "http://localhost:5051";
-builder.Services.AddScoped(_ => new SteamAPI(() =>
+builder.Services.AddScoped<ISteamApi, SeleniumSteamApi>(_ => new SeleniumSteamApi(() =>
 {
     var chromeOptions = new ChromeOptions();
     chromeOptions.AddArgument("--disable-gpu");
@@ -79,8 +68,9 @@ builder.Services.AddScoped(_ => new SteamAPI(() =>
 builder.Services.AddScoped<MarketDbAccess>();
 builder.Services.AddScoped<HistoryDbAccess>();
 
-builder.Services.AddScoped<ConfigurationManager>();
-builder.Services.AddScoped<StateManagerService>();
+JsonFileConfigurationManager.AddUsersConfigurations(builder.Configuration);
+builder.Services.AddScoped<IConfigurationManager, JsonFileConfigurationManager>();
+builder.Services.AddScoped<IStateManager, StateManagerService>();
 builder.Services.AddTransient<LogsProviderService>();
 builder.Services.AddTransient<OrderCancellingService>();
 

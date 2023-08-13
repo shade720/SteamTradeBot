@@ -3,6 +3,7 @@ using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.Services;
 
@@ -11,7 +12,7 @@ public class WorkerService
     private readonly ItemsNamesProvider _itemsNamesProvider;
     private readonly ItemPageFactory _itemPageFactory;
     private readonly SolutionsFactory _solutionsFactory;
-    private readonly StateManagerService _stateManager;
+    private readonly IStateManager _stateManager;
 
     private CancellationTokenSource? _cancellationTokenSource;
 
@@ -20,7 +21,7 @@ public class WorkerService
         ItemsNamesProvider itemsNamesProvider,
         ItemPageFactory itemPageFactory,
         SolutionsFactory solutionsFactory,
-        StateManagerService stateManager)
+        IStateManager stateManager)
     {
         _itemsNamesProvider = itemsNamesProvider;
         _itemPageFactory = itemPageFactory;

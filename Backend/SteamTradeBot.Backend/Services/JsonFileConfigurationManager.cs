@@ -8,10 +8,11 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using Serilog;
 using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.Services;
 
-public class ConfigurationManager
+public class JsonFileConfigurationManager : IConfigurationManager
 {
     #region Public
 
@@ -38,7 +39,7 @@ public class ConfigurationManager
 
     #endregion
 
-    public ConfigurationManager(IConfiguration configuration)
+    public JsonFileConfigurationManager(IConfiguration configuration)
     {
         _configuration = configuration;
     }
@@ -53,6 +54,17 @@ public class ConfigurationManager
             AddUserConfigurationFile(username, userConfiguration);
         }
         _configuration = _configuration.GetSection(username);
+    }
+
+    public static void AddUsersConfigurations(ConfigurationManager configurationBuilder)
+    {
+        if (!Directory.Exists(UserSettingsFolderPath))
+            Directory.CreateDirectory(UserSettingsFolderPath);
+        var builder = configurationBuilder.SetBasePath(Environment.CurrentDirectory);
+        foreach (var configFilePath in Directory.GetFiles(UserSettingsFolderPath, "*.json", SearchOption.AllDirectories))
+        {
+            builder.AddJsonFile(configFilePath, true, true);
+        }
     }
 
     public async Task RefreshConfigurationAsync(UserConfiguration userConfiguration)
@@ -116,64 +128,56 @@ public class ConfigurationManager
 
     private bool CheckIntegrity()
     {
+        Log.Information("Check userConfiguration integrity...");
         try
         {
-            Log.Information("Check userConfiguration integrity...");
-            try
+            var orderQuantity = OrderQuantity;
+            var salesPerWeek = SalesPerWeek;
+            var steamUserId = SteamUserId;
+            var sellListingFindRange = SellListingFindRange;
+            var buyListingFindRange = BuyListingFindRange;
+            var analysisIntervalDays = AnalysisIntervalDays;
+            var fitPriceRange = FitPriceRange;
+            var averagePrice = AveragePrice;
+            var trend = Trend;
+            var steamCommission = SteamCommission;
+            var requiredProfit = RequiredProfit;
+            var availableBalance = AvailableBalance;
+            var minPrice = MinPrice;
+            var maxPrice = MaxPrice;
+            var itemListSize = ItemListSize;
+
+            if (orderQuantity is <= 0 or > 10)
             {
-                var orderQuantity = OrderQuantity;
-                var salesPerWeek = SalesPerWeek;
-                var steamUserId = SteamUserId;
-                var sellListingFindRange = SellListingFindRange;
-                var buyListingFindRange = BuyListingFindRange;
-                var analysisIntervalDays = AnalysisIntervalDays;
-                var fitPriceRange = FitPriceRange;
-                var averagePrice = AveragePrice;
-                var trend = Trend;
-                var steamCommission = SteamCommission;
-                var requiredProfit = RequiredProfit;
-                var availableBalance = AvailableBalance;
-                var minPrice = MinPrice;
-                var maxPrice = MaxPrice;
-                var itemListSize = ItemListSize;
-
-                if (orderQuantity is <= 0 or > 10)
-                {
-                    Log.Fatal("Quantity can not be less than 0 or greater than 10!");
-                    return false;
-                }
-
-                if (salesPerWeek <= 0)
-                {
-                    Log.Fatal("Sales can not be less than 0!");
-                    return false;
-                }
-
-                if (availableBalance is <= 0.0 or > 1.0)
-                {
-                    Log.Fatal("Available balance range from 0.0 to 1.0");
-                    return false;
-                }
-
-                if (steamCommission is <= 0.0 or > 1.0)
-                {
-                    Log.Fatal("Steam commission range from 0.0 to 1.0");
-                    return false;
-                }
-
-                Log.Information("Check userConfiguration integrity -> OK");
-                return true;
-            }
-            catch (Exception e)
-            {
-                Log.Fatal("UserConfiguration error:\r\nMessage: {0}\r\nStackTrace: {1}", e.Message, e.StackTrace);
+                Log.Fatal("Quantity can not be less than 0 or greater than 10!");
                 return false;
             }
+
+            if (salesPerWeek <= 0)
+            {
+                Log.Fatal("Sales can not be less than 0!");
+                return false;
+            }
+
+            if (availableBalance is <= 0.0 or > 1.0)
+            {
+                Log.Fatal("Available balance range from 0.0 to 1.0");
+                return false;
+            }
+
+            if (steamCommission is <= 0.0 or > 1.0)
+            {
+                Log.Fatal("Steam commission range from 0.0 to 1.0");
+                return false;
+            }
+
+            Log.Information("Check userConfiguration integrity -> OK");
+            return true;
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            Log.Fatal("UserConfiguration error:\r\nMessage: {0}\r\nStackTrace: {1}", e.Message, e.StackTrace);
+            return false;
         }
     }
 

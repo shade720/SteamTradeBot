@@ -1,17 +1,16 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
+using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
-using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
 public class AveragePriceRule : IBuyRule
 {
-    private readonly ConfigurationManager _configurationManager;
+    private readonly IConfigurationManager _configurationManager;
 
-    public AveragePriceRule(ConfigurationManager configurationManager)
+    public AveragePriceRule(IConfigurationManager configurationManager)
     {
         _configurationManager = configurationManager;
     }

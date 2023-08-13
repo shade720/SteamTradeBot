@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.Models;
+using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.StateModel;
 using SteamTradeBot.Backend.Services;
 
@@ -15,10 +15,10 @@ public class TradeBotController : ControllerBase
     [HttpPost]
     [Route("activation")]
     public async Task StartBot(
-        WorkerService worker, 
-        ConfigurationManager configurationManager, 
-        SteamAPI api, 
-        StateManagerService stateManager, 
+        WorkerService worker,
+        JsonFileConfigurationManager configurationManager, 
+        ISteamApi api,
+        IStateManager stateManager, 
         UserConfiguration userConfiguration)
     {
         configurationManager.SetConfigurationContextForUser(userConfiguration.Login, userConfiguration);
@@ -32,8 +32,8 @@ public class TradeBotController : ControllerBase
     [Route("deactivation")]
     public async Task StopBot(
         WorkerService worker, 
-        SteamAPI api, 
-        StateManagerService stateManager)
+        SeleniumSteamApi api,
+        IStateManager stateManager)
     {
         api.LogOut();
         stateManager.OnLoggedOut();
@@ -43,7 +43,7 @@ public class TradeBotController : ControllerBase
     [HttpPost]
     [Route("userConfiguration")]
     public async Task SetConfiguration(
-        ConfigurationManager configurationManager, 
+        IConfigurationManager configurationManager, 
         UserConfiguration userConfiguration)
     {
         await configurationManager.RefreshConfigurationAsync(userConfiguration);
@@ -60,7 +60,7 @@ public class TradeBotController : ControllerBase
     [HttpGet]
     [Route("state")]
     public async Task<ServiceState> GetState(
-        StateManagerService stateManager, [FromQuery] long fromTicks)
+        IStateManager stateManager, [FromQuery] long fromTicks)
     {
         return await stateManager.GetServiceStateAsync(fromTicks);
     }

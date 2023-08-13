@@ -1,19 +1,18 @@
 ﻿using Serilog;
 using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Services;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
 public class ItemsNamesProvider
 {
-    private readonly ConfigurationManager _configurationManager;
-    private readonly SteamAPI _api;
+    private readonly IConfigurationManager _configurationManager;
+    private readonly ISteamApi _api;
     private readonly MarketDbAccess _marketDb;
 
-    public ItemsNamesProvider(ConfigurationManager configurationManager, SteamAPI api, MarketDbAccess marketDb)
+    public ItemsNamesProvider(ISteamApi api, IConfigurationManager configurationManager, MarketDbAccess marketDb)
     {
         _configurationManager = configurationManager;
         _api = api;

@@ -1,17 +1,15 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.DataAccessLayer;
+using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
-using SteamTradeBot.Backend.Services;
-using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 
 public class CancelMarketSolution : MarketSolution
 {
-    public CancelMarketSolution(SteamAPI api, MarketDbAccess marketDb, ConfigurationManager configurationManager, StateManagerService stateManager) : base(api, marketDb, configurationManager, stateManager) { }
+    public CancelMarketSolution(ISteamApi api, IConfigurationManager configurationManager, IStateManager stateManager, MarketDbAccess marketDb) : 
+        base(api, configurationManager, stateManager, marketDb) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -24,6 +22,6 @@ public class CancelMarketSolution : MarketSolution
         await SteamApi.CancelBuyOrderAsync(order.ItemUrl);
         Log.Information("Cancel buy order {0} (Price: {1}, Quantity: {2})", order.EngItemName, order.Price, order.Quantity);
         await MarketDb.RemoveBuyOrderAsync(order);
-        StateManager.OnItemCancelling(order);
+        await StateManager.OnItemCancellingAsync(order);
     }
 }

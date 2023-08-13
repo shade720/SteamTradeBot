@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Models.StateModel;
+using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.Services;
 
-public class StateManagerService
+public class StateManagerService : IStateManager
 {
     private readonly HistoryDbAccess _historyDb;
     private readonly ServiceState _serviceState;
@@ -102,7 +103,7 @@ public class StateManagerService
         _serviceState.Errors++;
     }
 
-    public async Task OnItemAnalyzed(ItemPage itemPage)
+    public async Task OnItemAnalyzedAsync(ItemPage itemPage)
     {
         _serviceState.ItemsAnalyzed++;
         await _historyDb.AddNewEventAsync(new TradingEvent
@@ -114,7 +115,7 @@ public class StateManagerService
         });
     }
 
-    public async Task OnItemSelling(SellOrder order)
+    public async Task OnItemSellingAsync(SellOrder order)
     {
         await _historyDb.AddNewEventAsync(new TradingEvent
         {
@@ -128,7 +129,7 @@ public class StateManagerService
         _serviceState.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Sold#{order.Price}");
     }
 
-    public async Task OnItemBuying(BuyOrder order)
+    public async Task OnItemBuyingAsync(BuyOrder order)
     {
         await _historyDb.AddNewEventAsync(new TradingEvent
         {
@@ -141,7 +142,7 @@ public class StateManagerService
         _serviceState.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Bought#{order.Price}");
     }
 
-    public async Task OnItemCancelling(BuyOrder order)
+    public async Task OnItemCancellingAsync(BuyOrder order)
     {
         await _historyDb.AddNewEventAsync(new TradingEvent
         {
@@ -151,5 +152,30 @@ public class StateManagerService
         });
         _serviceState.ItemCanceled++;
         _serviceState.Events.Add($"{DateTime.UtcNow}#{order.EngItemName}#Canceled#{order.Price}");
+    }
+
+    public void OnError(Exception exception)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void OnItemAnalyzed(ItemPage itemPage)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void OnItemSelling(SellOrder order)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void OnItemBuying(BuyOrder order)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void OnItemCancelling(BuyOrder order)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
 using SteamTradeBot.Backend.DataAccessLayer;
+using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
-using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
 
 public class FitPriceRule : ICancelRule
 {
     private readonly MarketDbAccess _marketDb;
-    private readonly ConfigurationManager _configurationManager;
+    private readonly IConfigurationManager _configurationManager;
 
-    public FitPriceRule(ConfigurationManager configurationManager, MarketDbAccess marketDb)
+    public FitPriceRule(IConfigurationManager configurationManager, MarketDbAccess marketDb)
     {
         _configurationManager = configurationManager;
         _marketDb = marketDb;

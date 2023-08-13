@@ -1,19 +1,16 @@
 ﻿using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Models;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBot.Backend.Services;
-using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 using SteamTradeBot.Backend.Models.ItemModel;
-using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
+using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 
 public class SellMarketSolution : MarketSolution
 {
-    public SellMarketSolution(SteamAPI api, MarketDbAccess marketDb, ConfigurationManager configurationManager, StateManagerService stateManager) : base(api, marketDb, configurationManager, stateManager) { }
+    public SellMarketSolution(ISteamApi api, IConfigurationManager configurationManager, IStateManager stateManager, MarketDbAccess marketDb) : 
+        base(api, configurationManager, stateManager, marketDb) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -52,6 +49,6 @@ public class SellMarketSolution : MarketSolution
             await MarketDb.AddOrUpdateBuyOrderAsync(buyOrder);
         }
         await MarketDb.AddOrUpdateSellOrderAsync(sellOrder);
-        StateManager.OnItemSelling(sellOrder);
+        await StateManager.OnItemSellingAsync(sellOrder);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
+using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;

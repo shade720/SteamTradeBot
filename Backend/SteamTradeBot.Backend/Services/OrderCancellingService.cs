@@ -1,16 +1,16 @@
 ﻿using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.DataAccessLayer;
+using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.Services;
 
 public class OrderCancellingService
 {
-    private readonly SteamAPI _api;
+    private readonly ISteamApi _api;
     private readonly MarketDbAccess _marketDb;
 
-    public OrderCancellingService(SteamAPI api, MarketDbAccess marketDb)
+    public OrderCancellingService(ISteamApi api, MarketDbAccess marketDb)
     {
         _api = api;
         _marketDb = marketDb;

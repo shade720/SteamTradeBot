@@ -1,18 +1,16 @@
 ﻿using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer.Abstractions;
+using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
-using SteamTradeBot.Backend.Services;
-using ConfigurationManager = SteamTradeBot.Backend.Services.ConfigurationManager;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
 public class AvailableBalanceRule : IBuyRule
 {
-    private readonly SteamAPI _api;
-    private readonly ConfigurationManager _configurationManager;
+    private readonly ISteamApi _api;
+    private readonly IConfigurationManager _configurationManager;
 
-    public AvailableBalanceRule(SteamAPI api, ConfigurationManager configurationManager)
+    public AvailableBalanceRule(ISteamApi api, IConfigurationManager configurationManager)
     {
         _api = api;
         _configurationManager = configurationManager;
