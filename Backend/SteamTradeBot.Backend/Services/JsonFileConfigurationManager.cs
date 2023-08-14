@@ -93,7 +93,7 @@ public class JsonFileConfigurationManager : IConfigurationManager
     public string Password => _targetSection.GetValue("Password", string.Empty)!;
     public string Secret => _targetSection.GetValue("Secret", string.Empty)!;
     public double Trend => _targetSection.GetValue<double>("Trend");
-    public double AveragePrice => _targetSection.GetValue<double>("AveragePrice");
+    public double AveragePriceRatio => _targetSection.GetValue<double>("AveragePriceRatio");
     public int SalesPerDay => _targetSection.GetValue<int>("SalesPerDay");
     public string SteamUserId => _targetSection.GetValue("SteamUserId", string.Empty)!;
     public double FitPriceRange => _targetSection.GetValue<double>("FitPriceRange");
@@ -142,7 +142,7 @@ public class JsonFileConfigurationManager : IConfigurationManager
             var buyListingFindRange = SalesRatio;
             var analysisIntervalDays = AnalysisIntervalDays;
             var fitPriceRange = FitPriceRange;
-            var averagePrice = AveragePrice;
+            var averagePrice = AveragePriceRatio;
             var trend = Trend;
             var steamCommission = SteamCommission;
             var requiredProfit = RequiredProfit;

@@ -135,7 +135,12 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
 
     private static string DeleteServiceCharacters(string line)
     {
-        return line.Replace("\"", "").Replace("\r", "").Replace("\t", "").Replace(";", "").TrimStart('[').TrimEnd(']');
+        return line
+            .Replace("\"", "")
+            .Replace("\r", "")
+            .Replace("\t", "")
+            .Replace(";", "")
+            .TrimStart('[').TrimEnd(']');
     }
 
 

@@ -26,15 +26,15 @@ public class RequiredProfitRule : IBuyRule
         {
             Log.Information("Finding profitable order...");
 
-            var buyPrice = itemPage.BuyOrderBook.FirstOrDefault(buyOrder => itemPage.SellOrderBook.Any(sellOrder => IsBuyPriceProfitable(buyOrder.Price, sellOrder.Price)));
+            var buyPrice = itemPage.BuyOrderBook.FirstOrDefault(buyOrder => itemPage.SellOrderBook.Any(sellOrder => IsBuyPriceProfitable(buyOrder.Price, sellOrder.Price, _configurationManager.SteamCommission, _configurationManager.RequiredProfit)));
             if (buyPrice is null)
             {
-                Log.Information("Item is not profitable. Reason: profitable buy price is not found. Required price: {0}, Available price: {1}",
-                    itemPage.SellOrderBook.Max(sellOrder => sellOrder.Price) + _configurationManager.RequiredProfit, itemPage.BuyOrderBook.Min(order => order.Price) + _configurationManager.SteamCommission);
+                Log.Information("Item is not profitable. Reason: profitable buy price is not found. Available price: {1} - Required price: {0}",
+                    itemPage.BuyOrderBook.Min(order => order.Price), itemPage.SellOrderBook.Max(sellOrder => sellOrder.Price) * (1 - _configurationManager.SteamCommission) - _configurationManager.RequiredProfit);
                 return false;
             }
 
-            var sellPrice = itemPage.SellOrderBook.FirstOrDefault(sellOrder => IsBuyPriceProfitable(buyPrice.Price, sellOrder.Price));
+            var sellPrice = itemPage.SellOrderBook.FirstOrDefault(sellOrder => IsBuyPriceProfitable(buyPrice.Price, sellOrder.Price, _configurationManager.SteamCommission, _configurationManager.RequiredProfit));
             if (sellPrice is null)
                 return false;
 
@@ -45,8 +45,8 @@ public class RequiredProfitRule : IBuyRule
         });
     }
 
-    private bool IsBuyPriceProfitable(double buyPrice, double sellPrice)
+    private static bool IsBuyPriceProfitable(double buyPrice, double sellPrice, double commission, double requiredProfit)
     {
-        return buyPrice < sellPrice * (1 - _configurationManager.SteamCommission) - _configurationManager.RequiredProfit;
+        return buyPrice < sellPrice * (1 - commission) - requiredProfit;
     }
 }

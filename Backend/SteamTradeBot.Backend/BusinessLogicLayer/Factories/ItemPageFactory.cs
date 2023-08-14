@@ -57,6 +57,7 @@ public class ItemPageFactory
             .SkipLast(1)
             .OrderByDescending(x => x.Price)
             .ToList();
+        itemPage.CurrentBalance = await _api.GetBalanceAsync();
 
         return itemPage;
     }
