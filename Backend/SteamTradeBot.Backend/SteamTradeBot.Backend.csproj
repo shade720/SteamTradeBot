@@ -18,6 +18,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="UserSettings\**" />
+    <Content Remove="UserSettings\**" />
+    <EmbeddedResource Remove="UserSettings\**" />
+    <None Remove="UserSettings\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.9" />
@@ -35,10 +42,6 @@
     <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UserSettings\" />
   </ItemGroup>
 
 </Project>
