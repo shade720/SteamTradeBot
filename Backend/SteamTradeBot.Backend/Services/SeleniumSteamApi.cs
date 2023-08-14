@@ -105,7 +105,7 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
 
     #region Chart
 
-    public async Task<Chart> GetGraphAsync(string itemUrl, DateTime fromDate)
+    public async Task<Chart> GetChartAsync(string itemUrl, DateTime fromDate)
     {
         if (!await SafeConnect(() =>
             {

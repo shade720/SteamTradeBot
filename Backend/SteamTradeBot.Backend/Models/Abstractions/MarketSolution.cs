@@ -11,12 +11,16 @@ public abstract class MarketSolution
     protected readonly IStateManager StateManager;
     protected readonly MarketDbAccess MarketDb;
 
-    protected MarketSolution(ISteamApi api, IConfigurationManager configurationManager, IStateManager stateManager, MarketDbAccess marketDb)
+    protected MarketSolution(
+        ISteamApi api, 
+        IConfigurationManager configurationManager, 
+        IStateManager stateManager, 
+        MarketDbAccess marketDb)
     {
         SteamApi = api;
-        MarketDb = marketDb;
         ConfigurationManager = configurationManager;
         StateManager = stateManager;
+        MarketDb = marketDb;
     }
 
     public abstract void Perform(ItemPage itemPage);

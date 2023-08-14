@@ -9,8 +9,12 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 
 public class SellMarketSolution : MarketSolution
 {
-    public SellMarketSolution(ISteamApi api, IConfigurationManager configurationManager, IStateManager stateManager, MarketDbAccess marketDb) : 
-        base(api, configurationManager, stateManager, marketDb) { }
+    public SellMarketSolution(
+        ISteamApi api, 
+        IConfigurationManager configurationManager, 
+        IStateManager stateManager, 
+        MarketDbAccess marketDb) 
+        : base(api, configurationManager, stateManager, marketDb) { }
 
     public override void Perform(ItemPage itemPage)
     {

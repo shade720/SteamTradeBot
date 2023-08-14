@@ -9,7 +9,11 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 
 public class BuyMarketSolution : MarketSolution
 {
-    public BuyMarketSolution(ISteamApi api, IConfigurationManager configurationManager, IStateManager stateManager, MarketDbAccess marketDb) : 
+    public BuyMarketSolution(
+        ISteamApi api, 
+        IConfigurationManager configurationManager, 
+        IStateManager stateManager, 
+        MarketDbAccess marketDb) : 
         base(api, configurationManager, stateManager, marketDb) { }
 
     public override void Perform(ItemPage itemPage)

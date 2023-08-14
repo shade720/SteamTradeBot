@@ -26,8 +26,7 @@ public class RequiredProfitRule : IBuyRule
         {
             Log.Information("Finding profitable order...");
 
-            var buyPrice = itemPage.BuyOrderBook.FirstOrDefault(buyOrder => itemPage.SellOrderBook.Any(sellOrder =>
-                sellOrder.Price + _configurationManager.RequiredProfit > buyOrder.Price * (1 + _configurationManager.SteamCommission)));
+            var buyPrice = itemPage.BuyOrderBook.FirstOrDefault(buyOrder => itemPage.SellOrderBook.Any(sellOrder => IsBuyPriceProfitable(buyOrder.Price, sellOrder.Price)));
             if (buyPrice is null)
             {
                 Log.Information("Item is not profitable. Reason: profitable buy price is not found. Required price: {0}, Available price: {1}",
@@ -35,15 +34,19 @@ public class RequiredProfitRule : IBuyRule
                 return false;
             }
 
-            var sellPrice = itemPage.SellOrderBook.FirstOrDefault(sellOrder =>
-                sellOrder.Price + _configurationManager.RequiredProfit > buyPrice.Price * (1 + _configurationManager.SteamCommission));
+            var sellPrice = itemPage.SellOrderBook.FirstOrDefault(sellOrder => IsBuyPriceProfitable(buyPrice.Price, sellOrder.Price));
             if (sellPrice is null)
                 return false;
 
             itemPage.EstimatedBuyPrice = buyPrice.Price;
             itemPage.EstimatedSellPrice = sellPrice.Price;
 
-            return false;
+            return true;
         });
+    }
+
+    private bool IsBuyPriceProfitable(double buyPrice, double sellPrice)
+    {
+        return buyPrice < sellPrice * (1 - _configurationManager.SteamCommission) - _configurationManager.RequiredProfit;
     }
 }

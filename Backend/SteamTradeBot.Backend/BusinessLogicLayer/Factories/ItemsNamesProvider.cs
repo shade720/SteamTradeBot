@@ -12,10 +12,13 @@ public class ItemsNamesProvider
     private readonly ISteamApi _api;
     private readonly MarketDbAccess _marketDb;
 
-    public ItemsNamesProvider(ISteamApi api, IConfigurationManager configurationManager, MarketDbAccess marketDb)
+    public ItemsNamesProvider(
+        ISteamApi api, 
+        IConfigurationManager configurationManager, 
+        MarketDbAccess marketDb)
     {
-        _configurationManager = configurationManager;
         _api = api;
+        _configurationManager = configurationManager;
         _marketDb = marketDb;
     }
 
@@ -27,7 +30,7 @@ public class ItemsNamesProvider
             var loadedItemNamesList = await _api.GetItemNamesListAsync(
                     _configurationManager.MinPrice,
                     _configurationManager.MaxPrice,
-                    _configurationManager.SalesPerWeek * 7,
+                    _configurationManager.SalesPerDay * 7,
                     _configurationManager.ItemListSize);
             var existingOrdersItemNames = await _marketDb.GetBuyOrdersAsync();
             foreach (var itemName in existingOrdersItemNames.Select(x => x.EngItemName))

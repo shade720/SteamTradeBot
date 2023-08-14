@@ -25,15 +25,15 @@ public class SalesCountRule : IBuyRule
         {
             Log.Information("Checking sales per week...");
 
-            var salesByDay = SalesByDay(itemPage.SalesChart);
-            if (salesByDay > _configurationManager.SalesPerWeek)
+            var salesPerDayFromChart = SalesPerDayFromChart(itemPage.SalesChart);
+            if (salesPerDayFromChart > _configurationManager.SalesPerDay)
                 return true;
-            Log.Information("Item is not profitable. Reason: sales volume is lower than needed. Current sales: {0} < Required sales: {1}", salesByDay, _configurationManager.SalesPerWeek);
+            Log.Information("Item is not profitable. Reason: sales volume is lower than needed. Current sales: {0} < Required sales: {1}", salesPerDayFromChart, _configurationManager.SalesPerDay);
             return false;
         });
     }
 
-    private static double SalesByDay(Chart salesChart)
+    private static double SalesPerDayFromChart(Chart salesChart)
     {
         return salesChart
             .GroupBy(x => x.Date.Date)

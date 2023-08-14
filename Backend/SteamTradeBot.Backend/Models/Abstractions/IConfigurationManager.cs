@@ -10,11 +10,11 @@ public interface IConfigurationManager
     public string Secret { get; }
     public double Trend { get; }
     public double AveragePrice { get; }
-    public int SalesPerWeek { get; }
+    public int SalesPerDay { get; }
     public string SteamUserId { get; }
     public double FitPriceRange { get; }
     public int SellListingFindRange { get; }
-    public int BuyListingFindRange { get; }
+    public int SalesRatio { get; }
     public int AnalysisIntervalDays { get; }
     public int OrderQuantity { get; }
     public double MinPrice { get; }

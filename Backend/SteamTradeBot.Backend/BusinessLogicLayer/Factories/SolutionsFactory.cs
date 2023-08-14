@@ -14,7 +14,12 @@ public class SolutionsFactory
     private readonly IStateManager _stateManager;
     private static Dictionary<string, MarketSolution> _solutions;
 
-    public SolutionsFactory(ISteamApi api, MarketDbAccess marketDb, IConfigurationManager configurationManager, MarketRules rules, IStateManager stateManager)
+    public SolutionsFactory(
+        ISteamApi api, 
+        IConfigurationManager configurationManager, 
+        IStateManager stateManager, 
+        MarketDbAccess marketDb, 
+        MarketRules rules)
     {
         _rules = rules;
         _stateManager = stateManager;

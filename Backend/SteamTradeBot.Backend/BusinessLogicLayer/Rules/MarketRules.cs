@@ -12,7 +12,10 @@ public class MarketRules
     private readonly IEnumerable<ISellRule> _sellRules;
     private readonly IEnumerable<ICancelRule> _cancelRules;
 
-    public MarketRules(IEnumerable<IBuyRule> buyRules, IEnumerable<ISellRule> sellRules, IEnumerable<ICancelRule> cancelRules)
+    public MarketRules(
+        IEnumerable<IBuyRule> buyRules, 
+        IEnumerable<ISellRule> sellRules, 
+        IEnumerable<ICancelRule> cancelRules)
     {
         _buyRules = buyRules;
         _sellRules = sellRules;

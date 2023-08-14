@@ -16,29 +16,6 @@ public class JsonFileConfigurationManager : IConfigurationManager
 {
     #region Public
 
-    #region Settings
-
-    public string Login => _configuration.GetValue("Login", string.Empty)!;
-    public string Password => _configuration.GetValue("Password", string.Empty)!;
-    public string Secret => _configuration.GetValue("Secret", string.Empty)!;
-    public double Trend => _configuration.GetValue<double>("Trend");
-    public double AveragePrice => _configuration.GetValue<double>("AveragePrice");
-    public int SalesPerWeek => _configuration.GetValue<int>("SalesPerWeek");
-    public string SteamUserId => _configuration.GetValue("SteamUserId", string.Empty)!;
-    public double FitPriceRange => _configuration.GetValue<double>("FitPriceRange");
-    public int SellListingFindRange => _configuration.GetValue<int>("SellListingFindRange");
-    public int BuyListingFindRange => _configuration.GetValue<int>("BuyListingFindRange");
-    public int AnalysisIntervalDays => _configuration.GetValue<int>("AnalysisIntervalDays");
-    public int OrderQuantity => _configuration.GetValue<int>("OrderQuantity");
-    public double MinPrice => _configuration.GetValue<double>("MinPrice");
-    public double MaxPrice => _configuration.GetValue<double>("MaxPrice");
-    public int ItemListSize => _configuration.GetValue<int>("ItemListSize");
-    public double SteamCommission => _configuration.GetValue<double>("SteamCommission");
-    public double RequiredProfit => _configuration.GetValue<double>("RequiredProfit");
-    public double AvailableBalance => _configuration.GetValue<double>("AvailableBalance");
-
-    #endregion
-
     public JsonFileConfigurationManager(IConfiguration configuration)
     {
         _configuration = configuration;
@@ -53,7 +30,7 @@ public class JsonFileConfigurationManager : IConfigurationManager
         {
             AddUserConfigurationFile(username, userConfiguration);
         }
-        _configuration = _configuration.GetSection(username);
+        _targetSection = _configuration.GetSection(username);
     }
 
     public static void AddUsersConfigurations(ConfigurationManager configurationBuilder)
@@ -110,14 +87,41 @@ public class JsonFileConfigurationManager : IConfigurationManager
         Log.Logger.Information("Settings have been updated!");
     }
 
+    #region Settings
+
+    public string Login => _targetSection.GetValue("Login", string.Empty)!;
+    public string Password => _targetSection.GetValue("Password", string.Empty)!;
+    public string Secret => _targetSection.GetValue("Secret", string.Empty)!;
+    public double Trend => _targetSection.GetValue<double>("Trend");
+    public double AveragePrice => _targetSection.GetValue<double>("AveragePrice");
+    public int SalesPerDay => _targetSection.GetValue<int>("SalesPerDay");
+    public string SteamUserId => _targetSection.GetValue("SteamUserId", string.Empty)!;
+    public double FitPriceRange => _targetSection.GetValue<double>("FitPriceRange");
+    public int SellListingFindRange => _targetSection.GetValue<int>("SellListingFindRange");
+    public int SalesRatio => _targetSection.GetValue<int>("SalesRatio");
+    public int AnalysisIntervalDays => _targetSection.GetValue<int>("AnalysisIntervalDays");
+    public int OrderQuantity => _targetSection.GetValue<int>("OrderQuantity");
+    public double MinPrice => _targetSection.GetValue<double>("MinPrice");
+    public double MaxPrice => _targetSection.GetValue<double>("MaxPrice");
+    public int ItemListSize => _targetSection.GetValue<int>("ItemListSize");
+    public double SteamCommission => _targetSection.GetValue<double>("SteamCommission");
+    public double RequiredProfit => _targetSection.GetValue<double>("RequiredProfit");
+    public double AvailableBalance => _targetSection.GetValue<double>("AvailableBalance");
+
     #endregion
 
+    #endregion
+
+    #region Private
+
     private const string UserSettingsFolderName = "UserSettings";
-    private const string ConfigurationFileName = "appsettings.json";
+    
     private static readonly string UserSettingsFolderPath = Path.Combine(Environment.CurrentDirectory, UserSettingsFolderName);
 
     private string _currentUser = "default";
-    private IConfiguration _configuration;
+
+    private readonly IConfiguration _configuration;
+    private IConfigurationSection _targetSection;
 
     private static void AddUserConfigurationFile(string username, UserConfiguration userConfiguration)
     {
@@ -132,10 +136,10 @@ public class JsonFileConfigurationManager : IConfigurationManager
         try
         {
             var orderQuantity = OrderQuantity;
-            var salesPerWeek = SalesPerWeek;
+            var salesPerWeek = SalesPerDay;
             var steamUserId = SteamUserId;
             var sellListingFindRange = SellListingFindRange;
-            var buyListingFindRange = BuyListingFindRange;
+            var buyListingFindRange = SalesRatio;
             var analysisIntervalDays = AnalysisIntervalDays;
             var fitPriceRange = FitPriceRange;
             var averagePrice = AveragePrice;
@@ -181,9 +185,14 @@ public class JsonFileConfigurationManager : IConfigurationManager
         }
     }
 
+    private static string GetFileNameForUser(string username) =>
+        $"appsettings-{username}.json" ;
+
     private static string GetFilePathForUser(string username)
-        => Path.Combine(UserSettingsFolderPath, username, ConfigurationFileName);
+        => Path.Combine(UserSettingsFolderPath, username, GetFileNameForUser(username));
 
     private static string GetFolderPathForUser(string username)
         => Path.Combine(UserSettingsFolderPath, username);
+
+    #endregion
 }

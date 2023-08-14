@@ -1,8 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Serilog;
+﻿using Serilog;
 using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
@@ -11,7 +13,9 @@ public class ItemPageFactory
     private readonly ISteamApi _api;
     private readonly IConfigurationManager _configurationManager;
 
-    public ItemPageFactory(ISteamApi api, IConfigurationManager configurationManager)
+    public ItemPageFactory(
+        ISteamApi api,
+        IConfigurationManager configurationManager)
     {
         _api = api;
         _configurationManager = configurationManager;
@@ -40,10 +44,19 @@ public class ItemPageFactory
         }
 
         var fromDate = DateTime.Now.AddDays(-_configurationManager.AnalysisIntervalDays);
-        itemPage.SalesChart = await _api.GetGraphAsync(itemPage.ItemUrl, fromDate);
+        itemPage.SalesChart = await _api.GetChartAsync(itemPage.ItemUrl, fromDate);
 
-        itemPage.BuyOrderBook = await _api.GetBuyOrdersBookAsync(itemPage.ItemUrl, _configurationManager.BuyListingFindRange);
         itemPage.SellOrderBook = await _api.GetSellOrdersBookAsync(itemPage.ItemUrl, _configurationManager.SellListingFindRange);
+        itemPage.BuyOrderBook = (await _api.GetBuyOrdersBookAsync(itemPage.ItemUrl, 5))
+            .Aggregate(new List<OrderBookItem>(), (list, order) =>
+            {
+                if (list.Sum(x => x.Quantity) < _configurationManager.SalesPerDay * _configurationManager.SalesRatio)
+                    list.Add(order);
+                return list;
+            })
+            .SkipLast(1)
+            .OrderByDescending(x => x.Price)
+            .ToList();
 
         return itemPage;
     }

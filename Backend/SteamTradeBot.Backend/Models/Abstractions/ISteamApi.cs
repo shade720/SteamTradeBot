@@ -15,7 +15,7 @@ public interface ISteamApi
     public Task<List<OrderBookItem>> GetSellOrdersBookAsync(string itemUrl, int sellListingFindRange);
     public Task<int?> GetBuyOrderQuantityAsync(string itemUrl);
     public Task<double?> GetBuyOrderPriceAsync(string itemUrl);
-    public Task<Chart> GetGraphAsync(string itemUrl, DateTime fromDate);
+    public Task<Chart> GetChartAsync(string itemUrl, DateTime fromDate);
     public Task<double?> GetSellOrderPriceAsync(string itemUrl);
     public Task<bool> PlaceBuyOrderAsync(string itemUrl, double price, int quantity);
     public Task<bool> PlaceSellOrderAsync(string itemName, double price, string userId, int inventoryFindRange = 10);

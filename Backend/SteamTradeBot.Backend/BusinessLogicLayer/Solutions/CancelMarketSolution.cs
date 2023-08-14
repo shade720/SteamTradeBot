@@ -8,8 +8,12 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 
 public class CancelMarketSolution : MarketSolution
 {
-    public CancelMarketSolution(ISteamApi api, IConfigurationManager configurationManager, IStateManager stateManager, MarketDbAccess marketDb) : 
-        base(api, configurationManager, stateManager, marketDb) { }
+    public CancelMarketSolution(
+        ISteamApi api, 
+        IConfigurationManager configurationManager, 
+        IStateManager stateManager, 
+        MarketDbAccess marketDb) 
+        : base(api, configurationManager, stateManager, marketDb) { }
 
     public override void Perform(ItemPage itemPage)
     {

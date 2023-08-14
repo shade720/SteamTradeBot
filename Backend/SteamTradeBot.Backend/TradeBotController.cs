@@ -16,7 +16,7 @@ public class TradeBotController : ControllerBase
     [Route("activation")]
     public async Task StartBot(
         WorkerService worker,
-        JsonFileConfigurationManager configurationManager, 
+        [FromServices] JsonFileConfigurationManager configurationManager, 
         ISteamApi api,
         IStateManager stateManager, 
         UserConfiguration userConfiguration)
@@ -31,8 +31,8 @@ public class TradeBotController : ControllerBase
     [HttpPost]
     [Route("deactivation")]
     public async Task StopBot(
-        WorkerService worker, 
-        SeleniumSteamApi api,
+        WorkerService worker,
+        ISteamApi api,
         IStateManager stateManager)
     {
         api.LogOut();
