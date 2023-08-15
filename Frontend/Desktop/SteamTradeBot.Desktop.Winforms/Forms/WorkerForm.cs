@@ -22,7 +22,19 @@ public partial class WorkerForm : Form
     {
         try
         {
-            await _steamTradeBotServiceClient.Start();
+            var credentials = Program.LoadCredentials();
+            if (credentials is null)
+            {
+                MessageBox.Show(@"Incorrect credentials!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var configuration = Program.LoadConfiguration();
+            if (configuration is null || configuration.CheckIntegrity())
+            {
+                MessageBox.Show(@"Incorrect configuration!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            await _steamTradeBotServiceClient.Start(credentials, configuration);
         }
         catch (Exception exception)
         {
@@ -88,7 +100,7 @@ public partial class WorkerForm : Form
                 AddIfNotExist(eventInfo);
             }
         });
-        ThreadHelperClass.ExecOnForm(this, () => WorkingStateControlsVisibility(state.WorkingState == StateInfo.ServiceWorkingState.Up));
+        ThreadHelperClass.ExecOnForm(this, () => SetWorkingStateControlsVisibility(state.WorkingState == StateInfo.ServiceWorkingState.Up));
     }
 
     private void AddIfNotExist(string eventInfo)
@@ -101,7 +113,7 @@ public partial class WorkerForm : Form
         }
     }
 
-    private void WorkingStateControlsVisibility(bool isWorking)
+    private void SetWorkingStateControlsVisibility(bool isWorking)
     {
         StartButton.Visible = !isWorking;
         StopButton.Visible = isWorking;
@@ -115,9 +127,16 @@ public partial class WorkerForm : Form
 
     private async void ViewLogsButton_Click(object sender, EventArgs e)
     {
-        var logs = await _steamTradeBotServiceClient.GetLogFile();
-        var logsForm = new LogForm(logs);
-        logsForm.Show();
+        try
+        {
+            var logs = await _steamTradeBotServiceClient.GetLogFile();
+            var logsForm = new LogForm(logs);
+            logsForm.Show();
+        }
+        catch (Exception exception)
+        {
+            MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     private void WorkerForm_Load(object sender, EventArgs e)

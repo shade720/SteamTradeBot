@@ -2,20 +2,17 @@
 using Newtonsoft.Json.Converters;
 using SteamTradeBot.Desktop.Winforms.Models;
 using System.Dynamic;
-using SteamTradeBot.Desktop.Winforms.ServiceAccess;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
 public partial class LogInForm : Form
 {
-    private readonly SteamTradeBotRestClient _steamTradeBotRestClient;
     private readonly Credentials _credentials;
     public StateInfo.LogInState State { get; set; }
 
-    public LogInForm(SteamTradeBotRestClient steamTradeBotRestClient)
+    public LogInForm()
     {
         InitializeComponent();
-        _steamTradeBotRestClient = steamTradeBotRestClient;
         var savedCredentials = Program.LoadCredentials() ?? new Credentials();
         _credentials = savedCredentials;
         LogInTextBox.Text = savedCredentials.Login;
@@ -25,7 +22,7 @@ public partial class LogInForm : Form
         MaFilePathTextBox.Text = @"MaFile is loaded";
     }
 
-    private async void LogInButton_Click(object sender, EventArgs e)
+    private void LogInButton_Click(object sender, EventArgs e)
     {
         if (string.IsNullOrEmpty(LogInTextBox.Text) || string.IsNullOrEmpty(PasswordTextBox.Text))
         {
@@ -38,11 +35,7 @@ public partial class LogInForm : Form
 
         if (string.IsNullOrEmpty(_credentials.Secret))
         {
-            if (!string.IsNullOrEmpty(TokenTextBox.Text))
-            {
-                _credentials.Token = TokenTextBox.Text;
-            }
-            else if (!string.IsNullOrEmpty(MaFilePathTextBox.Text))
+            if (!string.IsNullOrEmpty(MaFilePathTextBox.Text))
             {
                 var secret = GetSecret(MaFilePathTextBox.Text);
                 if (secret is null)
@@ -59,18 +52,7 @@ public partial class LogInForm : Form
             }
         }
 
-        try
-        {
-            await _steamTradeBotRestClient.LogIn(_credentials);
-        }
-        catch (Exception exception)
-        {
-            MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
-        }
-
-        if (RememberMeCheckBox.Checked)
-            Program.SaveCredentials(_credentials);
+        Program.SaveCredentials(_credentials);
     }
 
     private void ChooseMaFileButton_Click(object sender, EventArgs e)
@@ -96,7 +78,6 @@ public partial class LogInForm : Form
         PasswordTextBox.Text = string.Empty;
         MaFilePathTextBox.Enabled = true;
         MaFilePathTextBox.Text = string.Empty;
-        TokenTextBox.Text = string.Empty;
         Program.EraseCredentials();
         MessageBox.Show(@"Credentials was erased", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }

@@ -16,12 +16,13 @@ public class TradeBotController : ControllerBase
     [Route("activation")]
     public async Task StartBot(
         WorkerService worker,
-        [FromServices] JsonFileConfigurationManager configurationManager, 
+        IConfigurationManager configurationManager, 
         ISteamApi api,
         IStateManager stateManager, 
         UserConfiguration userConfiguration)
     {
-        configurationManager.SetConfigurationContextForUser(userConfiguration.Login, userConfiguration);
+        var jsonConfigurationManager = configurationManager as JsonFileConfigurationManager;
+        jsonConfigurationManager.SetConfigurationContextForUser(userConfiguration.Login, userConfiguration);
         stateManager.OnLogInPending();
         await api.LogIn(configurationManager.Login, configurationManager.Password, configurationManager.Secret);
         stateManager.OnLoggedIn(configurationManager.Login);
@@ -46,7 +47,7 @@ public class TradeBotController : ControllerBase
         IConfigurationManager configurationManager, 
         UserConfiguration userConfiguration)
     {
-        await configurationManager.RefreshConfigurationAsync(userConfiguration);
+        await configurationManager.RefreshConfigurationAsync(userConfiguration.Login, userConfiguration);
     }
 
     [HttpPost]
@@ -60,7 +61,8 @@ public class TradeBotController : ControllerBase
     [HttpGet]
     [Route("state")]
     public async Task<ServiceState> GetState(
-        IStateManager stateManager, [FromQuery] long fromTicks)
+        IStateManager stateManager, 
+        [FromQuery] long fromTicks)
     {
         return await stateManager.GetServiceStateAsync(fromTicks);
     }

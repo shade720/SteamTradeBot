@@ -31,13 +31,9 @@
             groupBox1 = new GroupBox();
             ResetButton = new Button();
             ChooseMaFileButton = new Button();
-            LogInButton = new Button();
+            SaveCredentialsButton = new Button();
             MaFilePathTextBox = new TextBox();
             label5 = new Label();
-            label4 = new Label();
-            RememberMeCheckBox = new CheckBox();
-            TokenTextBox = new TextBox();
-            label3 = new Label();
             PasswordTextBox = new TextBox();
             label2 = new Label();
             LogInTextBox = new TextBox();
@@ -51,13 +47,9 @@
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(ResetButton);
             groupBox1.Controls.Add(ChooseMaFileButton);
-            groupBox1.Controls.Add(LogInButton);
+            groupBox1.Controls.Add(SaveCredentialsButton);
             groupBox1.Controls.Add(MaFilePathTextBox);
             groupBox1.Controls.Add(label5);
-            groupBox1.Controls.Add(label4);
-            groupBox1.Controls.Add(RememberMeCheckBox);
-            groupBox1.Controls.Add(TokenTextBox);
-            groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(PasswordTextBox);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(LogInTextBox);
@@ -96,7 +88,7 @@
             ChooseMaFileButton.FlatStyle = FlatStyle.Flat;
             ChooseMaFileButton.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             ChooseMaFileButton.ForeColor = Color.White;
-            ChooseMaFileButton.Location = new Point(441, 231);
+            ChooseMaFileButton.Location = new Point(441, 223);
             ChooseMaFileButton.Margin = new Padding(3, 2, 3, 2);
             ChooseMaFileButton.Name = "ChooseMaFileButton";
             ChooseMaFileButton.Size = new Size(97, 29);
@@ -105,21 +97,21 @@
             ChooseMaFileButton.UseVisualStyleBackColor = false;
             ChooseMaFileButton.Click += ChooseMaFileButton_Click;
             // 
-            // LogInButton
+            // SaveCredentialsButton
             // 
-            LogInButton.Anchor = AnchorStyles.Bottom;
-            LogInButton.BackColor = Color.DodgerBlue;
-            LogInButton.FlatStyle = FlatStyle.Flat;
-            LogInButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
-            LogInButton.ForeColor = Color.White;
-            LogInButton.Location = new Point(184, 352);
-            LogInButton.Margin = new Padding(3, 2, 3, 2);
-            LogInButton.Name = "LogInButton";
-            LogInButton.Size = new Size(175, 45);
-            LogInButton.TabIndex = 10;
-            LogInButton.Text = "Log In";
-            LogInButton.UseVisualStyleBackColor = false;
-            LogInButton.Click += LogInButton_Click;
+            SaveCredentialsButton.Anchor = AnchorStyles.Bottom;
+            SaveCredentialsButton.BackColor = Color.DodgerBlue;
+            SaveCredentialsButton.FlatStyle = FlatStyle.Flat;
+            SaveCredentialsButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            SaveCredentialsButton.ForeColor = Color.White;
+            SaveCredentialsButton.Location = new Point(184, 352);
+            SaveCredentialsButton.Margin = new Padding(3, 2, 3, 2);
+            SaveCredentialsButton.Name = "SaveCredentialsButton";
+            SaveCredentialsButton.Size = new Size(175, 45);
+            SaveCredentialsButton.TabIndex = 10;
+            SaveCredentialsButton.Text = "Save";
+            SaveCredentialsButton.UseVisualStyleBackColor = false;
+            SaveCredentialsButton.Click += LogInButton_Click;
             // 
             // MaFilePathTextBox
             // 
@@ -127,7 +119,7 @@
             MaFilePathTextBox.BackColor = SystemColors.ControlLight;
             MaFilePathTextBox.BorderStyle = BorderStyle.FixedSingle;
             MaFilePathTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            MaFilePathTextBox.Location = new Point(184, 231);
+            MaFilePathTextBox.Location = new Point(184, 223);
             MaFilePathTextBox.Margin = new Padding(3, 2, 3, 2);
             MaFilePathTextBox.Name = "MaFilePathTextBox";
             MaFilePathTextBox.Size = new Size(233, 29);
@@ -138,58 +130,11 @@
             label5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label5.Location = new Point(38, 235);
+            label5.Location = new Point(47, 225);
             label5.Name = "label5";
-            label5.Size = new Size(133, 21);
+            label5.Size = new Size(129, 21);
             label5.TabIndex = 8;
-            label5.Text = "SDA maFile path:";
-            // 
-            // label4
-            // 
-            label4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
-            label4.Location = new Point(257, 195);
-            label4.Name = "label4";
-            label4.Size = new Size(26, 20);
-            label4.TabIndex = 7;
-            label4.Text = "Or";
-            // 
-            // RememberMeCheckBox
-            // 
-            RememberMeCheckBox.Anchor = AnchorStyles.Bottom;
-            RememberMeCheckBox.AutoSize = true;
-            RememberMeCheckBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            RememberMeCheckBox.Location = new Point(206, 402);
-            RememberMeCheckBox.Margin = new Padding(3, 2, 3, 2);
-            RememberMeCheckBox.Name = "RememberMeCheckBox";
-            RememberMeCheckBox.Size = new Size(132, 25);
-            RememberMeCheckBox.TabIndex = 6;
-            RememberMeCheckBox.Text = "Remember me";
-            RememberMeCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // TokenTextBox
-            // 
-            TokenTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            TokenTextBox.BackColor = SystemColors.ControlLight;
-            TokenTextBox.BorderStyle = BorderStyle.FixedSingle;
-            TokenTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            TokenTextBox.Location = new Point(184, 148);
-            TokenTextBox.Margin = new Padding(3, 2, 3, 2);
-            TokenTextBox.Name = "TokenTextBox";
-            TokenTextBox.Size = new Size(233, 29);
-            TokenTextBox.TabIndex = 5;
-            // 
-            // label3
-            // 
-            label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label3.Location = new Point(123, 150);
-            label3.Name = "label3";
-            label3.Size = new Size(53, 21);
-            label3.TabIndex = 4;
-            label3.Text = "Token";
+            label5.Text = "SDA maFile path";
             // 
             // PasswordTextBox
             // 
@@ -197,7 +142,7 @@
             PasswordTextBox.BackColor = SystemColors.ControlLight;
             PasswordTextBox.BorderStyle = BorderStyle.FixedSingle;
             PasswordTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            PasswordTextBox.Location = new Point(184, 104);
+            PasswordTextBox.Location = new Point(184, 178);
             PasswordTextBox.Margin = new Padding(3, 2, 3, 2);
             PasswordTextBox.Name = "PasswordTextBox";
             PasswordTextBox.PasswordChar = '*';
@@ -209,7 +154,7 @@
             label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(97, 106);
+            label2.Location = new Point(97, 180);
             label2.Name = "label2";
             label2.Size = new Size(79, 21);
             label2.TabIndex = 2;
@@ -221,7 +166,7 @@
             LogInTextBox.BackColor = SystemColors.ControlLight;
             LogInTextBox.BorderStyle = BorderStyle.FixedSingle;
             LogInTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            LogInTextBox.Location = new Point(184, 60);
+            LogInTextBox.Location = new Point(184, 134);
             LogInTextBox.Margin = new Padding(3, 2, 3, 2);
             LogInTextBox.Name = "LogInTextBox";
             LogInTextBox.Size = new Size(233, 29);
@@ -232,7 +177,7 @@
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label1.Location = new Point(125, 62);
+            label1.Location = new Point(125, 136);
             label1.Name = "label1";
             label1.Size = new Size(51, 21);
             label1.TabIndex = 0;
@@ -267,13 +212,9 @@
         private Label label2;
         private TextBox MaFilePathTextBox;
         private Label label5;
-        private Label label4;
-        private CheckBox RememberMeCheckBox;
-        private TextBox TokenTextBox;
-        private Label label3;
         private Button ChooseMaFileButton;
         private Button ResetButton;
         private OpenFileDialog OpenFileDialog;
-        public Button LogInButton;
+        public Button SaveCredentialsButton;
     }
 }

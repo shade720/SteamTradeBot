@@ -3,7 +3,7 @@ using System;
 
 namespace SteamTradeBot.Backend.Models.StateModel;
 
-public partial class ServiceState
+public class ServiceState
 {
     public ServiceWorkingState WorkingState { get; set; } = ServiceWorkingState.Down;
     public LogInState IsLoggedIn { get; set; }

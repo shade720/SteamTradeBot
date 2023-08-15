@@ -38,5 +38,5 @@ public interface IConfigurationManager
     public double SteamCommission { get; }
     public double RequiredProfit { get; }
     public double AvailableBalance { get; }
-    public Task RefreshConfigurationAsync(UserConfiguration userConfiguration);
+    public Task RefreshConfigurationAsync(string username, UserConfiguration userConfiguration);
 }

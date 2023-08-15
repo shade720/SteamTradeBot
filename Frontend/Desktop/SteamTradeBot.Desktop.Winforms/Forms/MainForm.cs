@@ -10,16 +10,15 @@ public partial class MainForm : Form
     private readonly SettingsForm _settingsForm;
     private readonly LogInForm _logInForm;
 
-    private readonly SteamTradeBotRestClient _steamTradeBotRestClient;
     public MainForm()
     {
         InitializeComponent();
-        _steamTradeBotRestClient = new SteamTradeBotRestClient();
 
-        _workerForm = new WorkerForm(_steamTradeBotRestClient);
+        var steamTradeBotRestClient = new SteamTradeBotRestClient(new HttpClientProvider());
+        _workerForm = new WorkerForm(steamTradeBotRestClient);
 
-        _settingsForm = new SettingsForm(_steamTradeBotRestClient);
-        _logInForm = new LogInForm(_steamTradeBotRestClient);
+        _settingsForm = new SettingsForm(steamTradeBotRestClient);
+        _logInForm = new LogInForm();
 
         _settingsForm.TopLevel = false;
         _settingsForm.Dock = DockStyle.Fill;
@@ -45,16 +44,6 @@ public partial class MainForm : Form
         _logInForm.Show();
     }
 
-    private async void LogOutButton_Click(object sender, EventArgs e)
-    {
-        await _steamTradeBotRestClient.LogOut();
-    }
-
-    private async void LogOutLabel_Click(object sender, EventArgs e)
-    {
-        await _steamTradeBotRestClient.LogOut();
-    }
-
     #endregion
 
     #region Worker
@@ -68,6 +57,8 @@ public partial class MainForm : Form
 
     private void OnStateChanged(StateInfo state)
     {
+        if (state is null)
+            return;
         ServiceStatePanel.BackColor = state.WorkingState switch
         {
             StateInfo.ServiceWorkingState.Up => Color.PaleGreen,
@@ -82,7 +73,7 @@ public partial class MainForm : Form
             case StateInfo.LogInState.Pending:
                 ThreadHelperClass.ExecOnForm(this, () =>
                 {
-                    _logInForm.LogInButton.Enabled = false;
+                    _logInForm.SaveCredentialsButton.Enabled = false;
                     _logInForm.State = StateInfo.LogInState.Pending;
                     StartDisplayLoadingIcon("Connecting to steam API...");
                 });
@@ -98,7 +89,7 @@ public partial class MainForm : Form
                     LogInLabel.Visible = false;
                     LogOutLabel.Visible = true;
                     LogOutLabel.Text = state.CurrentUser;
-                    _logInForm.LogInButton.Enabled = false;
+                    _logInForm.SaveCredentialsButton.Enabled = false;
                     _logInForm.Hide();
                     _workerForm.Show();
                     _settingsForm.Hide();
@@ -114,7 +105,7 @@ public partial class MainForm : Form
                     LogInLabel.Visible = true;
                     LogOutLabel.Visible = false;
                     LogOutLabel.Text = string.Empty;
-                    _logInForm.LogInButton.Enabled = true;
+                    _logInForm.SaveCredentialsButton.Enabled = true;
                     _logInForm.State = StateInfo.LogInState.NotLoggedIn;
                 });
                 break;
@@ -151,7 +142,6 @@ public partial class MainForm : Form
         _workerForm.Dispose();
         _settingsForm.Dispose();
         _logInForm.Dispose();
-        _steamTradeBotRestClient.Dispose();
     }
 
     private void MainForm_Load(object sender, EventArgs e)

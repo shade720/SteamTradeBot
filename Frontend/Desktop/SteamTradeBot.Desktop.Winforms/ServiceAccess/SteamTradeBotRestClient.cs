@@ -1,71 +1,70 @@
-﻿using System.Net.Http.Headers;
-using System.Security.Authentication;
-using System.Text;
+﻿using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SteamTradeBot.Desktop.Winforms.Models;
 
 namespace SteamTradeBot.Desktop.Winforms.ServiceAccess;
 
-public class SteamTradeBotRestClient : IDisposable
+public class SteamTradeBotRestClient
 {
-    private readonly HttpClient _restClient;
-    private const string BaseAddress = "http://192.168.0.107:5050/api/";
-    //private const string BaseAddress = "http://localhost:5050/api/";
+    private readonly HttpClientProvider _clientProvider;
     private DateTime _lastStateCheck = DateTime.MinValue;
 
-    public SteamTradeBotRestClient()
+    public SteamTradeBotRestClient(HttpClientProvider clientProvider)
     {
-        _restClient = new HttpClient();
-        _restClient.BaseAddress = new Uri(BaseAddress);
-        _restClient.DefaultRequestHeaders.Accept.Clear();
-        _restClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        _clientProvider = clientProvider;
     }
 
-    public async Task LogIn(Credentials credentials)
+    public async Task Start(Credentials credentials, Configuration configuration)
     {
-        var response = await _restClient.PostAsync("login", new StringContent(JsonConvert.SerializeObject(credentials), Encoding.UTF8, "application/json"));
-        if (!response.IsSuccessStatusCode)
-            throw new AuthenticationException(await response.Content.ReadAsStringAsync());
-    }
+        using var restClient = HttpClientProvider.Create();
+        restClient.Timeout = TimeSpan.MaxValue;
+        var serializedCredentials = JsonConvert.SerializeObject(credentials);
+        var serializedConfiguration = JsonConvert.SerializeObject(configuration);
 
-    public async Task LogOut()
-    {
-        var response = await _restClient.PostAsync("logout", null);
-        response.EnsureSuccessStatusCode();
-    }
+        var credentialsJObject = JObject.Parse(serializedCredentials);
+        var configurationJObject = JObject.Parse(serializedConfiguration);
+        credentialsJObject.Merge(configurationJObject, new JsonMergeSettings {MergeArrayHandling = MergeArrayHandling.Merge});
 
-    public async Task Start()
-    {
-        var response = await _restClient.PostAsync("activation", null);
+        var response = await restClient.PostAsync("/api/activation", new StringContent(credentialsJObject.ToString(), Encoding.UTF8, "application/json"));
         response.EnsureSuccessStatusCode();
     }
 
     public async Task Stop()
     {
-        var response = await _restClient.PostAsync("deactivation", null);
+        using var restClient = HttpClientProvider.Create();
+        var response = await restClient.PostAsync("/api/deactivation", null);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task UploadSettings(string configurationJson)
     {
-        var response = await _restClient.PostAsync("configuration", new StringContent(configurationJson, Encoding.UTF8, "application/json"));
+        using var restClient = HttpClientProvider.Create();
+        var response = await restClient.PostAsync("/api/configuration", new StringContent(configurationJson, Encoding.UTF8, "application/json"));
         response.EnsureSuccessStatusCode();
     }
 
     public async Task CancelOrders()
     {
-        var response = await _restClient.PostAsync("orderscanceling", null);
+        using var restClient = HttpClientProvider.Create();
+        var response = await restClient.PostAsync("/api/orderscanceling", null);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task<StateInfo> CheckState()
     {
+        using var restClient = HttpClientProvider.Create();
         try
         {
-            var response = await _restClient.GetAsync($"state?fromTicks={_lastStateCheck.Ticks}");
+            var response = await restClient.GetAsync($"/api/state?fromTicks={_lastStateCheck.Ticks}");
             _lastStateCheck = DateTime.UtcNow;
             var stateInfoJson = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<StateInfo>(stateInfoJson)!;
+            var stateInfoObject = JsonConvert.DeserializeObject<StateInfo>(stateInfoJson);
+            return stateInfoObject ?? new StateInfo
+            {
+                Connection = StateInfo.ConnectionState.Disconnected, 
+                WorkingState = StateInfo.ServiceWorkingState.Down
+            };
         }
         catch
         {
@@ -79,12 +78,8 @@ public class SteamTradeBotRestClient : IDisposable
 
     public async Task<string> GetLogFile()
     {
-        var response = await _restClient.GetAsync("logs");
+        using var restClient = HttpClientProvider.Create();
+        var response = await restClient.GetAsync("logs");
         return await response.Content.ReadAsStringAsync();
-    }
-
-    public void Dispose()
-    {
-        _restClient.Dispose();
     }
 }

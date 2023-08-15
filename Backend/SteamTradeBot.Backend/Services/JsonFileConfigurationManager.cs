@@ -23,9 +23,6 @@ public class JsonFileConfigurationManager : IConfigurationManager
 
     public void SetConfigurationContextForUser(string username, UserConfiguration userConfiguration)
     {
-        if (_currentUser == username)
-            return;
-        _currentUser = username;
         if (!File.Exists(GetFilePathForUser(username)))
         {
             AddUserConfigurationFile(username, userConfiguration);
@@ -44,10 +41,10 @@ public class JsonFileConfigurationManager : IConfigurationManager
         }
     }
 
-    public async Task RefreshConfigurationAsync(UserConfiguration userConfiguration)
+    public async Task RefreshConfigurationAsync(string username, UserConfiguration userConfiguration)
     {
         Log.Logger.Information("Start settings update...");
-        var currentSettings = await File.ReadAllTextAsync(GetFilePathForUser(_currentUser));
+        var currentSettings = await File.ReadAllTextAsync(GetFilePathForUser(username));
 
         var jsonSettings = new JsonSerializerSettings();
         jsonSettings.Converters.Add(new ExpandoObjectConverter());
@@ -77,11 +74,11 @@ public class JsonFileConfigurationManager : IConfigurationManager
         }
 
         var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
-        await File.WriteAllTextAsync(GetFilePathForUser(_currentUser), updatedSettings);
+        await File.WriteAllTextAsync(GetFilePathForUser(username), updatedSettings);
 
         if (!CheckIntegrity())
         {
-            await File.WriteAllTextAsync(GetFilePathForUser(_currentUser), currentSettings);
+            await File.WriteAllTextAsync(GetFilePathForUser(username), currentSettings);
             Log.Logger.Information("Settings have not been updated. UserConfiguration was corrupted.");
         }
         Log.Logger.Information("Settings have been updated!");
@@ -117,8 +114,6 @@ public class JsonFileConfigurationManager : IConfigurationManager
     private const string UserSettingsFolderName = "UserSettings";
     
     private static readonly string UserSettingsFolderPath = Path.Combine(Environment.CurrentDirectory, UserSettingsFolderName);
-
-    private string _currentUser = "default";
 
     private readonly IConfiguration _configuration;
     private IConfigurationSection _targetSection;

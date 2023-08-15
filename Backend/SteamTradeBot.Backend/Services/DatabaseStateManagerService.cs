@@ -10,13 +10,13 @@ using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.Services;
 
-public class StateManagerService : IStateManager
+public class DatabaseStateManagerService : IStateManager
 {
     private readonly HistoryDbAccess _historyDb;
     private readonly ServiceState _serviceState;
     private readonly Stopwatch _stopwatch;
 
-    public StateManagerService(HistoryDbAccess historyDb)
+    public DatabaseStateManagerService(HistoryDbAccess historyDb)
     {
         _historyDb = historyDb;
         var previousMarketEvents = _historyDb.GetHistoryAsync().Result;
@@ -42,24 +42,25 @@ public class StateManagerService : IStateManager
 
     public async Task<ServiceState> GetServiceStateAsync(long fromDate)
     {
-        return await Task.Run(() =>
+        var previousMarketEvents = await _historyDb.GetHistoryAsync();
+        var currentState = new ServiceState
         {
-            var serviceStateCopy = new ServiceState
-            {
-                WorkingState = _serviceState.WorkingState,
-                ItemsAnalyzed = _serviceState.ItemsAnalyzed,
-                ItemsBought = _serviceState.ItemsBought,
-                ItemsSold = _serviceState.ItemsSold,
-                ItemCanceled = _serviceState.ItemCanceled,
-                Errors = _serviceState.Errors,
-                Warnings = _serviceState.Warnings,
-                Events = new List<string>(_serviceState.Events.Where(x => DateTime.Parse(x.Split('#')[0]).Ticks > fromDate)),
-                Uptime = _stopwatch.Elapsed,
-                CurrentUser = _serviceState.CurrentUser,
-                IsLoggedIn = _serviceState.IsLoggedIn,
-            };
-            return serviceStateCopy;
-        });
+            Warnings = previousMarketEvents.Count(x => x.Type == InfoType.Warning),
+            Errors = previousMarketEvents.Count(x => x.Type == InfoType.Error),
+            ItemsAnalyzed = previousMarketEvents.Count(x => x.Type == InfoType.ItemAnalyzed),
+            ItemsBought = previousMarketEvents.Count(x => x.Type == InfoType.ItemBought),
+            ItemsSold = previousMarketEvents.Count(x => x.Type == InfoType.ItemSold),
+            ItemCanceled = previousMarketEvents.Count(x => x.Type == InfoType.ItemCanceled),
+            Events = previousMarketEvents
+                .Where(x => x.Type is InfoType.ItemBought or InfoType.ItemCanceled or InfoType.ItemSold)
+                .Select(x =>
+                {
+                    var profit = x.Profit > 0 ? x.Profit.ToString() : string.Empty;
+                    return $"{x.Time}#{x.Info}#{x.Type}#{x.BuyPrice}#{x.SellPrice}#{profit}";
+                })
+                .ToList()
+        };
+        return currentState;
     }
 
     public void OnTradingStarted()

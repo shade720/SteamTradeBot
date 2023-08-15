@@ -40,10 +40,10 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Log.Logger);
 
 var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? builder.Configuration["PostgresConnectionString"];
-var sqlServerConnectionString = builder.Configuration["SqlServerConnectionString"];
+var sqlServerConnectionString = builder.Configuration["MsSqlServerConnectionString"];
 
-//builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseSqlServer(sqlServerConnectionString));
-builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseNpgsql(postgresConnectionString));
+builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseSqlServer(sqlServerConnectionString));
+//builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseNpgsql(postgresConnectionString));
 
 var remoteWebDriverHost = Environment.GetEnvironmentVariable("SELENIUM_HOST") ?? "http://localhost:5051";
 builder.Services.AddScoped<ISteamApi, SeleniumSteamApi>(_ => new SeleniumSteamApi(() =>
@@ -70,7 +70,7 @@ builder.Services.AddScoped<HistoryDbAccess>();
 
 JsonFileConfigurationManager.AddUsersConfigurations(builder.Configuration);
 builder.Services.AddScoped<IConfigurationManager, JsonFileConfigurationManager>();
-builder.Services.AddScoped<IStateManager, StateManagerService>();
+builder.Services.AddScoped<IStateManager, DatabaseStateManagerService>();
 builder.Services.AddTransient<LogsProviderService>();
 builder.Services.AddTransient<OrderCancellingService>();
 

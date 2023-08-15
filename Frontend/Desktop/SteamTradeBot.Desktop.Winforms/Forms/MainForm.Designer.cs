@@ -264,7 +264,6 @@
             LogOutButton.TabIndex = 5;
             LogOutButton.UseVisualStyleBackColor = true;
             LogOutButton.Visible = false;
-            LogOutButton.Click += LogOutButton_Click;
             // 
             // LogOutLabel
             // 
@@ -277,7 +276,6 @@
             LogOutLabel.TabIndex = 7;
             LogOutLabel.TextAlign = ContentAlignment.MiddleRight;
             LogOutLabel.Visible = false;
-            LogOutLabel.Click += LogOutLabel_Click;
             // 
             // LoadingPictureBox
             // 

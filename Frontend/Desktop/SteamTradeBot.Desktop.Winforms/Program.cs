@@ -9,8 +9,10 @@ internal static class Program
     public static readonly string TempPath = Path.Combine(Environment.SpecialFolder.ApplicationData.ToString(), "SteamTradeBotTemp");
     private const string SettingsFileName = "configuration.json";
     private const string CredentialsFileName = "credentials.json";
+    private const string ConnectionInfoFileName = "connection.json";
     private static readonly string SettingsPath = Path.Combine(TempPath, SettingsFileName);
     private static readonly string CredentialsPath = Path.Combine(TempPath, CredentialsFileName);
+    private static readonly string ConnectionInfoPath = Path.Combine(TempPath, ConnectionInfoFileName);
 
     /// <summary>
     ///  The main entry point for the application.
@@ -67,5 +69,24 @@ internal static class Program
     public static void EraseCredentials()
     {
         File.Delete(CredentialsPath);
+    }
+
+    public static void SaveConnectionInfo(ConnectionInfo connectionInfo)
+    {
+        var connectionInfoJson = JsonConvert.SerializeObject(connectionInfo);
+        File.WriteAllText(ConnectionInfoPath, connectionInfoJson);
+    }
+
+    public static ConnectionInfo? LoadConnectionInfo()
+    {
+        if (!File.Exists(ConnectionInfoPath))
+            return null;
+        var connectionInfoJson = File.ReadAllText(ConnectionInfoPath);
+        return JsonConvert.DeserializeObject<ConnectionInfo>(connectionInfoJson);
+    }
+
+    public static void EraseConnectionInfo()
+    {
+        File.Delete(ConnectionInfoPath);
     }
 }

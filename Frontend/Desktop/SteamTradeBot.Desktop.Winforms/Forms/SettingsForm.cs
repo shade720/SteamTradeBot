@@ -9,6 +9,7 @@ public partial class SettingsForm : Form
 {
     private readonly SteamTradeBotRestClient _steamTradeBotRestClient;
     public Configuration? Configuration { get; set; }
+    public ConnectionInfo? ConnectionInfo { get; set; }
 
     public SettingsForm(SteamTradeBotRestClient steamTradeBotRestClient)
     {
@@ -29,7 +30,10 @@ public partial class SettingsForm : Form
         SalesPerWeekTextBox.Text = Configuration.SalesPerWeek.ToString(CultureInfo.InvariantCulture);
         SteamUserIdTextBox.Text = Configuration.SteamUserId;
         SteamCommissionTextBox.Text = Configuration.SteamCommission.ToString(CultureInfo.InvariantCulture);
-        BuyListingFindRangeTextBox.Text = Configuration.BuyListingFindRange.ToString();
+        SalesCoefficient.Text = Configuration.BuyListingFindRange.ToString();
+
+        ConnectionInfo = Program.LoadConnectionInfo() ?? new ConnectionInfo();
+        ConnectionAddressTextBox.Text = ConnectionInfo.ServerAddress;
     }
 
     private async void UploadSettingsButton_Click(object sender, EventArgs e)
@@ -64,7 +68,7 @@ public partial class SettingsForm : Form
             SalesPerWeek = int.Parse(SalesPerWeekTextBox.Text),
             SteamUserId = SteamUserIdTextBox.Text,
             SteamCommission = double.Parse(SteamCommissionTextBox.Text, CultureInfo.InvariantCulture),
-            BuyListingFindRange = int.Parse(BuyListingFindRangeTextBox.Text)
+            BuyListingFindRange = int.Parse(SalesCoefficient.Text)
         };
     }
 
@@ -84,9 +88,15 @@ public partial class SettingsForm : Form
         TrendTextBox.Text = string.Empty;
         SalesPerWeekTextBox.Text = string.Empty;
         SteamCommissionTextBox.Text = string.Empty;
-        BuyListingFindRangeTextBox.Text = string.Empty;
+        SalesCoefficient.Text = string.Empty;
         Configuration = null;
+
+        ConnectionAddressTextBox.Text = string.Empty;
+        ConnectionInfo = null;
+
+        Program.EraseConnectionInfo();
         Program.EraseConfiguration();
+        
         MessageBox.Show(@"Settings was erased!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
@@ -96,6 +106,8 @@ public partial class SettingsForm : Form
         {
             var currentConfiguration = GetCurrentConfiguration();
             Program.SaveConfiguration(currentConfiguration);
+
+            Program.SaveConnectionInfo(new ConnectionInfo {ServerAddress = ConnectionAddressTextBox.Text});
             MessageBox.Show(@"Configuration was saved!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception exception)

@@ -6,10 +6,14 @@ public class BuyOrder
 {
     [Key]
     public int Id { get; set; }
-    public string UserName { get; set; } = string.Empty;
     public string EngItemName { get; set; } = string.Empty;
+
+    [Required(AllowEmptyStrings = true)]
+    public string UserName { get; set; } = string.Empty;
+
     [Required(AllowEmptyStrings = true)]
     public string RusItemName { get; set; } = string.Empty;
+
     [Required(AllowEmptyStrings = true)]
     public string ItemUrl { get; set; } = string.Empty;
     public double Price { get; set; }
