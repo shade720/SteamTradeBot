@@ -23,7 +23,7 @@ public class SellMarketSolution : MarketSolution
 
     public override async Task PerformAsync(ItemPage itemPage)
     {
-        var buyOrder = await MarketDb.GetBuyOrderAsync(itemPage.EngItemName, itemPage.UserName);
+        var buyOrder = await MarketDb.GetBuyOrderAsync(itemPage.EngItemName, itemPage.ApiKey);
         if (buyOrder is null)
             throw new Exception("Can't find local buy order for sell order forming");
         var sellOrder = new SellOrder

@@ -21,13 +21,11 @@ public class JsonFileConfigurationManager : IConfigurationManager
         _configuration = configuration;
     }
 
-    public void SetConfigurationContextForUser(string username, UserConfiguration userConfiguration)
+    public void SetConfigurationContextForUser(string apiKey)
     {
-        if (!File.Exists(GetFilePathForUser(username)))
-        {
-            AddUserConfigurationFile(username, userConfiguration);
-        }
-        _targetSection = _configuration.GetSection(username);
+        if (!File.Exists(GetFilePathForUser(apiKey)))
+            throw new Exception("Configuration does not exist");
+        _targetSection = _configuration.GetSection(apiKey);
     }
 
     public static void AddUsersConfigurations(ConfigurationManager configurationBuilder)
@@ -41,10 +39,15 @@ public class JsonFileConfigurationManager : IConfigurationManager
         }
     }
 
-    public async Task RefreshConfigurationAsync(string username, UserConfiguration userConfiguration)
+    public async Task RefreshConfigurationAsync(string apiKey, UserConfiguration userConfiguration)
     {
+        if (!File.Exists(GetFilePathForUser(apiKey)))
+            AddUserConfigurationFile(apiKey, userConfiguration);
+
         Log.Logger.Information("Start settings update...");
-        var currentSettings = await File.ReadAllTextAsync(GetFilePathForUser(username));
+        var currentSettings = await File.ReadAllTextAsync(GetFilePathForUser(apiKey));
+
+        userConfiguration.ApiKey = apiKey;
 
         var jsonSettings = new JsonSerializerSettings();
         jsonSettings.Converters.Add(new ExpandoObjectConverter());
@@ -74,11 +77,14 @@ public class JsonFileConfigurationManager : IConfigurationManager
         }
 
         var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
-        await File.WriteAllTextAsync(GetFilePathForUser(username), updatedSettings);
+        await File.WriteAllTextAsync(GetFilePathForUser(apiKey), updatedSettings);
+
+        if (_targetSection is null)
+            SetConfigurationContextForUser(apiKey);
 
         if (!CheckIntegrity())
         {
-            await File.WriteAllTextAsync(GetFilePathForUser(username), currentSettings);
+            await File.WriteAllTextAsync(GetFilePathForUser(apiKey), currentSettings);
             Log.Logger.Information("Settings have not been updated. UserConfiguration was corrupted.");
         }
         Log.Logger.Information("Settings have been updated!");
@@ -86,9 +92,7 @@ public class JsonFileConfigurationManager : IConfigurationManager
 
     #region Settings
 
-    public string Login => _targetSection.GetValue("Login", string.Empty)!;
-    public string Password => _targetSection.GetValue("Password", string.Empty)!;
-    public string Secret => _targetSection.GetValue("Secret", string.Empty)!;
+    public string ApiKey => _targetSection.GetValue<string>("ApiKey", string.Empty)!;
     public double Trend => _targetSection.GetValue<double>("Trend");
     public double AveragePriceRatio => _targetSection.GetValue<double>("AveragePriceRatio");
     public int SalesPerDay => _targetSection.GetValue<int>("SalesPerDay");
@@ -112,17 +116,17 @@ public class JsonFileConfigurationManager : IConfigurationManager
     #region Private
 
     private const string UserSettingsFolderName = "UserSettings";
-    
     private static readonly string UserSettingsFolderPath = Path.Combine(Environment.CurrentDirectory, UserSettingsFolderName);
 
     private readonly IConfiguration _configuration;
-    private IConfigurationSection _targetSection;
+    private IConfigurationSection? _targetSection;
 
-    private static void AddUserConfigurationFile(string username, UserConfiguration userConfiguration)
+    private static void AddUserConfigurationFile(string apiKey, UserConfiguration userConfiguration)
     {
-        Directory.CreateDirectory(GetFolderPathForUser(username));
-        var configurationJson = JsonConvert.SerializeObject(new Dictionary<string, UserConfiguration> { { username, userConfiguration } });
-        File.WriteAllText(GetFilePathForUser(username), configurationJson);
+        Directory.CreateDirectory(GetFolderPathForUser(apiKey));
+        userConfiguration.ApiKey = apiKey;
+        var configurationJson = JsonConvert.SerializeObject(new Dictionary<string, UserConfiguration> { { apiKey, userConfiguration } });
+        File.WriteAllText(GetFilePathForUser(apiKey), configurationJson);
     }
 
     private bool CheckIntegrity()

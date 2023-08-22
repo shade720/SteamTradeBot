@@ -4,9 +4,7 @@ namespace SteamTradeBot.Backend.Models.Abstractions;
 
 public interface IConfigurationManager
 {
-    public string Login { get; }
-    public string Password { get; }
-    public string Secret { get; }
+    public string ApiKey { get; }
 
     /// <summary>
     /// Тренд цены - лежит в промежутке -Infinity:+Infinity - угол наклона усредненного графика продаж.
@@ -38,5 +36,5 @@ public interface IConfigurationManager
     public double SteamCommission { get; }
     public double RequiredProfit { get; }
     public double AvailableBalance { get; }
-    public Task RefreshConfigurationAsync(string username, UserConfiguration userConfiguration);
+    public Task RefreshConfigurationAsync(string apiKey, UserConfiguration userConfiguration);
 }

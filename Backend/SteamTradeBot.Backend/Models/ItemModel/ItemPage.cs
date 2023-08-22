@@ -12,12 +12,12 @@ public class ItemPage
     public Chart SalesChart { get; set; }
     public List<OrderBookItem> SellOrderBook { get; set; }
     public List<OrderBookItem> BuyOrderBook { get; set; }
-    public string UserName { get; set; }
-
+    
     //Temp
     public double EstimatedBuyPrice { get; set; }
     public double EstimatedSellPrice { get; set; }
     public double CurrentBalance { get; set; }
+    public string ApiKey { get; set; }
 
     public override string ToString()
     {

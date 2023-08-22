@@ -46,7 +46,7 @@ builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.Use
 //builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseNpgsql(postgresConnectionString));
 
 var remoteWebDriverHost = Environment.GetEnvironmentVariable("SELENIUM_HOST") ?? "http://localhost:5051";
-builder.Services.AddScoped<ISteamApi, SeleniumSteamApi>(_ => new SeleniumSteamApi(() =>
+builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>(_ => new SeleniumSteamApi(() =>
 {
     var chromeOptions = new ChromeOptions();
     chromeOptions.AddArgument("--disable-gpu");
@@ -65,12 +65,12 @@ builder.Services.AddScoped<ISteamApi, SeleniumSteamApi>(_ => new SeleniumSteamAp
     return new ChromeDriver(driverService, chromeOptions);
 }));
 
-builder.Services.AddScoped<MarketDbAccess>();
-builder.Services.AddScoped<HistoryDbAccess>();
+builder.Services.AddTransient<MarketDbAccess>();
+builder.Services.AddTransient<HistoryDbAccess>();
 
 JsonFileConfigurationManager.AddUsersConfigurations(builder.Configuration);
-builder.Services.AddScoped<IConfigurationManager, JsonFileConfigurationManager>();
-builder.Services.AddScoped<IStateManager, DatabaseStateManagerService>();
+builder.Services.AddSingleton<IConfigurationManager, JsonFileConfigurationManager>();
+builder.Services.AddSingleton<IStateManager, DatabaseStateManagerService>();
 builder.Services.AddTransient<LogsProviderService>();
 builder.Services.AddTransient<OrderCancellingService>();
 
@@ -86,9 +86,9 @@ builder.Services.AddTransient<ICancelRule, FitPriceRule>();
 builder.Services.AddTransient<MarketRules>();
 builder.Services.AddTransient<SolutionsFactory>();
 builder.Services.AddTransient<ItemPageFactory>();
-builder.Services.AddScoped<ItemsNamesProvider>();
+builder.Services.AddTransient<ItemsNamesProvider>();
 
-builder.Services.AddScoped<WorkerService>();
+builder.Services.AddHostedService<WorkerService>();
 
 builder.Services.AddControllers();
 

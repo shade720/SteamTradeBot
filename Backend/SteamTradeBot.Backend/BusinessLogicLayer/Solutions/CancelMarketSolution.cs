@@ -22,7 +22,7 @@ public class CancelMarketSolution : MarketSolution
 
     public override async Task PerformAsync(ItemPage itemPage)
     {
-        var order = await MarketDb.GetBuyOrderAsync(itemPage.EngItemName, itemPage.UserName);
+        var order = await MarketDb.GetBuyOrderAsync(itemPage.EngItemName, itemPage.ApiKey);
         await SteamApi.CancelBuyOrderAsync(order.ItemUrl);
         Log.Information("Cancel buy order {0} (Price: {1}, Quantity: {2})", order.EngItemName, order.Price, order.Quantity);
         await MarketDb.RemoveBuyOrderAsync(order);

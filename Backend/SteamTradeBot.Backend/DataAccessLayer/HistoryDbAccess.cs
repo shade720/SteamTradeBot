@@ -14,6 +14,8 @@ public class HistoryDbAccess
         _tradeBotDataContextFactory = tradeBotDataContextFactory;
     }
 
+    #region Events
+
     public async Task AddNewEventAsync(TradingEvent tradingEvent)
     {
         await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
@@ -33,4 +35,27 @@ public class HistoryDbAccess
         await context.History.ExecuteDeleteAsync();
         await context.SaveChangesAsync();
     }
+
+    #endregion
+
+    #region State
+
+
+    public async Task AddOrUpdateStateAsync(ServiceState state)
+    {
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        if (await context.ServiceStates.ContainsAsync(state))
+            context.ServiceStates.Update(state);
+        else
+            await context.ServiceStates.AddAsync(state);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<ServiceState?> GetStateAsync(string apiKey, long fromDate = 0)
+    {
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        return await context.ServiceStates.FirstOrDefaultAsync(x => x.ApiKey == apiKey);
+    }
+
+    #endregion
 }

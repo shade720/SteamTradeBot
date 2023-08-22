@@ -23,7 +23,7 @@ public class CurrentQuantityCheckRule : ISellRule
     public async Task<bool> IsFollowedAsync(ItemPage itemPage)
     {
         Log.Information("Checking if order satisfied...");
-        var localOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, itemPage.UserName);
+        var localOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, itemPage.ApiKey);
         return localOrder is not null && (itemPage.MyBuyOrder is null || itemPage.MyBuyOrder.Quantity < localOrder.Quantity);
     }
 }

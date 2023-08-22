@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using SteamTradeBot.Backend.Models;
 using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.StateModel;
 using SteamTradeBot.Backend.Services;
+using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend;
 
@@ -12,21 +12,23 @@ namespace SteamTradeBot.Backend;
 [ApiController]
 public class TradeBotController : ControllerBase
 {
+    public record Credentials(string Login, string Password, string Secret);
+
     [HttpPost]
     [Route("activation")]
     public async Task StartBot(
         WorkerService worker,
-        IConfigurationManager configurationManager, 
         ISteamApi api,
-        IStateManager stateManager, 
-        UserConfiguration userConfiguration)
+        IStateManager stateManager,
+        IConfigurationManager configurationManager,
+        Credentials credentials,
+        [FromQuery] string apiKey)
     {
-        var jsonConfigurationManager = configurationManager as JsonFileConfigurationManager;
-        jsonConfigurationManager.SetConfigurationContextForUser(userConfiguration.Login, userConfiguration);
-        stateManager.OnLogInPending();
-        await api.LogIn(configurationManager.Login, configurationManager.Password, configurationManager.Secret);
-        stateManager.OnLoggedIn(configurationManager.Login);
-        await worker.Start();
+        (configurationManager as JsonFileConfigurationManager).SetConfigurationContextForUser(apiKey);
+        await stateManager.OnLogInPendingAsync();
+        await api.LogIn(credentials.Login, credentials.Password, credentials.Secret);
+        await stateManager.OnLoggedInAsync();
+        await worker.StartAsync(new CancellationToken());
     }
 
     [HttpPost]
@@ -34,26 +36,29 @@ public class TradeBotController : ControllerBase
     public async Task StopBot(
         WorkerService worker,
         ISteamApi api,
-        IStateManager stateManager)
+        IStateManager stateManager,
+        [FromQuery] string apiKey)
     {
         api.LogOut();
-        stateManager.OnLoggedOut();
-        await worker.Stop();
+        await stateManager.OnLoggedOutAsync();
+        await worker.StopAsync(new CancellationToken());
     }
 
     [HttpPost]
-    [Route("userConfiguration")]
+    [Route("refreshConfiguration")]
     public async Task SetConfiguration(
-        IConfigurationManager configurationManager, 
-        UserConfiguration userConfiguration)
+        IConfigurationManager configurationManager,
+        UserConfiguration userConfiguration,
+        [FromQuery] string apiKey)
     {
-        await configurationManager.RefreshConfigurationAsync(userConfiguration.Login, userConfiguration);
+        await configurationManager.RefreshConfigurationAsync(apiKey, userConfiguration);
     }
 
     [HttpPost]
-    [Route("orderscanceling")]
+    [Route("cancelOrders")]
     public async Task CancelOrders(
-        OrderCancellingService cancellingService)
+        OrderCancellingService cancellingService,
+        [FromQuery] string apiKey)
     {
         await cancellingService.ClearBuyOrdersAsync();
     }
@@ -61,18 +66,19 @@ public class TradeBotController : ControllerBase
     [HttpGet]
     [Route("state")]
     public async Task<ServiceState> GetState(
-        IStateManager stateManager, 
-        [FromQuery] long fromTicks)
+        IStateManager stateManager,
+        [FromQuery] long fromTicks,
+        [FromQuery] string apiKey)
     {
-        return await stateManager.GetServiceStateAsync(fromTicks);
+        return await stateManager.GetServiceStateAsync(apiKey, fromTicks);
     }
 
     [HttpGet]
     [Route("logs")]
     public async Task<string> GetLogs(
-        LogsProviderService logsProvider, 
-        Guid userGuid)
+        LogsProviderService logsProvider,
+        [FromQuery] string apiKey)
     {
-        return await logsProvider.GetLogs(userGuid.ToString());
+        return await logsProvider.GetLogs(apiKey);
     }
 }

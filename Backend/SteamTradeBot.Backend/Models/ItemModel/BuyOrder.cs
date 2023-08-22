@@ -9,7 +9,7 @@ public class BuyOrder
     public string EngItemName { get; set; } = string.Empty;
 
     [Required(AllowEmptyStrings = true)]
-    public string UserName { get; set; } = string.Empty;
+    public string ApiKey { get; set; }
 
     [Required(AllowEmptyStrings = true)]
     public string RusItemName { get; set; } = string.Empty;

@@ -29,7 +29,7 @@ public class MarketDbAccess
     public async Task RemoveBuyOrderAsync(BuyOrder order)
     {
         await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
-        var itemSetToRemove = await context.BuyOrders.FirstOrDefaultAsync(i => i.EngItemName == order.EngItemName && i.RusItemName == order.RusItemName && i.UserName == order.UserName);
+        var itemSetToRemove = await context.BuyOrders.FirstOrDefaultAsync(i => i.EngItemName == order.EngItemName && i.RusItemName == order.RusItemName && i.ApiKey == order.ApiKey);
         if (itemSetToRemove is not null)
             context.BuyOrders.Remove(itemSetToRemove);
         await context.SaveChangesAsync();
@@ -41,10 +41,10 @@ public class MarketDbAccess
         return await context.BuyOrders.ToListAsync();
     }
 
-    public async Task<BuyOrder?> GetBuyOrderAsync(string engName, string username)
+    public async Task<BuyOrder?> GetBuyOrderAsync(string engName, string apiKey)
     {
         await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
-        return await context.BuyOrders.FirstOrDefaultAsync(i => i.EngItemName == engName && i.UserName == username);
+        return await context.BuyOrders.FirstOrDefaultAsync(i => i.EngItemName == engName && i.ApiKey == apiKey);
     }
 
     #endregion
@@ -64,7 +64,7 @@ public class MarketDbAccess
     public async Task RemoveSellOrderAsync(SellOrder order)
     {
         await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
-        var itemSetToRemove = await context.SellOrders.FirstOrDefaultAsync(i => i.EngItemName == order.EngItemName && i.RusItemName == order.RusItemName && i.UserName == order.UserName);
+        var itemSetToRemove = await context.SellOrders.FirstOrDefaultAsync(i => i.EngItemName == order.EngItemName && i.RusItemName == order.RusItemName && i.ApiKey == order.ApiKey);
         if (itemSetToRemove is not null)
             context.SellOrders.Remove(itemSetToRemove);
         await context.SaveChangesAsync();

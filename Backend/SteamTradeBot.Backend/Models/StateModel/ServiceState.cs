@@ -7,7 +7,7 @@ public class ServiceState
 {
     public ServiceWorkingState WorkingState { get; set; } = ServiceWorkingState.Down;
     public LogInState IsLoggedIn { get; set; }
-    public string CurrentUser { get; set; } = string.Empty;
+    public string ApiKey { get; set; }
     public int ItemsAnalyzed { get; set; }
     public int ItemsBought { get; set; }
     public int ItemsSold { get; set; }

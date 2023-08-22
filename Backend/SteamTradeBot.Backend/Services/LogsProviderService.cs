@@ -9,7 +9,7 @@ public class LogsProviderService
 {
     private const string LogsPath = "Logs";
 
-    public async Task<string> GetLogs(string userGuid)
+    public async Task<string> GetLogs(string apiKey)
     {
         Log.Logger.Information("Provide server logs...");
         var logFiles = Directory.GetFiles(LogsPath);
