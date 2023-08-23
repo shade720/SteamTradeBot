@@ -6,7 +6,7 @@ using SteamTradeBot.Backend.Models.StateModel;
 using SteamTradeBot.Backend.Services;
 using System.Threading.Tasks;
 
-namespace SteamTradeBot.Backend;
+namespace SteamTradeBot.Backend.Controllers;
 
 [Route("api")]
 [ApiController]

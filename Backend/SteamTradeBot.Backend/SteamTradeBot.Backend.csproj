@@ -18,9 +18,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Logs\**" />
     <Compile Remove="UserSettings\**" />
+    <Content Remove="Logs\**" />
     <Content Remove="UserSettings\**" />
+    <EmbeddedResource Remove="Logs\**" />
     <EmbeddedResource Remove="UserSettings\**" />
+    <None Remove="Logs\**" />
     <None Remove="UserSettings\**" />
   </ItemGroup>
 
