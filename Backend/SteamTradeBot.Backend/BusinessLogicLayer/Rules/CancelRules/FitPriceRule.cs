@@ -29,7 +29,7 @@ public class FitPriceRule : ICancelRule
         if (itemPage.MyBuyOrder is null) 
             return false;
         Log.Information("Checking if order obsolete...");
-        var existingBuyOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, itemPage.ApiKey);
+        var existingBuyOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey);
         return existingBuyOrder is not null && itemPage.BuyOrderBook.Any(x => Math.Abs(x.Price - existingBuyOrder.Price) > _configurationManager.FitPriceRange);
     }
 }

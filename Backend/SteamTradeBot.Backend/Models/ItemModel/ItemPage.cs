@@ -17,7 +17,6 @@ public class ItemPage
     public double EstimatedBuyPrice { get; set; }
     public double EstimatedSellPrice { get; set; }
     public double CurrentBalance { get; set; }
-    public string ApiKey { get; set; }
 
     public override string ToString()
     {

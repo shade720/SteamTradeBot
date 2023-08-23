@@ -18,7 +18,6 @@ namespace SteamTradeBot.Backend.Services;
 public class SeleniumSteamApi : IDisposable, ISteamApi
 {
     private readonly IWebDriver _chromeBrowser;
-    private bool _logState;
     private const int DefaultImplicitWaitTime = 5;
     private const int RequestDelayMs = 5000;
     private const int RetryWaitTimeMs = 2000;
@@ -362,12 +361,6 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
 
         var token = await GetTokenAsync(secret);
 
-        if (_logState)
-        {
-            Log.Error("Authorization failed. You're already logged in.");
-            throw new AuthenticationException("Authorization failed. You're already logged in.");
-        }
-
         await SafeConnect(() =>
         {
             SetPage("https://steamcommunity.com/login/home/?goto=");
@@ -393,7 +386,6 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
             throw new AuthenticationException("Authorization failed. User data are incorrect.");
         }
         Log.Information("Authentication completed successful");
-        _logState = true;
     }
 
     private bool IsAuthenticationSuccessful()
@@ -426,7 +418,7 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
     public void LogOut()
     {
         Log.Information("Signing out...");
-        _logState = false;
+        SetPage("https://steamcommunity.com");
         ExecuteJs("javascript:Logout()");
         Log.Information("Successful sign out");
     }

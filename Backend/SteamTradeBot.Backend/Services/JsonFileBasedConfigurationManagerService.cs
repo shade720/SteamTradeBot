@@ -12,11 +12,11 @@ using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.Services;
 
-public class JsonFileConfigurationManager : IConfigurationManager
+public class JsonFileBasedConfigurationManagerService : IConfigurationManager
 {
     #region Public
 
-    public JsonFileConfigurationManager(IConfiguration configuration)
+    public JsonFileBasedConfigurationManagerService(IConfiguration configuration)
     {
         _configuration = configuration;
     }

@@ -1,14 +1,13 @@
 ﻿using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
 using SteamTradeBot.Backend.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
 namespace SteamTradeBot.Backend.Services;
 
-public class WorkerService : IHostedService
+public class WorkerService
 {
     private readonly ItemsNamesProvider _itemsNamesProvider;
     private readonly ItemPageFactory _itemPageFactory;
@@ -30,20 +29,20 @@ public class WorkerService : IHostedService
         _stateManager = stateManager;
     }
 
-    public async Task StartAsync(CancellationToken token)
+    public async Task StartAsync()
     {
-        _cancellationTokenSource = new CancellationTokenSource();
-        Log.Information("Worker has started");
-        await _stateManager.OnTradingStartedAsync();
-        await Task.Run(WorkerLoop);
-        await _stateManager.OnTradingStoppedAsync();
-        Log.Information("Worker has stopped");
+        var task = Task.Run(WorkerLoop);
+        await Task.CompletedTask;
     }
 
     private async Task WorkerLoop()
     {
+        _cancellationTokenSource = new CancellationTokenSource();
+        await _stateManager.OnTradingStartedAsync();
         await foreach (var name in _itemsNamesProvider.GetNamesAsync())
         {
+            if (_cancellationTokenSource.IsCancellationRequested)
+                break;
             try
             {
                 var itemPage = await _itemPageFactory.CreateAsync(name);
@@ -57,20 +56,18 @@ public class WorkerService : IHostedService
                 Log.Logger.Error("Item skipped due to error -> \r\nMessage: {0}, StackTrace: {1}", 
                     e.Message, e.StackTrace);
                 await _stateManager.OnErrorAsync(e);
-                continue;
             }
-
-            if (_cancellationTokenSource.IsCancellationRequested)
-                break;
         }
+        await _stateManager.OnTradingStoppedAsync();
     }
 
-    public async Task StopAsync(CancellationToken token)
+    public async Task StopAsync()
     {
         if (_cancellationTokenSource is null)
         {
             throw new Exception("Worker is already stopped!");
         }
-        await Task.Run(_cancellationTokenSource.Cancel);
+        _cancellationTokenSource.Cancel();
+        await Task.CompletedTask;
     }
 }

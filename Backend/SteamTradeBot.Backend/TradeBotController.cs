@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SteamTradeBot.Backend.Models;
 using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.StateModel;
@@ -20,15 +19,13 @@ public class TradeBotController : ControllerBase
         WorkerService worker,
         ISteamApi api,
         IStateManager stateManager,
-        IConfigurationManager configurationManager,
-        Credentials credentials,
-        [FromQuery] string apiKey)
+        Credentials credentials)
     {
-        (configurationManager as JsonFileConfigurationManager).SetConfigurationContextForUser(apiKey);
+        await (stateManager as DbBasedStateManagerService).EnsureCreated();
         await stateManager.OnLogInPendingAsync();
         await api.LogIn(credentials.Login, credentials.Password, credentials.Secret);
         await stateManager.OnLoggedInAsync();
-        await worker.StartAsync(new CancellationToken());
+        await worker.StartAsync();
     }
 
     [HttpPost]
@@ -36,12 +33,11 @@ public class TradeBotController : ControllerBase
     public async Task StopBot(
         WorkerService worker,
         ISteamApi api,
-        IStateManager stateManager,
-        [FromQuery] string apiKey)
+        IStateManager stateManager)
     {
+        await worker.StopAsync();
         api.LogOut();
         await stateManager.OnLoggedOutAsync();
-        await worker.StopAsync(new CancellationToken());
     }
 
     [HttpPost]
@@ -51,6 +47,7 @@ public class TradeBotController : ControllerBase
         UserConfiguration userConfiguration,
         [FromQuery] string apiKey)
     {
+        (configurationManager as JsonFileBasedConfigurationManagerService).SetConfigurationContextForUser(apiKey);
         await configurationManager.RefreshConfigurationAsync(apiKey, userConfiguration);
     }
 

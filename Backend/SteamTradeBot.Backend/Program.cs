@@ -68,9 +68,9 @@ builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>(_ => new SeleniumStea
 builder.Services.AddTransient<MarketDbAccess>();
 builder.Services.AddTransient<HistoryDbAccess>();
 
-JsonFileConfigurationManager.AddUsersConfigurations(builder.Configuration);
-builder.Services.AddSingleton<IConfigurationManager, JsonFileConfigurationManager>();
-builder.Services.AddSingleton<IStateManager, DatabaseStateManagerService>();
+JsonFileBasedConfigurationManagerService.AddUsersConfigurations(builder.Configuration);
+builder.Services.AddSingleton<IConfigurationManager, JsonFileBasedConfigurationManagerService>();
+builder.Services.AddSingleton<IStateManager, DbBasedStateManagerService>();
 builder.Services.AddTransient<LogsProviderService>();
 builder.Services.AddTransient<OrderCancellingService>();
 
@@ -88,7 +88,7 @@ builder.Services.AddTransient<SolutionsFactory>();
 builder.Services.AddTransient<ItemPageFactory>();
 builder.Services.AddTransient<ItemsNamesProvider>();
 
-builder.Services.AddHostedService<WorkerService>();
+builder.Services.AddSingleton<WorkerService>();
 
 builder.Services.AddControllers();
 
