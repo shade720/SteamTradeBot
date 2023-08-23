@@ -7,7 +7,7 @@ namespace SteamTradeBot.Backend.Models.Abstractions;
 
 public interface IStateManager
 {
-    public Task<ServiceState> GetServiceStateAsync(string apiKey, long fromDate);
+    public Task<ServiceState> GetServiceStateAsync(string apiKey);
     public Task OnTradingStartedAsync();
     public Task OnTradingStoppedAsync();
     public Task OnLogInPendingAsync();

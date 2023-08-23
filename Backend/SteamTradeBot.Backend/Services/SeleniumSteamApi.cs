@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Serilog;
+using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,10 @@ using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.Services;
 
-public class SeleniumSteamApi : IDisposable, ISteamApi
+public class SeleniumSteamApi : ISteamApi, IDisposable
 {
     private readonly IWebDriver _chromeBrowser;
     private const int DefaultImplicitWaitTime = 5;
@@ -359,6 +359,11 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
         Log.Information("Signing in...");
         Log.Information($"Incoming user data {login}, {password}, {secret}");
 
+        if (IsAuthenticated(login))
+            return;
+        
+        LogOut();
+
         var token = await GetTokenAsync(secret);
 
         await SafeConnect(() =>
@@ -380,7 +385,7 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
             throw new AuthenticationException("Authorization failed. Login or password are incorrect.");
         }
 
-        if (!IsAuthenticationSuccessful())
+        if (!IsAuthenticated(login))
         {
             Log.Error("Authorization failed. User data are incorrect.");
             throw new AuthenticationException("Authorization failed. User data are incorrect.");
@@ -388,20 +393,23 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
         Log.Information("Authentication completed successful");
     }
 
-    private bool IsAuthenticationSuccessful()
+    private bool IsAuthenticated(string loginToCompare)
     {
         Log.Information("Checking if authentication successful...");
         try
         {
-            ReadFromElement(LoginCheck, true);
-            Log.Information("Successfully authenticated");
-            return true;
+            if (ReadFromElement(LoginCheck, true) != loginToCompare)
+            {
+                Log.Information("Successfully authenticated");
+                return true;
+            }
         }
-        catch
+        catch 
         {
-            Log.Information("Authentication failed");
-            return false;
+            // ignored
         }
+        Log.Information("Authentication failed");
+        return false;
     }
 
     private async Task<string> GetTokenAsync(string secret)
@@ -436,10 +444,12 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
         }
         ImplicitWait(by, DefaultImplicitWaitTime).SendKeys(message);
     }
+
     private string ReadFromElement(By by, bool explicitly = false, int waitTime = 5)
     {
         return explicitly ? ExplicitWait(by, waitTime).Text : ImplicitWait(by, DefaultImplicitWaitTime).Text;
     }
+
     private void ClickOnElement(By by, bool explicitly = false, int waitTime = 5)
     {
         if (explicitly)
@@ -449,6 +459,7 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
         }
         ImplicitWait(by, DefaultImplicitWaitTime).Click();
     }
+
     private void SendKey(By by, string key, bool explicitly = false, int waitTime = 5)
     {
         if (explicitly)
@@ -508,6 +519,7 @@ public class SeleniumSteamApi : IDisposable, ISteamApi
     {
         Log.Logger.Information("Disposing steam Api...");
         _chromeBrowser.Quit();
+        _chromeBrowser.Dispose();
         Log.Logger.Information("Steam Api disposed!");
     }
 }

@@ -27,14 +27,14 @@ public class DbBasedStateManagerService : IStateManager
         _stopwatch = new Stopwatch();
     }
 
-    public async Task EnsureCreated()
+    public async Task EnsureStateCreated()
     {
         var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey);
         if (storedState is null)
             await _historyDb.AddOrUpdateStateAsync(new ServiceState { ApiKey = _configurationManager.ApiKey });
     }
 
-    public async Task<ServiceState> GetServiceStateAsync(string apiKey, long fromDate)
+    public async Task<ServiceState> GetServiceStateAsync(string apiKey)
     {
         var currentState =  await _historyDb.GetStateAsync(apiKey);
         return currentState ?? new ServiceState();

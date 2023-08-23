@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using SteamTradeBot.Backend.Models;
 using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.StateModel;
@@ -19,9 +20,18 @@ public class TradeBotController : ControllerBase
         WorkerService worker,
         ISteamApi api,
         IStateManager stateManager,
-        Credentials credentials)
+        IConfigurationManager configurationManager,
+        Credentials credentials,
+        [FromQuery] string apiKey)
     {
-        await (stateManager as DbBasedStateManagerService).EnsureCreated();
+        if (configurationManager is not JsonFileBasedConfigurationManagerService jsonFileBasedConfigurationManager)
+            throw new ApplicationException("Application error: configurationManager does not configured");
+        jsonFileBasedConfigurationManager.SetConfigurationContextForUser(apiKey);
+
+        if (stateManager is not DbBasedStateManagerService dbBasedStateManager)
+            throw new ApplicationException("Application error: stateManager does not configured");
+        await dbBasedStateManager.EnsureStateCreated();
+
         await stateManager.OnLogInPendingAsync();
         await api.LogIn(credentials.Login, credentials.Password, credentials.Secret);
         await stateManager.OnLoggedInAsync();
@@ -32,11 +42,9 @@ public class TradeBotController : ControllerBase
     [Route("deactivation")]
     public async Task StopBot(
         WorkerService worker,
-        ISteamApi api,
         IStateManager stateManager)
     {
         await worker.StopAsync();
-        api.LogOut();
         await stateManager.OnLoggedOutAsync();
     }
 
@@ -47,7 +55,9 @@ public class TradeBotController : ControllerBase
         UserConfiguration userConfiguration,
         [FromQuery] string apiKey)
     {
-        (configurationManager as JsonFileBasedConfigurationManagerService).SetConfigurationContextForUser(apiKey);
+        if (configurationManager is not JsonFileBasedConfigurationManagerService jsonFileBasedConfigurationManager)
+            throw new ApplicationException("Application error: configurationManager not configured");
+        jsonFileBasedConfigurationManager.SetConfigurationContextForUser(apiKey);
         await configurationManager.RefreshConfigurationAsync(apiKey, userConfiguration);
     }
 
@@ -57,17 +67,16 @@ public class TradeBotController : ControllerBase
         OrderCancellingService cancellingService,
         [FromQuery] string apiKey)
     {
-        await cancellingService.ClearBuyOrdersAsync();
+        await cancellingService.ClearBuyOrdersAsync(apiKey);
     }
 
     [HttpGet]
     [Route("state")]
     public async Task<ServiceState> GetState(
         IStateManager stateManager,
-        [FromQuery] long fromTicks,
         [FromQuery] string apiKey)
     {
-        return await stateManager.GetServiceStateAsync(apiKey, fromTicks);
+        return await stateManager.GetServiceStateAsync(apiKey);
     }
 
     [HttpGet]

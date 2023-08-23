@@ -32,7 +32,7 @@ public class ItemsNamesProvider
                     _configurationManager.MaxPrice,
                     _configurationManager.SalesPerDay * 7,
                     _configurationManager.ItemListSize);
-            var existingOrdersItemNames = await _marketDb.GetBuyOrdersAsync();
+            var existingOrdersItemNames = await _marketDb.GetBuyOrdersAsync(_configurationManager.ApiKey);
             foreach (var itemName in existingOrdersItemNames.Select(x => x.EngItemName))
             {
                 loadedItemNamesList.Insert(0, itemName);

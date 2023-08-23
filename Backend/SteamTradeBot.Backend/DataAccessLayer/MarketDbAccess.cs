@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SteamTradeBot.Backend.Models.ItemModel;
@@ -35,10 +36,10 @@ public class MarketDbAccess
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<BuyOrder>> GetBuyOrdersAsync()
+    public async Task<List<BuyOrder>> GetBuyOrdersAsync(string apiKey)
     {
         await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
-        return await context.BuyOrders.ToListAsync();
+        return await context.BuyOrders.Where(order => order.ApiKey == apiKey).ToListAsync();
     }
 
     public async Task<BuyOrder?> GetBuyOrderAsync(string engName, string apiKey)

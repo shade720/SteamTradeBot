@@ -26,7 +26,7 @@ public class AvailableBalanceRule : IBuyRule
     {
         Log.Information("Checking available balance...");
 
-        var balanceInWork = (await _marketDbAccess.GetBuyOrdersAsync()).Sum(buyOrder => buyOrder.Price);
+        var balanceInWork = (await _marketDbAccess.GetBuyOrdersAsync(_configurationManager.ApiKey)).Sum(buyOrder => buyOrder.Price);
         var availableBalance = (itemPage.CurrentBalance - balanceInWork ) * _configurationManager.AvailableBalance;
 
         if (availableBalance > itemPage.EstimatedBuyPrice)

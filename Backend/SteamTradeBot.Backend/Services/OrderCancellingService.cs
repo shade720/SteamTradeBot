@@ -16,10 +16,10 @@ public class OrderCancellingService
         _marketDb = marketDb;
     }
 
-    public async Task ClearBuyOrdersAsync()
+    public async Task ClearBuyOrdersAsync(string apiKey)
     {
         Log.Logger.Information("Start buy orders canceling...");
-        var itemsWithPurchaseOrders = await _marketDb.GetBuyOrdersAsync();
+        var itemsWithPurchaseOrders = await _marketDb.GetBuyOrdersAsync(apiKey);
         foreach (var order in itemsWithPurchaseOrders)
         {
             Log.Logger.Information("Cancelling item {0} with buy price {1}", order.EngItemName, order.Price);
