@@ -350,17 +350,18 @@ public class SeleniumSteamApi : ISteamApi, IDisposable
     private static readonly By PasswordField = By.XPath("//*[@id='responsive_page_template_content']/div[1]/div[1]/div/div/div/div[2]/div/form/div[2]/input");
     private static readonly By LoginButton = By.XPath("//*[@id='responsive_page_template_content']/div[1]/div[1]/div/div/div/div[2]/div/form/div[4]/button");
     private static readonly By TwoFactorField = By.XPath("//*[@id='responsive_page_template_content']/div[1]/div[1]/div/div/div/div[2]/form/div/div[2]/div[1]/div/input[1]");
-    private static readonly By LoginCheck = By.Id("account_pulldown");
+    private static readonly By LoginCheckButton = By.XPath("//*[@id='account_pulldown']");
+    private static readonly By LoginCheckTextBox = By.XPath("//*[@id='account_dropdown']/div/a[3]/span");
 
     #endregion
 
-    public async Task LogIn(string login, string password, string secret)
+    public async Task<bool> LogIn(string login, string password, string secret)
     {
         Log.Information("Signing in...");
         Log.Information($"Incoming user data {login}, {password}, {secret}");
 
         if (IsAuthenticated(login))
-            return;
+            return true;
         
         LogOut();
 
@@ -382,23 +383,27 @@ public class SeleniumSteamApi : ISteamApi, IDisposable
         catch
         {
             Log.Error("Authorization failed. Login or password are incorrect.");
-            throw new AuthenticationException("Authorization failed. Login or password are incorrect.");
+            return false;
         }
 
         if (!IsAuthenticated(login))
         {
             Log.Error("Authorization failed. User data are incorrect.");
-            throw new AuthenticationException("Authorization failed. User data are incorrect.");
+            return false;
         }
         Log.Information("Authentication completed successful");
+        return true;
     }
 
     private bool IsAuthenticated(string loginToCompare)
     {
-        Log.Information("Checking if authentication successful...");
+        Log.Information("Checking authentication state...");
         try
         {
-            if (ReadFromElement(LoginCheck, true) != loginToCompare)
+            SetPage("https://steamcommunity.com");
+            ClickOnElement(LoginCheckButton, true);
+            var currentLogin = ReadFromElement(LoginCheckTextBox, true);
+            if (currentLogin == loginToCompare)
             {
                 Log.Information("Successfully authenticated");
                 return true;
@@ -408,7 +413,7 @@ public class SeleniumSteamApi : ISteamApi, IDisposable
         {
             // ignored
         }
-        Log.Information("Authentication failed");
+        Log.Information("Not authenticated");
         return false;
     }
 

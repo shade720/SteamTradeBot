@@ -37,8 +37,8 @@ public class WorkerService
 
     private async Task WorkerLoop()
     {
-        _cancellationTokenSource = new CancellationTokenSource();
         await _stateManager.OnTradingStartedAsync();
+        _cancellationTokenSource = new CancellationTokenSource();
         await foreach (var name in _itemsNamesProvider.GetNamesAsync())
         {
             if (_cancellationTokenSource.IsCancellationRequested)

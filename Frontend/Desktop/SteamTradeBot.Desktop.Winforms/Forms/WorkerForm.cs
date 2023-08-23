@@ -34,18 +34,22 @@ public partial class WorkerForm : Form
                 MessageBox.Show(@"Incorrect configuration!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
+            StartButton.Enabled = false;
             await _steamTradeBotServiceClient.Start(credentials);
         }
         catch (Exception exception)
         {
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+        StartButton.Enabled = true;
     }
 
     private async void StopButton_Click(object sender, EventArgs e)
     {
         try
         {
+            StopButton.Enabled = false;
             await _steamTradeBotServiceClient.Stop();
         }
         catch (Exception exception)
@@ -58,12 +62,14 @@ public partial class WorkerForm : Form
     {
         try
         {
+            CancelOrdersButtons.Enabled = false;
             await _steamTradeBotServiceClient.CancelOrders();
         }
         catch (Exception exception)
         {
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+        CancelOrdersButtons.Enabled = true;
     }
 
     private async void StateRefresher_DoWork(object sender, DoWorkEventArgs e)

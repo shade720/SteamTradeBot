@@ -7,7 +7,7 @@ namespace SteamTradeBot.Backend.Models.Abstractions;
 
 public interface ISteamApi
 {
-    public Task LogIn(string login, string password, string secret);
+    public Task<bool> LogIn(string login, string password, string secret);
     public void LogOut();
     public Task<string> GetItemUrlAsync(string itemName);
     public Task<string> GetRusItemNameAsync(string itemUrl);

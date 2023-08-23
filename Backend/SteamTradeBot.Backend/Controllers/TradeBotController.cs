@@ -5,6 +5,7 @@ using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.StateModel;
 using SteamTradeBot.Backend.Services;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace SteamTradeBot.Backend.Controllers;
 
@@ -16,7 +17,7 @@ public class TradeBotController : ControllerBase
 
     [HttpPost]
     [Route("activate")]
-    public async Task StartBot(
+    public async Task<IResult> StartBot(
         WorkerService worker,
         ISteamApi api,
         IStateManager stateManager,
@@ -33,20 +34,24 @@ public class TradeBotController : ControllerBase
         await dbBasedStateManager.EnsureStateCreated();
 
         await stateManager.OnLogInPendingAsync();
-        await api.LogIn(credentials.Login, credentials.Password, credentials.Secret);
+        var isAuthenticated = await api.LogIn(credentials.Login, credentials.Password, credentials.Secret);
+        if (!isAuthenticated)
+        {
+            await stateManager.OnLoggedOutAsync();
+            return Results.BadRequest("Authorization failed. User data are incorrect.");
+        }
         await stateManager.OnLoggedInAsync();
         await worker.StartAsync();
+
+        return Results.Ok();
     }
 
     [HttpPost]
     [Route("deactivate")]
     public async Task StopBot(
-        WorkerService worker,
-        IStateManager stateManager,
-        [FromQuery] string apiKey)
+        WorkerService worker)
     {
         await worker.StopAsync();
-        await stateManager.OnLoggedOutAsync();
     }
 
     [HttpPost]
