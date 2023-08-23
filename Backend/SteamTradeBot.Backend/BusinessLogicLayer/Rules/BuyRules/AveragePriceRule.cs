@@ -37,7 +37,7 @@ public class AveragePriceRule : IBuyRule
 
     private static bool IsBuyPriceLowerThanAverage(double buyPrice, double averagePrice, double avgPriceRatio)
     {
-        return buyPrice < averagePrice * (2 - avgPriceRatio);
+        return buyPrice < averagePrice * (1 + avgPriceRatio);
     }
 
     private static double AveragePriceFromChart(Chart salesChart)

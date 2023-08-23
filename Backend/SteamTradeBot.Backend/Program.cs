@@ -67,6 +67,7 @@ builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>(_ => new SeleniumStea
 
 builder.Services.AddTransient<MarketDbAccess>();
 builder.Services.AddTransient<HistoryDbAccess>();
+builder.Services.AddTransient<TokenDbAccess>();
 
 JsonFileBasedConfigurationManagerService.AddUsersConfigurations(builder.Configuration);
 builder.Services.AddSingleton<IConfigurationManager, JsonFileBasedConfigurationManagerService>();
@@ -94,6 +95,8 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+app.MapControllers();
+app.UseMiddleware<TokenAuthenticationMiddleware>();
 app.UseExceptionHandler(exceptionHandlerApp =>
 {
     var exception = exceptionHandlerApp.ServerFeatures.Get<IExceptionHandlerFeature>()?.Error;
@@ -106,7 +109,5 @@ app.UseExceptionHandler(exceptionHandlerApp =>
     }
     exceptionHandlerApp.Run(async context => await Results.Problem().ExecuteAsync(context));
 });
-
-app.MapControllers();
 
 app.Run();
