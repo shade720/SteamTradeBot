@@ -51,10 +51,16 @@ public class HistoryDbAccess
         await context.SaveChangesAsync();
     }
 
-    public async Task<ServiceState?> GetStateAsync(string apiKey, long fromDate = 0)
+    public async Task<ServiceState?> GetStateAsync(string apiKey)
     {
         await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
         return await context.ServiceStates.FirstOrDefaultAsync(x => x.ApiKey == apiKey);
+    }
+
+    public async Task<List<ServiceState>> GetStatesAsync()
+    {
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
+        return await context.ServiceStates.ToListAsync();
     }
 
     #endregion

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using SteamTradeBot.Backend.DataAccessLayer;
 
-namespace SteamTradeBot.Backend.Services;
+namespace SteamTradeBot.Backend.Middlewares;
 
 public class TokenAuthenticationMiddleware
 {

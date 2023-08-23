@@ -1,24 +1,23 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Serilog.Events;
-using System;
-using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OpenQA.Selenium.Chrome;
+using Serilog;
+using Serilog.Events;
+using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules;
+using SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
 using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
-using SteamTradeBot.Backend.Services;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Remote;
-using SteamTradeBot.Backend.Models.StateModel;
+using SteamTradeBot.Backend.Middlewares;
 using SteamTradeBot.Backend.Models.Abstractions;
+using SteamTradeBot.Backend.Services;
+using System;
+using System.IO;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
@@ -97,16 +96,19 @@ var app = builder.Build();
 
 app.MapControllers();
 app.UseMiddleware<TokenAuthenticationMiddleware>();
-app.UseExceptionHandler(exceptionHandlerApp =>
+app.UseMiddleware<ExclusiveAccessMiddleware>();
+app.UseExceptionHandler(async exceptionHandlerApp =>  
 {
     var exception = exceptionHandlerApp.ServerFeatures.Get<IExceptionHandlerFeature>()?.Error;
     if (exception is null)
         return;
-    var obj = exceptionHandlerApp.ApplicationServices.GetService(typeof(ServiceState));
-    if (obj is not null)
+    var stateManager = exceptionHandlerApp.ApplicationServices.GetService<IStateManager>();
+    if (stateManager is null)
     {
-        ((ServiceState)obj).Errors++;
+        Log.Error("Application error: stateManager does not configured (ExceptionHandler)");
+        return;
     }
+    await stateManager.OnErrorAsync(exception);
     exceptionHandlerApp.Run(async context => await Results.Problem().ExecuteAsync(context));
 });
 
