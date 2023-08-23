@@ -39,12 +39,16 @@
             LogInTextBox = new TextBox();
             label1 = new Label();
             OpenFileDialog = new OpenFileDialog();
+            ApiKeyTextBox = new TextBox();
+            label3 = new Label();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox1.Controls.Add(ApiKeyTextBox);
+            groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(ResetButton);
             groupBox1.Controls.Add(ChooseMaFileButton);
             groupBox1.Controls.Add(SaveCredentialsButton);
@@ -187,6 +191,29 @@
             // 
             OpenFileDialog.FileName = "openFileDialog1";
             // 
+            // ApiKeyTextBox
+            // 
+            ApiKeyTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            ApiKeyTextBox.BackColor = SystemColors.ControlLight;
+            ApiKeyTextBox.BorderStyle = BorderStyle.FixedSingle;
+            ApiKeyTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ApiKeyTextBox.Location = new Point(184, 268);
+            ApiKeyTextBox.Margin = new Padding(3, 2, 3, 2);
+            ApiKeyTextBox.Name = "ApiKeyTextBox";
+            ApiKeyTextBox.Size = new Size(233, 29);
+            ApiKeyTextBox.TabIndex = 14;
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            label3.Location = new Point(112, 270);
+            label3.Name = "label3";
+            label3.Size = new Size(64, 21);
+            label3.TabIndex = 13;
+            label3.Text = "API key";
+            // 
             // LogInForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -216,5 +243,7 @@
         private Button ResetButton;
         private OpenFileDialog OpenFileDialog;
         public Button SaveCredentialsButton;
+        private TextBox ApiKeyTextBox;
+        private Label label3;
     }
 }

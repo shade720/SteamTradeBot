@@ -34,7 +34,7 @@ public partial class WorkerForm : Form
                 MessageBox.Show(@"Incorrect configuration!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            await _steamTradeBotServiceClient.Start(credentials, configuration);
+            await _steamTradeBotServiceClient.Start(credentials);
         }
         catch (Exception exception)
         {

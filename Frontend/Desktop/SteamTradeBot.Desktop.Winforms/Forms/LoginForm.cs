@@ -17,6 +17,7 @@ public partial class LogInForm : Form
         _credentials = savedCredentials;
         LogInTextBox.Text = savedCredentials.Login;
         PasswordTextBox.Text = savedCredentials.Password;
+        ApiKeyTextBox.Text = savedCredentials.ApiKey;
         if (string.IsNullOrEmpty(_credentials.Secret)) return;
         MaFilePathTextBox.Enabled = false;
         MaFilePathTextBox.Text = @"MaFile is loaded";
@@ -29,9 +30,15 @@ public partial class LogInForm : Form
             MessageBox.Show(@"Enter the login and the password!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
+        if (string.IsNullOrEmpty(ApiKeyTextBox.Text))
+        {
+            MessageBox.Show(@"Enter the api key!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
 
         _credentials.Login = LogInTextBox.Text;
         _credentials.Password = PasswordTextBox.Text;
+        _credentials.ApiKey = ApiKeyTextBox.Text;
 
         if (string.IsNullOrEmpty(_credentials.Secret))
         {
@@ -51,8 +58,8 @@ public partial class LogInForm : Form
                 return;
             }
         }
-
         Program.SaveCredentials(_credentials);
+        MessageBox.Show(@"Credentials was successfully saved!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     private void ChooseMaFileButton_Click(object sender, EventArgs e)
@@ -78,6 +85,7 @@ public partial class LogInForm : Form
         PasswordTextBox.Text = string.Empty;
         MaFilePathTextBox.Enabled = true;
         MaFilePathTextBox.Text = string.Empty;
+        ApiKeyTextBox.Text = string.Empty;
         Program.EraseCredentials();
         MessageBox.Show(@"Credentials was erased", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }

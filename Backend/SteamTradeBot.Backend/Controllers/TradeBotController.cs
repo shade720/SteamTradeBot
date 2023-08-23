@@ -15,7 +15,7 @@ public class TradeBotController : ControllerBase
     public record Credentials(string Login, string Password, string Secret);
 
     [HttpPost]
-    [Route("activation")]
+    [Route("activate")]
     public async Task StartBot(
         WorkerService worker,
         ISteamApi api,
@@ -39,10 +39,11 @@ public class TradeBotController : ControllerBase
     }
 
     [HttpPost]
-    [Route("deactivation")]
+    [Route("deactivate")]
     public async Task StopBot(
         WorkerService worker,
-        IStateManager stateManager)
+        IStateManager stateManager,
+        [FromQuery] string apiKey)
     {
         await worker.StopAsync();
         await stateManager.OnLoggedOutAsync();

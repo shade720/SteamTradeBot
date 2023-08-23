@@ -1,6 +1,5 @@
 ﻿using SteamTradeBot.Desktop.Winforms.Models;
 using SteamTradeBot.Desktop.Winforms.ServiceAccess;
-using System.Windows.Forms;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -14,7 +13,7 @@ public partial class MainForm : Form
     {
         InitializeComponent();
 
-        var steamTradeBotRestClient = new SteamTradeBotRestClient(new HttpClientProvider());
+        var steamTradeBotRestClient = new SteamTradeBotRestClient(new HttpClientProvider(), new ApiKeyProvider());
         _workerForm = new WorkerForm(steamTradeBotRestClient);
 
         _settingsForm = new SettingsForm(steamTradeBotRestClient);
