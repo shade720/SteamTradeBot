@@ -18,7 +18,7 @@ public partial class SettingsForm : Form
         Configuration = Program.LoadConfiguration() ?? new Configuration();
         AvailibleBalanceTextBox.Text = Configuration.AvailableBalance.ToString(CultureInfo.InvariantCulture);
         AnalysisIntervalComboBox.SelectedItem = Configuration.AnalysisIntervalDays.ToString();
-        AveragePriceTextBox.Text = Configuration.AveragePrice.ToString(CultureInfo.InvariantCulture);
+        AveragePriceRatioTextBox.Text = Configuration.AveragePriceRatio.ToString(CultureInfo.InvariantCulture);
         OrderQuantityTextBox.Text = Configuration.OrderQuantity.ToString(CultureInfo.InvariantCulture);
         FitRangePriceTextBox.Text = Configuration.FitPriceRange.ToString(CultureInfo.InvariantCulture);
         ItemListSizeTextBox.Text = Configuration.ItemListSize.ToString(CultureInfo.InvariantCulture);
@@ -27,10 +27,10 @@ public partial class SettingsForm : Form
         MinPriceTextBox.Text = Configuration.MinPrice.ToString(CultureInfo.InvariantCulture);
         RequiredProfitTextBox.Text = Configuration.RequiredProfit.ToString(CultureInfo.InvariantCulture);
         TrendTextBox.Text = Configuration.Trend.ToString(CultureInfo.InvariantCulture);
-        SalesPerWeekTextBox.Text = Configuration.SalesPerWeek.ToString(CultureInfo.InvariantCulture);
+        SalesPerDayTextBox.Text = Configuration.SalesPerDay.ToString(CultureInfo.InvariantCulture);
         SteamUserIdTextBox.Text = Configuration.SteamUserId;
         SteamCommissionTextBox.Text = Configuration.SteamCommission.ToString(CultureInfo.InvariantCulture);
-        SalesCoefficient.Text = Configuration.BuyListingFindRange.ToString();
+        SalesRatio.Text = Configuration.SalesRatio.ToString();
 
         ConnectionInfo = Program.LoadConnectionInfo() ?? new ConnectionInfo();
         ConnectionAddressTextBox.Text = ConnectionInfo.ServerAddress;
@@ -41,6 +41,8 @@ public partial class SettingsForm : Form
         try
         {
             var configuration = GetCurrentConfiguration();
+            var credentials = Program.LoadCredentials();
+            configuration.ApiKey = credentials.ApiKey;
             await _steamTradeBotRestClient.UploadSettings(JsonConvert.SerializeObject(configuration));
             MessageBox.Show(@"Configuration was uploaded!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -56,7 +58,7 @@ public partial class SettingsForm : Form
         {
             AvailableBalance = double.Parse(AvailibleBalanceTextBox.Text, CultureInfo.InvariantCulture),
             AnalysisIntervalDays = int.Parse(AnalysisIntervalComboBox.SelectedItem.ToString()),
-            AveragePrice = double.Parse(AveragePriceTextBox.Text, CultureInfo.InvariantCulture),
+            AveragePriceRatio = double.Parse(AveragePriceRatioTextBox.Text, CultureInfo.InvariantCulture),
             OrderQuantity = int.Parse(OrderQuantityTextBox.Text),
             FitPriceRange = double.Parse(FitRangePriceTextBox.Text, CultureInfo.InvariantCulture),
             ItemListSize = int.Parse(ItemListSizeTextBox.Text),
@@ -65,10 +67,10 @@ public partial class SettingsForm : Form
             MinPrice = double.Parse(MinPriceTextBox.Text, CultureInfo.InvariantCulture),
             RequiredProfit = double.Parse(RequiredProfitTextBox.Text, CultureInfo.InvariantCulture),
             Trend = double.Parse(TrendTextBox.Text, CultureInfo.InvariantCulture),
-            SalesPerWeek = int.Parse(SalesPerWeekTextBox.Text),
+            SalesPerDay = int.Parse(SalesPerDayTextBox.Text),
             SteamUserId = SteamUserIdTextBox.Text,
             SteamCommission = double.Parse(SteamCommissionTextBox.Text, CultureInfo.InvariantCulture),
-            BuyListingFindRange = int.Parse(SalesCoefficient.Text)
+            SalesRatio = int.Parse(SalesRatio.Text)
         };
     }
 
@@ -77,7 +79,7 @@ public partial class SettingsForm : Form
         MessageBox.Show(@"Erase all settings?", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         AvailibleBalanceTextBox.Text = string.Empty;
         AnalysisIntervalComboBox.SelectedText = string.Empty;
-        AveragePriceTextBox.Text = string.Empty;
+        AveragePriceRatioTextBox.Text = string.Empty;
         OrderQuantityTextBox.Text = string.Empty;
         FitRangePriceTextBox.Text = string.Empty;
         ItemListSizeTextBox.Text = string.Empty;
@@ -86,9 +88,9 @@ public partial class SettingsForm : Form
         MinPriceTextBox.Text = string.Empty;
         RequiredProfitTextBox.Text = string.Empty;
         TrendTextBox.Text = string.Empty;
-        SalesPerWeekTextBox.Text = string.Empty;
+        SalesPerDayTextBox.Text = string.Empty;
         SteamCommissionTextBox.Text = string.Empty;
-        SalesCoefficient.Text = string.Empty;
+        SalesRatio.Text = string.Empty;
         Configuration = null;
 
         ConnectionAddressTextBox.Text = string.Empty;
@@ -96,7 +98,7 @@ public partial class SettingsForm : Form
 
         Program.EraseConnectionInfo();
         Program.EraseConfiguration();
-        
+
         MessageBox.Show(@"Settings was erased!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
@@ -107,7 +109,7 @@ public partial class SettingsForm : Form
             var currentConfiguration = GetCurrentConfiguration();
             Program.SaveConfiguration(currentConfiguration);
 
-            Program.SaveConnectionInfo(new ConnectionInfo {ServerAddress = ConnectionAddressTextBox.Text});
+            Program.SaveConnectionInfo(new ConnectionInfo { ServerAddress = ConnectionAddressTextBox.Text });
             MessageBox.Show(@"Configuration was saved!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception exception)

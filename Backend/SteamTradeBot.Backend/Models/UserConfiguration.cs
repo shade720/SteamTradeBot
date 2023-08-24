@@ -18,6 +18,7 @@ public class UserConfiguration
     /// </summary>
     public int SalesPerDay { get; set; }
     public string SteamUserId { get; set; }
+    public double SteamCommission { get; set; }
     public double FitPriceRange { get; set; }
     public int SellListingFindRange { get; set; }
 
@@ -30,7 +31,6 @@ public class UserConfiguration
     public double MinPrice { get; set; }
     public double MaxPrice { get; set; }
     public int ItemListSize { get; set; }
-    public double SteamCommission { get; set; }
     public double RequiredProfit { get; set; }
     public double AvailableBalance { get; set; }
 }

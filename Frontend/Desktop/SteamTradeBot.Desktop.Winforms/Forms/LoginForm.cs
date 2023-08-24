@@ -59,6 +59,10 @@ public partial class LogInForm : Form
             }
         }
         Program.SaveCredentials(_credentials);
+        var configuration = Program.LoadConfiguration();
+        configuration.ApiKey = _credentials.ApiKey;
+        Program.SaveConfiguration(configuration);
+
         MessageBox.Show(@"Credentials was successfully saved!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 

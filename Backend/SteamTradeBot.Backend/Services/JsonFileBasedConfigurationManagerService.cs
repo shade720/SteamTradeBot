@@ -39,7 +39,7 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
         }
     }
 
-    public async Task RefreshConfigurationAsync(string apiKey, UserConfiguration userConfiguration)
+    public async Task<bool> RefreshConfigurationAsync(string apiKey, UserConfiguration userConfiguration)
     {
         if (!File.Exists(GetFilePathForUser(apiKey)))
             AddUserConfigurationFile(apiKey, userConfiguration);
@@ -59,16 +59,16 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
         if (currentConfig is null)
         {
             Log.Logger.Error("Cannot deserialize appsettings.json file");
-            return;
+            return false;
         }
         if (newConfig is null)
         {
             Log.Logger.Error("Cannot deserialize new settings file");
-            return;
+            return false;
         }
 
         var newConfigDict = (IDictionary<string, object>)newConfig;
-        var currentConfigDict = (IDictionary<string, object>)currentConfig;
+        var currentConfigDict = (IDictionary<string, object>)((IDictionary<string, object>)currentConfig)[apiKey];
 
         foreach (var pair in newConfigDict)
         {
@@ -79,15 +79,16 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
         var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
         await File.WriteAllTextAsync(GetFilePathForUser(apiKey), updatedSettings);
 
-        if (_targetSection is null)
-            SetConfigurationContextForUser(apiKey);
+        SetConfigurationContextForUser(apiKey);
 
         if (!CheckIntegrity())
         {
             await File.WriteAllTextAsync(GetFilePathForUser(apiKey), currentSettings);
             Log.Logger.Information("Settings have not been updated. UserConfiguration was corrupted.");
+            return false;
         }
         Log.Logger.Information("Settings have been updated!");
+        return true;
     }
 
     #region Settings
@@ -134,41 +135,25 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
         Log.Information("Check userConfiguration integrity...");
         try
         {
-            var orderQuantity = OrderQuantity;
-            var salesPerWeek = SalesPerDay;
-            var steamUserId = SteamUserId;
-            var sellListingFindRange = SellListingFindRange;
-            var buyListingFindRange = SalesRatio;
-            var analysisIntervalDays = AnalysisIntervalDays;
-            var fitPriceRange = FitPriceRange;
-            var averagePrice = AveragePriceRatio;
-            var trend = Trend;
-            var steamCommission = SteamCommission;
-            var requiredProfit = RequiredProfit;
-            var availableBalance = AvailableBalance;
-            var minPrice = MinPrice;
-            var maxPrice = MaxPrice;
-            var itemListSize = ItemListSize;
-
-            if (orderQuantity is <= 0 or > 10)
+            if (OrderQuantity is <= 0 or > 10)
             {
                 Log.Fatal("Quantity can not be less than 0 or greater than 10!");
                 return false;
             }
 
-            if (salesPerWeek <= 0)
+            if (SalesPerDay <= 0)
             {
                 Log.Fatal("Sales can not be less than 0!");
                 return false;
             }
 
-            if (availableBalance is <= 0.0 or > 1.0)
+            if (AvailableBalance is <= 0.0 or > 1.0)
             {
                 Log.Fatal("Available balance range from 0.0 to 1.0");
                 return false;
             }
 
-            if (steamCommission is <= 0.0 or > 1.0)
+            if (SteamCommission is <= 0.0 or > 1.0)
             {
                 Log.Fatal("Steam commission range from 0.0 to 1.0");
                 return false;

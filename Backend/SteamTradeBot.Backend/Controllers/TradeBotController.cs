@@ -56,15 +56,13 @@ public class TradeBotController : ControllerBase
 
     [HttpPost]
     [Route("refreshConfiguration")]
-    public async Task SetConfiguration(
+    public async Task<IResult> SetConfiguration(
         IConfigurationManager configurationManager,
         UserConfiguration userConfiguration,
         [FromQuery] string apiKey)
     {
-        if (configurationManager is not JsonFileBasedConfigurationManagerService jsonFileBasedConfigurationManager)
-            throw new ApplicationException("Application error: configurationManager not configured");
-        jsonFileBasedConfigurationManager.SetConfigurationContextForUser(apiKey);
-        await configurationManager.RefreshConfigurationAsync(apiKey, userConfiguration);
+        var isSuccessful = await configurationManager.RefreshConfigurationAsync(apiKey, userConfiguration);
+        return !isSuccessful ? Results.BadRequest("Settings have not been updated. UserConfiguration was corrupted.") : Results.Ok();
     }
 
     [HttpPost]

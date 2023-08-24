@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            ApiKeyTextBox = new TextBox();
+            label3 = new Label();
             ResetButton = new Button();
             ChooseMaFileButton = new Button();
             SaveCredentialsButton = new Button();
@@ -39,8 +41,6 @@
             LogInTextBox = new TextBox();
             label1 = new Label();
             OpenFileDialog = new OpenFileDialog();
-            ApiKeyTextBox = new TextBox();
-            label3 = new Label();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
@@ -68,6 +68,29 @@
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Log In";
+            // 
+            // ApiKeyTextBox
+            // 
+            ApiKeyTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            ApiKeyTextBox.BackColor = SystemColors.ControlLightLight;
+            ApiKeyTextBox.BorderStyle = BorderStyle.FixedSingle;
+            ApiKeyTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ApiKeyTextBox.Location = new Point(184, 268);
+            ApiKeyTextBox.Margin = new Padding(3, 2, 3, 2);
+            ApiKeyTextBox.Name = "ApiKeyTextBox";
+            ApiKeyTextBox.Size = new Size(233, 29);
+            ApiKeyTextBox.TabIndex = 14;
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            label3.Location = new Point(112, 270);
+            label3.Name = "label3";
+            label3.Size = new Size(64, 21);
+            label3.TabIndex = 13;
+            label3.Text = "API key";
             // 
             // ResetButton
             // 
@@ -120,7 +143,7 @@
             // MaFilePathTextBox
             // 
             MaFilePathTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            MaFilePathTextBox.BackColor = SystemColors.ControlLight;
+            MaFilePathTextBox.BackColor = SystemColors.ControlLightLight;
             MaFilePathTextBox.BorderStyle = BorderStyle.FixedSingle;
             MaFilePathTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             MaFilePathTextBox.Location = new Point(184, 223);
@@ -143,7 +166,7 @@
             // PasswordTextBox
             // 
             PasswordTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            PasswordTextBox.BackColor = SystemColors.ControlLight;
+            PasswordTextBox.BackColor = SystemColors.ControlLightLight;
             PasswordTextBox.BorderStyle = BorderStyle.FixedSingle;
             PasswordTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             PasswordTextBox.Location = new Point(184, 178);
@@ -158,16 +181,16 @@
             label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(97, 180);
+            label2.Location = new Point(46, 180);
             label2.Name = "label2";
-            label2.Size = new Size(79, 21);
+            label2.Size = new Size(130, 21);
             label2.TabIndex = 2;
-            label2.Text = "Password";
+            label2.Text = "Steam password";
             // 
             // LogInTextBox
             // 
             LogInTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            LogInTextBox.BackColor = SystemColors.ControlLight;
+            LogInTextBox.BackColor = SystemColors.ControlLightLight;
             LogInTextBox.BorderStyle = BorderStyle.FixedSingle;
             LogInTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             LogInTextBox.Location = new Point(184, 134);
@@ -181,38 +204,15 @@
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label1.Location = new Point(125, 136);
+            label1.Location = new Point(79, 136);
             label1.Name = "label1";
-            label1.Size = new Size(51, 21);
+            label1.Size = new Size(97, 21);
             label1.TabIndex = 0;
-            label1.Text = "Login";
+            label1.Text = "Steam login";
             // 
             // OpenFileDialog
             // 
             OpenFileDialog.FileName = "openFileDialog1";
-            // 
-            // ApiKeyTextBox
-            // 
-            ApiKeyTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            ApiKeyTextBox.BackColor = SystemColors.ControlLight;
-            ApiKeyTextBox.BorderStyle = BorderStyle.FixedSingle;
-            ApiKeyTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            ApiKeyTextBox.Location = new Point(184, 268);
-            ApiKeyTextBox.Margin = new Padding(3, 2, 3, 2);
-            ApiKeyTextBox.Name = "ApiKeyTextBox";
-            ApiKeyTextBox.Size = new Size(233, 29);
-            ApiKeyTextBox.TabIndex = 14;
-            // 
-            // label3
-            // 
-            label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label3.Location = new Point(112, 270);
-            label3.Name = "label3";
-            label3.Size = new Size(64, 21);
-            label3.TabIndex = 13;
-            label3.Text = "API key";
             // 
             // LogInForm
             // 

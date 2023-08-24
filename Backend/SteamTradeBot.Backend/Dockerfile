@@ -2,12 +2,12 @@
 # docker build -t unh0ly/steam-trade-bot:latest .
 # docker push unh0ly/steam-trade-bot
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet restore "SteamTradeBot.Backend.csproj"

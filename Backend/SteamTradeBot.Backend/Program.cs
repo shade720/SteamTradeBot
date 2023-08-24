@@ -18,6 +18,7 @@ using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Services;
 using System;
 using System.IO;
+using OpenQA.Selenium.Remote;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 

@@ -44,9 +44,12 @@
             label1 = new Label();
             label2 = new Label();
             panel1 = new Panel();
+            groupBox4 = new GroupBox();
+            ConnectionAddressTextBox = new TextBox();
+            label12 = new Label();
             groupBox1 = new GroupBox();
             label10 = new Label();
-            SalesCoefficient = new TextBox();
+            SalesRatio = new TextBox();
             label7 = new Label();
             OrderQuantityTextBox = new TextBox();
             label5235262 = new Label();
@@ -58,21 +61,18 @@
             label1515236 = new Label();
             label11 = new Label();
             AnalysisIntervalComboBox = new ComboBox();
-            SalesPerWeekTextBox = new TextBox();
+            SalesPerDayTextBox = new TextBox();
             SellListingFindRangeTextBox = new TextBox();
-            AveragePriceTextBox = new TextBox();
+            AveragePriceRatioTextBox = new TextBox();
             RequiredProfitTextBox = new TextBox();
             label4 = new Label();
             AvailibleBalanceTextBox = new TextBox();
             FitRangePriceTextBox = new TextBox();
-            groupBox4 = new GroupBox();
-            ConnectionAddressTextBox = new TextBox();
-            label12 = new Label();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
             panel1.SuspendLayout();
-            groupBox1.SuspendLayout();
             groupBox4.SuspendLayout();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // label8
@@ -307,11 +307,53 @@
             panel1.Size = new Size(932, 564);
             panel1.TabIndex = 95;
             // 
+            // groupBox4
+            // 
+            groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            groupBox4.Controls.Add(ConnectionAddressTextBox);
+            groupBox4.Controls.Add(label12);
+            groupBox4.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
+            groupBox4.ForeColor = Color.DodgerBlue;
+            groupBox4.Location = new Point(466, 306);
+            groupBox4.Margin = new Padding(3, 2, 3, 2);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Padding = new Padding(3, 2, 3, 2);
+            groupBox4.Size = new Size(436, 142);
+            groupBox4.TabIndex = 96;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Connection settings";
+            // 
+            // ConnectionAddressTextBox
+            // 
+            ConnectionAddressTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            ConnectionAddressTextBox.BackColor = Color.White;
+            ConnectionAddressTextBox.BorderStyle = BorderStyle.FixedSingle;
+            ConnectionAddressTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ConnectionAddressTextBox.ForeColor = Color.Black;
+            ConnectionAddressTextBox.Location = new Point(195, 63);
+            ConnectionAddressTextBox.Margin = new Padding(4);
+            ConnectionAddressTextBox.Name = "ConnectionAddressTextBox";
+            ConnectionAddressTextBox.Size = new Size(217, 29);
+            ConnectionAddressTextBox.TabIndex = 90;
+            // 
+            // label12
+            // 
+            label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label12.AutoSize = true;
+            label12.BackColor = Color.Transparent;
+            label12.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            label12.ForeColor = Color.DodgerBlue;
+            label12.Location = new Point(75, 65);
+            label12.Name = "label12";
+            label12.Size = new Size(113, 21);
+            label12.TabIndex = 89;
+            label12.Text = "Server address";
+            // 
             // groupBox1
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(label10);
-            groupBox1.Controls.Add(SalesCoefficient);
+            groupBox1.Controls.Add(SalesRatio);
             groupBox1.Controls.Add(label7);
             groupBox1.Controls.Add(OrderQuantityTextBox);
             groupBox1.Controls.Add(label5235262);
@@ -323,9 +365,9 @@
             groupBox1.Controls.Add(label1515236);
             groupBox1.Controls.Add(label11);
             groupBox1.Controls.Add(AnalysisIntervalComboBox);
-            groupBox1.Controls.Add(SalesPerWeekTextBox);
+            groupBox1.Controls.Add(SalesPerDayTextBox);
             groupBox1.Controls.Add(SellListingFindRangeTextBox);
-            groupBox1.Controls.Add(AveragePriceTextBox);
+            groupBox1.Controls.Add(AveragePriceRatioTextBox);
             groupBox1.Controls.Add(RequiredProfitTextBox);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(AvailibleBalanceTextBox);
@@ -348,24 +390,24 @@
             label10.BackColor = Color.Transparent;
             label10.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label10.ForeColor = Color.DodgerBlue;
-            label10.Location = new Point(84, 331);
+            label10.Location = new Point(123, 331);
             label10.Name = "label10";
-            label10.Size = new Size(121, 21);
+            label10.Size = new Size(82, 21);
             label10.TabIndex = 89;
-            label10.Text = "Sales coefficient";
+            label10.Text = "Sales ratio";
             // 
-            // SalesCoefficient
+            // SalesRatio
             // 
-            SalesCoefficient.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            SalesCoefficient.BackColor = Color.White;
-            SalesCoefficient.BorderStyle = BorderStyle.FixedSingle;
-            SalesCoefficient.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            SalesCoefficient.ForeColor = Color.Black;
-            SalesCoefficient.Location = new Point(210, 329);
-            SalesCoefficient.Margin = new Padding(2);
-            SalesCoefficient.Name = "SalesCoefficient";
-            SalesCoefficient.Size = new Size(128, 29);
-            SalesCoefficient.TabIndex = 88;
+            SalesRatio.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            SalesRatio.BackColor = Color.White;
+            SalesRatio.BorderStyle = BorderStyle.FixedSingle;
+            SalesRatio.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            SalesRatio.ForeColor = Color.Black;
+            SalesRatio.Location = new Point(210, 329);
+            SalesRatio.Margin = new Padding(2);
+            SalesRatio.Name = "SalesRatio";
+            SalesRatio.Size = new Size(128, 29);
+            SalesRatio.TabIndex = 88;
             // 
             // label7
             // 
@@ -512,18 +554,18 @@
             AnalysisIntervalComboBox.Size = new Size(128, 29);
             AnalysisIntervalComboBox.TabIndex = 62;
             // 
-            // SalesPerWeekTextBox
+            // SalesPerDayTextBox
             // 
-            SalesPerWeekTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            SalesPerWeekTextBox.BackColor = Color.White;
-            SalesPerWeekTextBox.BorderStyle = BorderStyle.FixedSingle;
-            SalesPerWeekTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            SalesPerWeekTextBox.ForeColor = Color.Black;
-            SalesPerWeekTextBox.Location = new Point(210, 47);
-            SalesPerWeekTextBox.Margin = new Padding(2);
-            SalesPerWeekTextBox.Name = "SalesPerWeekTextBox";
-            SalesPerWeekTextBox.Size = new Size(128, 29);
-            SalesPerWeekTextBox.TabIndex = 69;
+            SalesPerDayTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            SalesPerDayTextBox.BackColor = Color.White;
+            SalesPerDayTextBox.BorderStyle = BorderStyle.FixedSingle;
+            SalesPerDayTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            SalesPerDayTextBox.ForeColor = Color.Black;
+            SalesPerDayTextBox.Location = new Point(210, 47);
+            SalesPerDayTextBox.Margin = new Padding(2);
+            SalesPerDayTextBox.Name = "SalesPerDayTextBox";
+            SalesPerDayTextBox.Size = new Size(128, 29);
+            SalesPerDayTextBox.TabIndex = 69;
             // 
             // SellListingFindRangeTextBox
             // 
@@ -538,18 +580,18 @@
             SellListingFindRangeTextBox.Size = new Size(128, 29);
             SellListingFindRangeTextBox.TabIndex = 63;
             // 
-            // AveragePriceTextBox
+            // AveragePriceRatioTextBox
             // 
-            AveragePriceTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            AveragePriceTextBox.BackColor = Color.White;
-            AveragePriceTextBox.BorderStyle = BorderStyle.FixedSingle;
-            AveragePriceTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            AveragePriceTextBox.ForeColor = Color.Black;
-            AveragePriceTextBox.Location = new Point(210, 187);
-            AveragePriceTextBox.Margin = new Padding(2);
-            AveragePriceTextBox.Name = "AveragePriceTextBox";
-            AveragePriceTextBox.Size = new Size(128, 29);
-            AveragePriceTextBox.TabIndex = 73;
+            AveragePriceRatioTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            AveragePriceRatioTextBox.BackColor = Color.White;
+            AveragePriceRatioTextBox.BorderStyle = BorderStyle.FixedSingle;
+            AveragePriceRatioTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            AveragePriceRatioTextBox.ForeColor = Color.Black;
+            AveragePriceRatioTextBox.Location = new Point(210, 187);
+            AveragePriceRatioTextBox.Margin = new Padding(2);
+            AveragePriceRatioTextBox.Name = "AveragePriceRatioTextBox";
+            AveragePriceRatioTextBox.Size = new Size(128, 29);
+            AveragePriceRatioTextBox.TabIndex = 73;
             // 
             // RequiredProfitTextBox
             // 
@@ -571,11 +613,11 @@
             label4.BackColor = Color.Transparent;
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label4.ForeColor = Color.DodgerBlue;
-            label4.Location = new Point(59, 189);
+            label4.Location = new Point(64, 189);
             label4.Name = "label4";
-            label4.Size = new Size(146, 21);
+            label4.Size = new Size(141, 21);
             label4.TabIndex = 72;
-            label4.Text = "Average price coeff.";
+            label4.Text = "Average price ratio";
             // 
             // AvailibleBalanceTextBox
             // 
@@ -603,48 +645,6 @@
             FitRangePriceTextBox.Size = new Size(128, 29);
             FitRangePriceTextBox.TabIndex = 68;
             // 
-            // groupBox4
-            // 
-            groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            groupBox4.Controls.Add(ConnectionAddressTextBox);
-            groupBox4.Controls.Add(label12);
-            groupBox4.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox4.ForeColor = Color.DodgerBlue;
-            groupBox4.Location = new Point(466, 306);
-            groupBox4.Margin = new Padding(3, 2, 3, 2);
-            groupBox4.Name = "groupBox4";
-            groupBox4.Padding = new Padding(3, 2, 3, 2);
-            groupBox4.Size = new Size(436, 142);
-            groupBox4.TabIndex = 96;
-            groupBox4.TabStop = false;
-            groupBox4.Text = "Connection settings";
-            // 
-            // ConnectionAddressTextBox
-            // 
-            ConnectionAddressTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            ConnectionAddressTextBox.BackColor = Color.White;
-            ConnectionAddressTextBox.BorderStyle = BorderStyle.FixedSingle;
-            ConnectionAddressTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            ConnectionAddressTextBox.ForeColor = Color.Black;
-            ConnectionAddressTextBox.Location = new Point(195, 63);
-            ConnectionAddressTextBox.Margin = new Padding(4);
-            ConnectionAddressTextBox.Name = "ConnectionAddressTextBox";
-            ConnectionAddressTextBox.Size = new Size(217, 29);
-            ConnectionAddressTextBox.TabIndex = 90;
-            // 
-            // label12
-            // 
-            label12.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label12.AutoSize = true;
-            label12.BackColor = Color.Transparent;
-            label12.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label12.ForeColor = Color.DodgerBlue;
-            label12.Location = new Point(75, 65);
-            label12.Name = "label12";
-            label12.Size = new Size(113, 21);
-            label12.TabIndex = 89;
-            label12.Text = "Server address";
-            // 
             // SettingsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -661,10 +661,10 @@
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             panel1.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -699,7 +699,7 @@
         private Panel panel1;
         private GroupBox groupBox1;
         private Label label10;
-        private TextBox SalesCoefficient;
+        private TextBox SalesRatio;
         private Label label7;
         private TextBox OrderQuantityTextBox;
         private Label label5235262;
@@ -711,9 +711,9 @@
         private Label label1515236;
         private Label label11;
         private ComboBox AnalysisIntervalComboBox;
-        public TextBox SalesPerWeekTextBox;
+        public TextBox SalesPerDayTextBox;
         public TextBox SellListingFindRangeTextBox;
-        private TextBox AveragePriceTextBox;
+        private TextBox AveragePriceRatioTextBox;
         public TextBox RequiredProfitTextBox;
         private Label label4;
         public TextBox AvailibleBalanceTextBox;
