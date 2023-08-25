@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Serilog;
+using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Models.StateModel;
 using SteamTradeBot.Backend.Models.Abstractions;
-using Timer = System.Threading.Timer;
 
 namespace SteamTradeBot.Backend.Services;
 
@@ -15,12 +14,7 @@ public sealed class DbBasedStateManagerService : IStateManager
     private readonly IConfigurationManager _configurationManager;
     private readonly StateDbAccess _stateDb;
     private readonly HistoryDbAccess _historyDb;
-    
-    private readonly Stopwatch _stopwatch;
-    private const int UptimeUpdateDelayMs = 1000;
-    private const int StartDelay = 0;
-
-    private Timer? _timer;
+    private readonly UptimeProvider _uptimeProvider;
     
     public DbBasedStateManagerService(
         IConfigurationManager configurationManager, 
@@ -30,7 +24,8 @@ public sealed class DbBasedStateManagerService : IStateManager
         _configurationManager = configurationManager;
         _stateDb = stateDb;
         _historyDb = historyDb;
-        _stopwatch = new Stopwatch();
+        _uptimeProvider = new UptimeProvider();
+        _uptimeProvider.UptimeUpdate += OnUptimeUpdated;
     }
 
     public async Task EnsureStateCreated()
@@ -53,8 +48,7 @@ public sealed class DbBasedStateManagerService : IStateManager
                           ?? throw new Exception("There is no state for this api key");
         storedState.WorkingState = ServiceWorkingState.Up;
         await _stateDb.AddOrUpdateStateAsync(storedState);
-        _stopwatch.Start();
-        _timer = new Timer(UpdateTimer, null, StartDelay, UptimeUpdateDelayMs);
+        _uptimeProvider.StartCountdown();
         Log.Information("Worker has started");
     }
 
@@ -65,10 +59,7 @@ public sealed class DbBasedStateManagerService : IStateManager
         storedState.WorkingState = ServiceWorkingState.Down;
         storedState.Uptime = TimeSpan.Zero;
         await _stateDb.AddOrUpdateStateAsync(storedState);
-        _stopwatch.Stop();
-        _stopwatch.Reset();
-        if (_timer is not null)
-            await _timer.DisposeAsync();
+        _uptimeProvider.StopCountdown();
         Log.Information("Worker has stopped");
     }
 
@@ -176,11 +167,11 @@ public sealed class DbBasedStateManagerService : IStateManager
         });
     }
 
-    private void UpdateTimer(object? source)
+    private void OnUptimeUpdated(TimeSpan uptime)
     {
-        var storedState = _stateDb.GetStateAsync(_configurationManager.ApiKey).Result 
+        var storedState = _stateDb.GetStateAsync(_configurationManager.ApiKey).Result
                           ?? throw new Exception("There is no state for this api key");
-        storedState.Uptime = _stopwatch.Elapsed;
+        storedState.Uptime = uptime;
         var _ = _stateDb.AddOrUpdateStateAsync(storedState);
     }
 }
