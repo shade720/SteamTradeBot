@@ -1,8 +1,8 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Serilog;
+﻿using Serilog;
 using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
@@ -25,6 +25,17 @@ public class RequiredProfitRule : IBuyRule
         return await Task.Run(() =>
         {
             Log.Information("Finding profitable order...");
+
+            if (itemPage.BuyOrderBook.Count <= 0)
+            {
+                Log.Information("Item is not profitable. Reason: can't find profitable order, buy order book is empty.");
+                return false;
+            }
+            if ( itemPage.SellOrderBook.Count <= 0)
+            {
+                Log.Information("Item is not profitable. Reason: can't find profitable order, sell order book is empty.");
+                return false;
+            }
 
             var buyPrice = itemPage.BuyOrderBook.FirstOrDefault(buyOrder => itemPage.SellOrderBook.Any(sellOrder => IsBuyPriceProfitable(buyOrder.Price, sellOrder.Price, _configurationManager.SteamCommission, _configurationManager.RequiredProfit)));
             if (buyPrice is null)

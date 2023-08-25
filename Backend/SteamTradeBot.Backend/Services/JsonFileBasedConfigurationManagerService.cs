@@ -100,7 +100,7 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
     public string SteamUserId => _targetSection.GetValue("SteamUserId", string.Empty)!;
     public double FitPriceRange => _targetSection.GetValue<double>("FitPriceRange");
     public int SellListingFindRange => _targetSection.GetValue<int>("SellListingFindRange");
-    public int SalesRatio => _targetSection.GetValue<int>("SalesRatio");
+    public double SalesRatio => _targetSection.GetValue<double>("SalesRatio");
     public int AnalysisIntervalDays => _targetSection.GetValue<int>("AnalysisIntervalDays");
     public int OrderQuantity => _targetSection.GetValue<int>("OrderQuantity");
     public double MinPrice => _targetSection.GetValue<double>("MinPrice");
@@ -156,6 +156,30 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
             if (SteamCommission is <= 0.0 or > 1.0)
             {
                 Log.Fatal("Steam commission range from 0.0 to 1.0");
+                return false;
+            }
+
+            if (FitPriceRange < 0)
+            {
+                Log.Fatal("FitPriceRange must be greater than 0.0");
+                return false;
+            }
+
+            if (SellListingFindRange is <= 0 or > 5)
+            {
+                Log.Fatal("SellListingFindRange range from 1 to 5");
+                return false;
+            }
+
+            if (SalesRatio is < 0.0 or > 1.0)
+            {
+                Log.Fatal("SalesRatio range from 0.0 to 1.0");
+                return false;
+            }
+
+            if (RequiredProfit < 0)
+            {
+                Log.Fatal("RequiredProfit must be positive");
                 return false;
             }
 

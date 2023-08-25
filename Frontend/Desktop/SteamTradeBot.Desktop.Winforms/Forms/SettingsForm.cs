@@ -19,10 +19,10 @@ public partial class SettingsForm : Form
         AvailibleBalanceTextBox.Text = Configuration.AvailableBalance.ToString(CultureInfo.InvariantCulture);
         AnalysisIntervalComboBox.SelectedItem = Configuration.AnalysisIntervalDays.ToString();
         AveragePriceRatioTextBox.Text = Configuration.AveragePriceRatio.ToString(CultureInfo.InvariantCulture);
-        OrderQuantityTextBox.Text = Configuration.OrderQuantity.ToString(CultureInfo.InvariantCulture);
+        OrderQuantityTextBox.Text = Configuration.OrderQuantity.ToString();
         FitRangePriceTextBox.Text = Configuration.FitPriceRange.ToString(CultureInfo.InvariantCulture);
         ItemListSizeTextBox.Text = Configuration.ItemListSize.ToString(CultureInfo.InvariantCulture);
-        SellListingFindRangeTextBox.Text = Configuration.SellListingFindRange.ToString(CultureInfo.InvariantCulture);
+        SellListingFindRangeTextBox.Text = Configuration.SellListingFindRange.ToString();
         MaxPriceTextBox.Text = Configuration.MaxPrice.ToString(CultureInfo.InvariantCulture);
         MinPriceTextBox.Text = Configuration.MinPrice.ToString(CultureInfo.InvariantCulture);
         RequiredProfitTextBox.Text = Configuration.RequiredProfit.ToString(CultureInfo.InvariantCulture);
@@ -30,7 +30,7 @@ public partial class SettingsForm : Form
         SalesPerDayTextBox.Text = Configuration.SalesPerDay.ToString(CultureInfo.InvariantCulture);
         SteamUserIdTextBox.Text = Configuration.SteamUserId;
         SteamCommissionTextBox.Text = Configuration.SteamCommission.ToString(CultureInfo.InvariantCulture);
-        SalesRatio.Text = Configuration.SalesRatio.ToString();
+        SalesRatio.Text = Configuration.SalesRatio.ToString(CultureInfo.InvariantCulture);
 
         ConnectionInfo = Program.LoadConnectionInfo() ?? new ConnectionInfo();
         ConnectionAddressTextBox.Text = ConnectionInfo.ServerAddress;
@@ -70,7 +70,7 @@ public partial class SettingsForm : Form
             SalesPerDay = int.Parse(SalesPerDayTextBox.Text),
             SteamUserId = SteamUserIdTextBox.Text,
             SteamCommission = double.Parse(SteamCommissionTextBox.Text, CultureInfo.InvariantCulture),
-            SalesRatio = int.Parse(SalesRatio.Text)
+            SalesRatio = double.Parse(SalesRatio.Text, CultureInfo.InvariantCulture)
         };
     }
 

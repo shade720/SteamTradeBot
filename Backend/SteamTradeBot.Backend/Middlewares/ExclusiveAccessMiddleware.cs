@@ -9,9 +9,9 @@ namespace SteamTradeBot.Backend.Middlewares;
 public class ExclusiveAccessMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly HistoryDbAccess _db;
+    private readonly StateDbAccess _db;
 
-    public ExclusiveAccessMiddleware(RequestDelegate next, HistoryDbAccess db)
+    public ExclusiveAccessMiddleware(RequestDelegate next, StateDbAccess db)
     {
         _next = next;
         _db = db;

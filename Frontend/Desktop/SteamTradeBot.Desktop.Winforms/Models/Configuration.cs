@@ -10,7 +10,7 @@ public class Configuration
     public double SteamCommission { get; set; }
     public double FitPriceRange { get; set; }
     public int SellListingFindRange { get; set; }
-    public int SalesRatio { get; set; }
+    public double SalesRatio { get; set; }
     public int AnalysisIntervalDays { get; set; } = 7;
     public int OrderQuantity { get; set; }
     public double MinPrice { get; set; }

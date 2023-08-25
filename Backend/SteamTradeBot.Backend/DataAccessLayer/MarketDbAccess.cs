@@ -6,7 +6,7 @@ using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.DataAccessLayer;
 
-public class MarketDbAccess
+public sealed class MarketDbAccess
 {
     private readonly IDbContextFactory<TradeBotDataContext> _tradeBotDataContextFactory;
 

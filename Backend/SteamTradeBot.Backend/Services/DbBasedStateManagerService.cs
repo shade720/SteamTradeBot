@@ -10,43 +10,49 @@ using Timer = System.Threading.Timer;
 
 namespace SteamTradeBot.Backend.Services;
 
-public class DbBasedStateManagerService : IStateManager
+public sealed class DbBasedStateManagerService : IStateManager
 {
-    private readonly HistoryDbAccess _historyDb;
     private readonly IConfigurationManager _configurationManager;
+    private readonly StateDbAccess _stateDb;
+    private readonly HistoryDbAccess _historyDb;
+    
     private readonly Stopwatch _stopwatch;
     private const int UptimeUpdateDelayMs = 1000;
     private const int StartDelay = 0;
 
     private Timer? _timer;
     
-    public DbBasedStateManagerService(IConfigurationManager configurationManager, HistoryDbAccess historyDb)
+    public DbBasedStateManagerService(
+        IConfigurationManager configurationManager, 
+        StateDbAccess stateDb, 
+        HistoryDbAccess historyDb)
     {
         _configurationManager = configurationManager;
+        _stateDb = stateDb;
         _historyDb = historyDb;
         _stopwatch = new Stopwatch();
     }
 
     public async Task EnsureStateCreated()
     {
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey);
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey);
         if (storedState is not null)
             return;
-        await _historyDb.AddOrUpdateStateAsync(new ServiceState { ApiKey = _configurationManager.ApiKey });
+        await _stateDb.AddOrUpdateStateAsync(new ServiceState { ApiKey = _configurationManager.ApiKey });
     }
 
     public async Task<ServiceState> GetServiceStateAsync(string apiKey)
     {
-        var currentState =  await _historyDb.GetStateAsync(apiKey);
+        var currentState =  await _stateDb.GetStateAsync(apiKey);
         return currentState ?? new ServiceState();
     }
 
     public async Task OnTradingStartedAsync()
     {
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
         storedState.WorkingState = ServiceWorkingState.Up;
-        await _historyDb.AddOrUpdateStateAsync(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
         _stopwatch.Start();
         _timer = new Timer(UpdateTimer, null, StartDelay, UptimeUpdateDelayMs);
         Log.Information("Worker has started");
@@ -54,11 +60,11 @@ public class DbBasedStateManagerService : IStateManager
 
     public async Task OnTradingStoppedAsync()
     {
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
         storedState.WorkingState = ServiceWorkingState.Down;
         storedState.Uptime = TimeSpan.Zero;
-        await _historyDb.AddOrUpdateStateAsync(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
         _stopwatch.Stop();
         _stopwatch.Reset();
         if (_timer is not null)
@@ -68,35 +74,35 @@ public class DbBasedStateManagerService : IStateManager
 
     public async Task OnLogInPendingAsync()
     {
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
         storedState.IsLoggedIn = LogInState.Pending;
-        await _historyDb.AddOrUpdateStateAsync(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
     }
 
     public async Task OnLoggedInAsync()
     {
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
         storedState.IsLoggedIn = LogInState.LoggedIn;
         storedState.ApiKey = _configurationManager.ApiKey;
-        await _historyDb.AddOrUpdateStateAsync(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
     }
 
     public async Task OnLoggedOutAsync()
     {
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
         storedState.IsLoggedIn = LogInState.NotLoggedIn;
-        await _historyDb.AddOrUpdateStateAsync(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
     }
 
     public async Task OnErrorAsync(Exception exception)
     {
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
         storedState.Errors++;
-        await _historyDb.AddOrUpdateStateAsync(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
         await _historyDb.AddNewEventAsync(new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
@@ -108,10 +114,10 @@ public class DbBasedStateManagerService : IStateManager
 
     public async Task OnItemAnalyzedAsync(ItemPage itemPage)
     {
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemsAnalyzed++;
-        await _historyDb.AddOrUpdateStateAsync(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
         await _historyDb.AddNewEventAsync(new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
@@ -124,10 +130,10 @@ public class DbBasedStateManagerService : IStateManager
 
     public async Task OnItemSellingAsync(SellOrder order)
     {
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemsSold++;
-        await _historyDb.AddOrUpdateStateAsync(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
         await _historyDb.AddNewEventAsync(new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
@@ -149,18 +155,18 @@ public class DbBasedStateManagerService : IStateManager
             Info = order.EngItemName,
             BuyPrice = order.Price
         });
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemsBought++;
-        await _historyDb.AddOrUpdateStateAsync(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
     }
 
     public async Task OnItemCancellingAsync(BuyOrder order)
     {
-        var storedState = await _historyDb.GetStateAsync(_configurationManager.ApiKey)
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemCanceled++;
-        await _historyDb.AddOrUpdateStateAsync(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
         await _historyDb.AddNewEventAsync(new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
@@ -172,9 +178,9 @@ public class DbBasedStateManagerService : IStateManager
 
     private void UpdateTimer(object? source)
     {
-        var storedState = _historyDb.GetStateAsync(_configurationManager.ApiKey).Result 
+        var storedState = _stateDb.GetStateAsync(_configurationManager.ApiKey).Result 
                           ?? throw new Exception("There is no state for this api key");
         storedState.Uptime = _stopwatch.Elapsed;
-        var _ = _historyDb.AddOrUpdateStateAsync(storedState);
+        var _ = _stateDb.AddOrUpdateStateAsync(storedState);
     }
 }

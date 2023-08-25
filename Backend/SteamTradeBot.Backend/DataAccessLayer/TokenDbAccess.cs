@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SteamTradeBot.Backend.DataAccessLayer;
 
-public class TokenDbAccess
+public sealed class TokenDbAccess
 {
     private readonly IDbContextFactory<TradeBotDataContext> _tradeBotDataContextFactory;
 

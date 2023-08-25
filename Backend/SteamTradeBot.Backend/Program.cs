@@ -39,13 +39,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Log.Logger);
 
-var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING") ?? builder.Configuration["PostgresConnectionString"];
-var sqlServerConnectionString = builder.Configuration["MsSqlServerConnectionString"];
 
-builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseSqlServer(sqlServerConnectionString));
-//builder.Services.AddDbContextFactory<TradeBotDataContext>(options => options.UseNpgsql(postgresConnectionString));
+builder.Services.AddDbContextFactory<TradeBotDataContext>(options =>
+{
+    var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING");
+    if (postgresConnectionString is not null)
+        options.UseNpgsql(postgresConnectionString);
+    else
+    {
+        var sqlServerConnectionString = builder.Configuration["MsSqlServerConnectionString"];
+        options.UseSqlServer(sqlServerConnectionString);
+    }
+});
 
-var remoteWebDriverHost = Environment.GetEnvironmentVariable("SELENIUM_HOST") ?? "http://localhost:5051";
+var webDriverHostFromEnvironment = Environment.GetEnvironmentVariable("SELENIUM_HOST");
+
 builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>(_ => new SeleniumSteamApi(() =>
 {
     var chromeOptions = new ChromeOptions();
@@ -58,7 +66,8 @@ builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>(_ => new SeleniumStea
     chromeOptions.AddArgument("--headless");
     chromeOptions.AddArgument("--disable-logging");
     chromeOptions.AddArgument("--log-level=3");
-    //return new RemoteWebDriver(new Uri(remoteWebDriverHost), chromeOptions.ToCapabilities());
+    if (webDriverHostFromEnvironment is not null)
+        return new RemoteWebDriver(new Uri(webDriverHostFromEnvironment), chromeOptions.ToCapabilities());
     var driverService = ChromeDriverService.CreateDefaultService();
     driverService.EnableVerboseLogging = false;
     driverService.SuppressInitialDiagnosticInformation = true;
