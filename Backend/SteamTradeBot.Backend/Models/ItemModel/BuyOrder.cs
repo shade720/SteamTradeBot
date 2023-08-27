@@ -12,6 +12,7 @@ public class BuyOrder
     [Required(AllowEmptyStrings = true)]
     public string RusItemName { get; set; } = string.Empty;
     public string ItemUrl { get; set; }
-    public double Price { get; set; }
+    public double BuyPrice { get; set; }
+    public double EstimatedSellPrice { get; set; }
     public int Quantity { get; set; }
 }

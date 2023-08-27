@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.Models.Abstractions;

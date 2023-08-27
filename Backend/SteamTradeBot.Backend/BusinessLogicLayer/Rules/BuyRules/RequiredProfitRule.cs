@@ -1,12 +1,14 @@
 ﻿using Serilog;
 using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
-public class RequiredProfitRule : IBuyRule
+public sealed class RequiredProfitRule : IBuyRule
 {
     private readonly IConfigurationManager _configurationManager;
 
@@ -17,43 +19,60 @@ public class RequiredProfitRule : IBuyRule
 
     public bool IsFollowed(ItemPage itemPage)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public async Task<bool> IsFollowedAsync(ItemPage itemPage)
     {
         return await Task.Run(() =>
         {
-            Log.Information("Finding profitable order...");
-
             if (itemPage.BuyOrderBook.Count <= 0)
             {
-                Log.Information("Item is not profitable. Reason: can't find profitable order, buy order book is empty.");
+                Log.Information("Required profit is bad. Reason: can't find profitable order, buy order book is empty.");
                 return false;
             }
             if ( itemPage.SellOrderBook.Count <= 0)
             {
-                Log.Information("Item is not profitable. Reason: can't find profitable order, sell order book is empty.");
+                Log.Information("Required profit is bad. Reason: can't find profitable order, sell order book is empty.");
                 return false;
             }
+            
+            var isPricesFound = GetBestPricesFromListings(
+                itemPage.BuyOrderBook,
+                itemPage.SellOrderBook,
+                _configurationManager.SteamCommission,
+                _configurationManager.RequiredProfit,
+                out var buyPrice, out var sellPrice);
 
-            var buyPrice = itemPage.BuyOrderBook.FirstOrDefault(buyOrder => itemPage.SellOrderBook.Any(sellOrder => IsBuyPriceProfitable(buyOrder.Price, sellOrder.Price, _configurationManager.SteamCommission, _configurationManager.RequiredProfit)));
-            if (buyPrice is null)
+            if (!isPricesFound)
             {
-                Log.Information("Item is not profitable. Reason: profitable buy price is not found. Available price: {1} - Required price: {0}",
-                    itemPage.BuyOrderBook.Min(order => order.Price), itemPage.SellOrderBook.Max(sellOrder => sellOrder.Price) * (1 - _configurationManager.SteamCommission) - _configurationManager.RequiredProfit);
+                Log.Information("Required profit is bad. Reason: can't find profitable order, prices not found.");
                 return false;
             }
 
-            var sellPrice = itemPage.SellOrderBook.FirstOrDefault(sellOrder => IsBuyPriceProfitable(buyPrice.Price, sellOrder.Price, _configurationManager.SteamCommission, _configurationManager.RequiredProfit));
-            if (sellPrice is null)
-                return false;
+            itemPage.EstimatedBuyPrice = buyPrice;
+            itemPage.EstimatedSellPrice = sellPrice;
 
-            itemPage.EstimatedBuyPrice = buyPrice.Price;
-            itemPage.EstimatedSellPrice = sellPrice.Price;
-
+            Log.Information("Required profit is ok.\r\nEstimated buy price: {0}\r\nEstimated sell price: {1}", 
+                itemPage.EstimatedBuyPrice, itemPage.EstimatedSellPrice);
             return true;
         });
+    }
+
+    private static bool GetBestPricesFromListings(IEnumerable<OrderBookItem> buyListing, IReadOnlyCollection<OrderBookItem> sellListing, double commission, double requiredProfit, out double buyPrice, out double sellPrice)
+    {
+        buyPrice = 0;
+        sellPrice = 0;
+        foreach (var buyOrder in buyListing)
+        {
+            foreach (var sellOrder in sellListing.Where(sellOrder => IsBuyPriceProfitable(buyOrder.Price, sellOrder.Price, commission, requiredProfit)))
+            {
+                buyPrice = buyOrder.Price;
+                sellPrice = sellOrder.Price;
+                return true;
+            }
+        }
+        return false;
     }
 
     private static bool IsBuyPriceProfitable(double buyPrice, double sellPrice, double commission, double requiredProfit)

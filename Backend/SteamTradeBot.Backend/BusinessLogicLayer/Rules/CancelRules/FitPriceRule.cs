@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
 
-public class FitPriceRule : ICancelRule
+public sealed class FitPriceRule : ICancelRule
 {
     private readonly MarketDbAccess _marketDb;
     private readonly IConfigurationManager _configurationManager;
@@ -26,7 +26,6 @@ public class FitPriceRule : ICancelRule
 
     public async Task<bool> IsFollowedAsync(ItemPage itemPage)
     {
-        Log.Information("Checking if order obsolete...");
         if (itemPage.MyBuyOrder is null)
         {
             Log.Information("Can't check if order obsolete. Reason: buy order does not exist.");
@@ -37,7 +36,17 @@ public class FitPriceRule : ICancelRule
             Log.Information("Can't check if order obsolete. Reason: buy order book is empty.");
             return false;
         }
-        var existingBuyOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey);
-        return existingBuyOrder is not null && itemPage.BuyOrderBook.Any(x => Math.Abs(x.Price - existingBuyOrder.Price) > _configurationManager.FitPriceRange);
+        var existedBuyOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey);
+
+        var isOrderObsolete = existedBuyOrder is not null && itemPage.BuyOrderBook.Any(x =>
+            Math.Abs(x.Price - existedBuyOrder.BuyPrice) > _configurationManager.FitPriceRange);
+        if (!isOrderObsolete)
+        {
+            Log.Information("Order is still relevant.");
+            return false;
+            
+        }
+        Log.Information("Order is obsolete. Cancelling...");
+        return true;
     }
 }

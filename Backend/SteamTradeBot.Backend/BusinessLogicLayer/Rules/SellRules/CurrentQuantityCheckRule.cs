@@ -6,7 +6,7 @@ using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
 
-public class CurrentQuantityCheckRule : ISellRule
+public sealed class CurrentQuantityCheckRule : ISellRule
 {
     private readonly IConfigurationManager _configurationManager;
     private readonly MarketDbAccess _marketDb;
@@ -24,8 +24,20 @@ public class CurrentQuantityCheckRule : ISellRule
 
     public async Task<bool> IsFollowedAsync(ItemPage itemPage)
     {
-        Log.Information("Checking if order satisfied...");
         var localOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey);
-        return localOrder is not null && (itemPage.MyBuyOrder is null || itemPage.MyBuyOrder.Quantity < localOrder.Quantity);
+        if (localOrder is null)
+        {
+            Log.Logger.Information("Nothing to check. No buy orders for this item.");
+            return false;
+        }
+
+        if (itemPage.MyBuyOrder is not null && itemPage.MyBuyOrder.Quantity >= localOrder.Quantity)
+        {
+            Log.Logger.Information("Buy order not executed");
+            return false;
+        }
+
+        Log.Logger.Information("Buy order partially or fully executed!!!. Current order quantity is lower than stored.");
+        return true;
     }
 }

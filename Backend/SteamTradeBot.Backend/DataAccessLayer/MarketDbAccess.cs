@@ -52,13 +52,10 @@ public sealed class MarketDbAccess
 
     #region SellOrders
 
-    public async Task AddOrUpdateSellOrderAsync(SellOrder order)
+    public async Task AddSellOrderAsync(SellOrder order)
     {
         await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
-        if (await context.SellOrders.ContainsAsync(order))
-            context.SellOrders.Update(order);
-        else
-            await context.SellOrders.AddAsync(order);
+        await context.SellOrders.AddAsync(order);
         await context.SaveChangesAsync();
     }
 

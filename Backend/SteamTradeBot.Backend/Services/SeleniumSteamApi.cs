@@ -111,16 +111,16 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     private class ClosenessComparer : IEqualityComparer<double>
     {
-        private readonly double delta;
+        private readonly double _delta;
 
         public ClosenessComparer(double delta)
         {
-            this.delta = delta;
+            _delta = delta;
         }
 
         public bool Equals(double x, double y)
         {
-            return Math.Abs((x + y) / 2f - y) < delta;
+            return Math.Abs((x + y) / 2f - y) < _delta;
         }
 
         public int GetHashCode(double obj)
@@ -221,7 +221,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
     private static string GetItemQuality(string itemDescription) =>
         string.Join("", itemDescription.SkipWhile(x => x != ':').Skip(2)).Trim();
 
-    public async Task<bool> PlaceSellOrderAsync(string itemName, double price, string userId, int inventoryFindRange = 10)
+    public async Task<bool> PlaceSellOrderAsync(string itemName, double price, string userId, int inventoryFindRange = 15)
     {
         return await SafeConnect(() =>
         {
@@ -428,7 +428,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
                 var itemName = string.Join("", matches[i].ToString().SkipWhile(x => x != '=').Skip(2).SkipLast(1));
                 if (itemName.Contains("Sealed Graffiti") || itemName.Contains("Sticker") || itemName.Contains("Case"))
                     continue;
-                Log.Logger.Information("Get {0} item", itemName);
+                Log.Logger.Information("Got {0} item name", itemName);
                 result.Add(itemName);
             }
             return result;

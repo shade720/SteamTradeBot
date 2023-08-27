@@ -6,7 +6,7 @@ using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
-public class AveragePriceRule : IBuyRule
+public sealed class AveragePriceRule : IBuyRule
 {
     private readonly IConfigurationManager _configurationManager;
 
@@ -23,18 +23,19 @@ public class AveragePriceRule : IBuyRule
     {
         return await Task.Run(() =>
         {
-            Log.Information("Checking average price...");
             if (itemPage.BuyOrderBook.Count <= 0)
             {
-                Log.Information("Item is not profitable. Reason: can't check average price, buy order book is empty.");
+                Log.Information("Average price is bad. Reason: can't check average price, buy order book is empty.");
                 return false;
             }
 
             var avgPriceFromChart = AveragePriceFromChart(itemPage.SalesChart);
             if (itemPage.BuyOrderBook.Any(buyOrder => IsBuyPriceLowerThanAverage(buyOrder.Price, avgPriceFromChart, _configurationManager.AveragePriceRatio)))
+            {
+                Log.Information("Average price is ok.");
                 return true;
-
-            Log.Information("Item is not profitable. Reason: average price is higher than needed. Min buy price: {0} < Required average price: {1}",
+            }
+            Log.Information("Average price is bad. Reason: average price is higher than needed. Min buy price: {0} < Required average price: {1}",
                 itemPage.BuyOrderBook.Min(buyOrder => buyOrder.Price), avgPriceFromChart * (1 + _configurationManager.AveragePriceRatio));
             return false;
         });

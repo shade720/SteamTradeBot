@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace SteamTradeBot.Backend.BusinessLogicLayer;
+namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
 public sealed class UptimeProvider
 {

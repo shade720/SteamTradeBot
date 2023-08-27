@@ -76,6 +76,7 @@ builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>(_ => new SeleniumStea
 
 builder.Services.AddTransient<MarketDbAccess>();
 builder.Services.AddTransient<HistoryDbAccess>();
+builder.Services.AddTransient<StateDbAccess>();
 builder.Services.AddTransient<TokenDbAccess>();
 
 JsonFileBasedConfigurationManagerService.AddUsersConfigurations(builder.Configuration);

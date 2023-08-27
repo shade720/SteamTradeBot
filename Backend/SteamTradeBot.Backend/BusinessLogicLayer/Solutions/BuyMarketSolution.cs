@@ -1,13 +1,13 @@
-﻿using SteamTradeBot.Backend.DataAccessLayer;
+﻿using Serilog;
+using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 
-public class BuyMarketSolution : MarketSolution
+public sealed class BuyMarketSolution : MarketSolution
 {
     public BuyMarketSolution(
         ISteamApi api, 
@@ -23,19 +23,26 @@ public class BuyMarketSolution : MarketSolution
 
     public override async Task PerformAsync(ItemPage itemPage)
     {
-        var price = itemPage.BuyOrderBook.FirstOrDefault(buyOrder => itemPage.SellOrderBook.Any(sellOrder => sellOrder.Price + ConfigurationManager.RequiredProfit > buyOrder.Price * (1 + ConfigurationManager.SteamCommission)));
-        if (price is null)
-            throw new Exception("Sell order not found");
+        Log.Logger.Information("Placing buy order ({0})...", itemPage.EngItemName);
+
+        if (itemPage.EstimatedBuyPrice is null || itemPage.EstimatedSellPrice is null)
+            throw new Exception("Can't place buy order. Estimated prices are empty.");
+        
         var buyOrder = new BuyOrder
         {
             EngItemName = itemPage.EngItemName,
             RusItemName = itemPage.RusItemName,
             ItemUrl = itemPage.ItemUrl,
-            Price = price.Price,
+            BuyPrice = itemPage.EstimatedBuyPrice.Value,
+            EstimatedSellPrice = itemPage.EstimatedSellPrice.Value,
             Quantity = ConfigurationManager.OrderQuantity
         };
-        await SteamApi.PlaceBuyOrderAsync(buyOrder.ItemUrl, buyOrder.Price, buyOrder.Quantity);
+
+        await SteamApi.PlaceBuyOrderAsync(buyOrder.ItemUrl, buyOrder.BuyPrice, buyOrder.Quantity);
         await MarketDb.AddOrUpdateBuyOrderAsync(buyOrder);
         await StateManager.OnItemBuyingAsync(buyOrder);
+
+        Log.Logger.Information("Buy order {0} has been placed:\r\nItem name: {1}\r\nUrl: {2}\r\nBuy price: {3}\r\nEstimated sell price: {4}\r\nQuantity: {5}", 
+            buyOrder.EngItemName, buyOrder.ItemUrl, buyOrder.ItemUrl, buyOrder.BuyPrice, buyOrder.EstimatedSellPrice, buyOrder.Quantity);
     }
 }

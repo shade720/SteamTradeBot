@@ -7,7 +7,7 @@ using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
-public class TrendRule : IBuyRule
+public sealed class TrendRule : IBuyRule
 {
     private readonly IConfigurationManager _configurationManager;
 
@@ -26,11 +26,13 @@ public class TrendRule : IBuyRule
     {
         return await Task.Run(() =>
         {
-            Log.Information("Checking trend...");
             var trend = PriceTrend(itemPage.SalesChart);
             if (trend > _configurationManager.Trend)
+            {
+                Log.Information("Trend is ok.");
                 return true;
-            Log.Information("Item is not profitable. Reason: trend is lower than needed. Current trend: {0} < Required trend: {1}",
+            }
+            Log.Information("Trend is bad. Reason: lower than needed. Current trend: {0} < Required trend: {1}",
                 trend.ToString("F10"), _configurationManager.Trend);
             return false;
         });

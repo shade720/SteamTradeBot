@@ -22,10 +22,10 @@ public class OrderCancellingService
         var itemsWithPurchaseOrders = await _marketDb.GetBuyOrdersAsync(apiKey);
         foreach (var order in itemsWithPurchaseOrders)
         {
-            Log.Logger.Information("Cancelling item {0} with buy price {1}", order.EngItemName, order.Price);
+            Log.Logger.Information("Cancelling item {0} with buy price {1}", order.EngItemName, order.BuyPrice);
             await _api.CancelBuyOrderAsync(order.ItemUrl);
             await _marketDb.RemoveBuyOrderAsync(order);
-            Log.Logger.Information("Item {0} with buy price {1} was canceled", order.EngItemName, order.Price);
+            Log.Logger.Information("Item {0} with buy price {1} was canceled", order.EngItemName, order.BuyPrice);
         }
         Log.Logger.Information("All buy orders have been canceled!");
     }

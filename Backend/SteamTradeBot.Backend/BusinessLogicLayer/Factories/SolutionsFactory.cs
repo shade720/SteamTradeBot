@@ -8,11 +8,11 @@ using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
-public class SolutionsFactory
+public sealed class SolutionsFactory
 {
-    private readonly MarketRules _rules;
     private readonly IStateManager _stateManager;
-    private static Dictionary<string, MarketSolution> _solutions;
+    private readonly MarketRules _rules;
+    private readonly Dictionary<string, MarketSolution> _solutions;
 
     public SolutionsFactory(
         ISteamApi api, 
@@ -27,13 +27,13 @@ public class SolutionsFactory
         {
             { nameof(BuyMarketSolution), new BuyMarketSolution(api, configurationManager, stateManager, marketDb) },
             { nameof(SellMarketSolution), new SellMarketSolution(api, configurationManager, stateManager, marketDb) },
-            { nameof(CancelMarketSolution), new CancelMarketSolution(api, configurationManager, stateManager, marketDb) },
+            { nameof(CancelMarketSolution), new CancelMarketSolution(api, configurationManager, stateManager, marketDb) }
         };
     }
 
     public async Task<MarketSolution?> GetSolutionAsync(ItemPage itemPage)
     {
-        await _stateManager.OnItemAnalyzedAsync(itemPage);
+        await _stateManager.OnItemAnalyzingAsync(itemPage);
 
         if (await _rules.CanSellItemAsync(itemPage))
             return _solutions[nameof(SellMarketSolution)];

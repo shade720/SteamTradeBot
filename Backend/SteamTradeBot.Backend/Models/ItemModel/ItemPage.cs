@@ -14,8 +14,8 @@ public class ItemPage
     public List<OrderBookItem> BuyOrderBook { get; set; }
     
     //Temp
-    public double EstimatedBuyPrice { get; set; }
-    public double EstimatedSellPrice { get; set; }
+    public double? EstimatedBuyPrice { get; set; }
+    public double? EstimatedSellPrice { get; set; }
     public double CurrentBalance { get; set; }
 
     public override string ToString()

@@ -5,7 +5,7 @@ using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
-public class OrderAlreadyExistRule : IBuyRule
+public sealed class OrderAlreadyExistRule : IBuyRule
 {
     public bool IsFollowed(ItemPage itemPage)
     {
@@ -16,8 +16,10 @@ public class OrderAlreadyExistRule : IBuyRule
     {
         return Task.Run(() =>
         {
-            Log.Information("Checking if order already exist...");
-            return itemPage.MyBuyOrder is null;
+            var isOrderAlreadyExist = itemPage.MyBuyOrder is not null;
+            if (!isOrderAlreadyExist) return true;
+            Log.Information("Item is bad. Reason: Order already exist.");
+            return false;
         });
     }
 }

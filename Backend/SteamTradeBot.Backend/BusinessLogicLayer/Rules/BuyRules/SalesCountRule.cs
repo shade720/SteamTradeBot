@@ -6,7 +6,7 @@ using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
-public class SalesCountRule : IBuyRule
+public sealed class SalesCountRule : IBuyRule
 {
     private readonly IConfigurationManager _configurationManager;
 
@@ -23,12 +23,14 @@ public class SalesCountRule : IBuyRule
     {
         return await Task.Run(() =>
         {
-            Log.Information("Checking sales per week...");
-
             var salesPerDayFromChart = SalesPerDayFromChart(itemPage.SalesChart);
             if (salesPerDayFromChart > _configurationManager.SalesPerDay)
+            {
+                Log.Information("Sales count is ok.");
                 return true;
-            Log.Information("Item is not profitable. Reason: sales volume is lower than needed. Current sales: {0} < Required sales: {1}", salesPerDayFromChart, _configurationManager.SalesPerDay);
+            }
+            Log.Information("Sales count is bad. Reason: sales volume is lower than needed. Current sales: {0} < Required sales: {1}", 
+                salesPerDayFromChart, _configurationManager.SalesPerDay);
             return false;
         });
     }

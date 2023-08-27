@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Models.StateModel;
 using SteamTradeBot.Backend.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
 namespace SteamTradeBot.Backend.Services;
 
@@ -103,7 +103,7 @@ public sealed class DbBasedStateManagerService : IStateManager
         });
     }
 
-    public async Task OnItemAnalyzedAsync(ItemPage itemPage)
+    public async Task OnItemAnalyzingAsync(ItemPage itemPage)
     {
         var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
@@ -144,7 +144,7 @@ public sealed class DbBasedStateManagerService : IStateManager
             Type = InfoType.ItemBought,
             Time = DateTime.UtcNow,
             Info = order.EngItemName,
-            BuyPrice = order.Price
+            BuyPrice = order.BuyPrice
         });
         var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");

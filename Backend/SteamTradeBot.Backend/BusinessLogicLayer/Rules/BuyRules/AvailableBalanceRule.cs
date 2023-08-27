@@ -7,7 +7,7 @@ using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
-public class AvailableBalanceRule : IBuyRule
+public sealed class AvailableBalanceRule : IBuyRule
 {
     private readonly IConfigurationManager _configurationManager;
     private readonly MarketDbAccess _marketDbAccess;
@@ -24,14 +24,15 @@ public class AvailableBalanceRule : IBuyRule
 
     public async Task<bool> IsFollowedAsync(ItemPage itemPage)
     {
-        Log.Information("Checking available balance...");
-
-        var balanceInWork = (await _marketDbAccess.GetBuyOrdersAsync(_configurationManager.ApiKey)).Sum(buyOrder => buyOrder.Price);
+        var balanceInWork = (await _marketDbAccess.GetBuyOrdersAsync(_configurationManager.ApiKey)).Sum(buyOrder => buyOrder.BuyPrice);
         var availableBalance = (itemPage.CurrentBalance - balanceInWork ) * _configurationManager.AvailableBalance;
 
         if (availableBalance > itemPage.EstimatedBuyPrice)
+        {
+            Log.Information("Available balance is ok.");
             return true;
-        Log.Information("Item is not profitable. Reason: no money for this item. Available balance: {0} < Price: {1}", availableBalance, itemPage.EstimatedBuyPrice);
+        }
+        Log.Information("Available balance is bad. Reason: no money for this item. Available balance: {0} < Price: {1}", availableBalance, itemPage.EstimatedBuyPrice);
         return false;
     }
 }

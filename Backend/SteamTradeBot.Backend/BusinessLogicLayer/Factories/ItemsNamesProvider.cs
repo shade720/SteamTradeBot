@@ -6,7 +6,7 @@ using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
-public class ItemsNamesProvider
+public sealed class ItemsNamesProvider
 {
     private readonly IConfigurationManager _configurationManager;
     private readonly ISteamApi _api;
@@ -26,19 +26,20 @@ public class ItemsNamesProvider
     {
         while (true)
         {
-            Log.Information("Load items for analysis....");
+            Log.Information("Load items names for analysis...");
+
             var loadedItemNamesList = await _api.GetItemNamesListAsync(
                     _configurationManager.MinPrice,
                     _configurationManager.MaxPrice,
                     _configurationManager.SalesPerDay * 7,
                     _configurationManager.ItemListSize);
-            var existingOrdersItemNames = await _marketDb.GetBuyOrdersAsync(_configurationManager.ApiKey);
-            foreach (var itemName in existingOrdersItemNames.Select(x => x.EngItemName))
+            var existingOrders = await _marketDb.GetBuyOrdersAsync(_configurationManager.ApiKey);
+            foreach (var existingOrderName in existingOrders.Select(x => x.EngItemName))
             {
-                loadedItemNamesList.Insert(0, itemName);
-                Log.Logger.Information("Add {0} as existing order", itemName);
+                loadedItemNamesList.Insert(0, existingOrderName);
+                Log.Logger.Information("Add {0} as existing order", existingOrderName);
             }
-            Log.Information("Pipeline initialized");
+            Log.Information("Items names list loaded.");
 
             foreach (var name in loadedItemNamesList)
             {
