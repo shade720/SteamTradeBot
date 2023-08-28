@@ -13,8 +13,8 @@ public sealed class BuyMarketSolution : MarketSolution
         ISteamApi api, 
         IConfigurationManager configurationManager, 
         IStateManager stateManager, 
-        MarketDbAccess marketDb) : 
-        base(api, configurationManager, stateManager, marketDb) { }
+        OrdersDbAccess ordersDb) : 
+        base(api, configurationManager, stateManager, ordersDb) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -28,22 +28,23 @@ public sealed class BuyMarketSolution : MarketSolution
         if (itemPage.EstimatedBuyPrice is null || itemPage.EstimatedSellPrice is null)
             throw new Exception("Can't place buy order. Estimated prices are empty.");
         
-        var buyOrder = new BuyOrder
+        var buyOrder = new Order
         {
             ApiKey = ConfigurationManager.ApiKey,
             EngItemName = itemPage.EngItemName,
             RusItemName = itemPage.RusItemName,
             ItemUrl = itemPage.ItemUrl,
+            OrderType = OrderType.BuyOrder,
             BuyPrice = itemPage.EstimatedBuyPrice.Value,
-            EstimatedSellPrice = itemPage.EstimatedSellPrice.Value,
+            SellPrice = itemPage.EstimatedSellPrice.Value,
             Quantity = ConfigurationManager.OrderQuantity
         };
 
         await SteamApi.PlaceBuyOrderAsync(buyOrder.ItemUrl, buyOrder.BuyPrice, buyOrder.Quantity);
-        await MarketDb.AddOrUpdateBuyOrderAsync(buyOrder);
+        await OrdersDb.AddOrUpdateOrderAsync(buyOrder);
         await StateManager.OnItemBuyingAsync(buyOrder);
 
         Log.Logger.Information("Buy order {0} has been placed:\r\nItem name: {1}\r\nUrl: {2}\r\nBuy price: {3}\r\nEstimated sell price: {4}\r\nQuantity: {5}", 
-            buyOrder.EngItemName, buyOrder.ItemUrl, buyOrder.ItemUrl, buyOrder.BuyPrice, buyOrder.EstimatedSellPrice, buyOrder.Quantity);
+            buyOrder.EngItemName, buyOrder.ItemUrl, buyOrder.ItemUrl, buyOrder.BuyPrice, buyOrder.SellPrice, buyOrder.Quantity);
     }
 }

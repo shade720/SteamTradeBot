@@ -2,7 +2,7 @@
 
 namespace SteamTradeBot.Backend.Models.ItemModel;
 
-public class SellOrder
+public class Order
 {
     [Key]
     public int Id { get; set; }
@@ -12,7 +12,8 @@ public class SellOrder
     [Required(AllowEmptyStrings = true)]
     public string RusItemName { get; set; } = string.Empty;
     public string ItemUrl { get; set; }
-    public double PurchasedPrice { get; set; }
+    public OrderType OrderType { get; set; }
+    public double BuyPrice { get; set; }
     public double SellPrice { get; set; }
     public int Quantity { get; set; }
 }

@@ -1,8 +1,10 @@
-﻿using Serilog;
+﻿using System;
+using Serilog;
 using SteamTradeBot.Backend.DataAccessLayer;
 using System.Collections.Generic;
 using System.Linq;
 using SteamTradeBot.Backend.Models.Abstractions;
+using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
@@ -10,16 +12,16 @@ public sealed class ItemsNamesProvider
 {
     private readonly IConfigurationManager _configurationManager;
     private readonly ISteamApi _api;
-    private readonly MarketDbAccess _marketDb;
+    private readonly OrdersDbAccess _ordersDb;
 
     public ItemsNamesProvider(
         ISteamApi api, 
         IConfigurationManager configurationManager, 
-        MarketDbAccess marketDb)
+        OrdersDbAccess ordersDb)
     {
         _api = api;
         _configurationManager = configurationManager;
-        _marketDb = marketDb;
+        _ordersDb = ordersDb;
     }
 
     public async IAsyncEnumerable<string> GetNamesAsync()
@@ -27,13 +29,22 @@ public sealed class ItemsNamesProvider
         while (true)
         {
             Log.Information("Load items names for analysis...");
-
-            var loadedItemNamesList = await _api.GetItemNamesListAsync(
+            List<string> loadedItemNamesList;
+            try
+            {
+                loadedItemNamesList = await _api.GetItemNamesListAsync(
                     _configurationManager.MinPrice,
                     _configurationManager.MaxPrice,
                     _configurationManager.SalesPerDay * 7,
                     _configurationManager.ItemListSize);
-            var existingOrders = await _marketDb.GetBuyOrdersAsync(_configurationManager.ApiKey);
+            }
+            catch
+            {
+                Log.Logger.Error("Can't get items names list. ");
+                loadedItemNamesList = new List<string>();
+            }
+            
+            var existingOrders = await _ordersDb.GetOrdersAsync(_configurationManager.ApiKey, OrderType.BuyOrder);
             foreach (var existingOrderName in existingOrders.Select(x => x.EngItemName))
             {
                 loadedItemNamesList.Insert(0, existingOrderName);

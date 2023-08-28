@@ -119,7 +119,7 @@ public sealed class DbBasedStateManagerService : IStateManager
         });
     }
 
-    public async Task OnItemSellingAsync(SellOrder order)
+    public async Task OnItemSellingAsync(Order order)
     {
         var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
                           ?? throw new Exception("There is no state for this api key");
@@ -132,11 +132,11 @@ public sealed class DbBasedStateManagerService : IStateManager
             Time = DateTime.UtcNow,
             Info = order.EngItemName,
             SellPrice = order.SellPrice,
-            Profit = order.SellPrice - order.SellPrice
+            Profit = order.SellPrice - order.BuyPrice - _configurationManager.SteamCommission
         });
     }
 
-    public async Task OnItemBuyingAsync(BuyOrder order)
+    public async Task OnItemBuyingAsync(Order order)
     {
         var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
@@ -149,11 +149,11 @@ public sealed class DbBasedStateManagerService : IStateManager
             Time = DateTime.UtcNow,
             Info = order.EngItemName,
             BuyPrice = order.BuyPrice,
-            SellPrice = order.EstimatedSellPrice
+            SellPrice = order.SellPrice
         });
     }
 
-    public async Task OnItemCancellingAsync(BuyOrder order)
+    public async Task OnItemCancellingAsync(Order order)
     {
         var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
@@ -164,7 +164,8 @@ public sealed class DbBasedStateManagerService : IStateManager
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemCanceled,
             Time = DateTime.UtcNow,
-            Info = order.EngItemName
+            Info = order.EngItemName,
+            BuyPrice = order.BuyPrice
         });
     }
 

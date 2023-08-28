@@ -13,8 +13,8 @@ public sealed class SellMarketSolution : MarketSolution
         ISteamApi api, 
         IConfigurationManager configurationManager, 
         IStateManager stateManager, 
-        MarketDbAccess marketDb) 
-        : base(api, configurationManager, stateManager, marketDb) { }
+        OrdersDbAccess ordersDb) 
+        : base(api, configurationManager, stateManager, ordersDb) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -24,7 +24,7 @@ public sealed class SellMarketSolution : MarketSolution
     public override async Task PerformAsync(ItemPage itemPage)
     {
         Log.Logger.Information("Placing sell order ({0})...", itemPage.EngItemName);
-        var buyOrder = await MarketDb.GetBuyOrderAsync(itemPage.EngItemName, ConfigurationManager.ApiKey);
+        var buyOrder = await OrdersDb.GetOrderAsync(itemPage.EngItemName, ConfigurationManager.ApiKey, OrderType.BuyOrder);
 
         if (buyOrder is null)
             throw new Exception("Can't load stored buy order for sell order forming.");
@@ -35,14 +35,15 @@ public sealed class SellMarketSolution : MarketSolution
             ? buyOrder.Quantity
             : buyOrder.Quantity - itemPage.MyBuyOrder.Quantity;
 
-        var sellOrder = new SellOrder
+        var sellOrder = new Order
         {
             ApiKey = ConfigurationManager.ApiKey,
             EngItemName = itemPage.EngItemName,
             RusItemName = itemPage.RusItemName,
             ItemUrl = itemPage.ItemUrl,
-            PurchasedPrice = buyOrder.BuyPrice,
-            SellPrice = buyOrder.EstimatedSellPrice,
+            OrderType = OrderType.SellOrder,
+            BuyPrice = buyOrder.BuyPrice,
+            SellPrice = buyOrder.SellPrice,
             Quantity = 1
         };
 
@@ -54,11 +55,11 @@ public sealed class SellMarketSolution : MarketSolution
             {
                 buyOrder.Quantity -= 1;
                 if (buyOrder.Quantity > 0)
-                    await MarketDb.AddOrUpdateBuyOrderAsync(buyOrder);
+                    await OrdersDb.AddOrUpdateOrderAsync(buyOrder);
                 else
-                    await MarketDb.RemoveBuyOrderAsync(buyOrder);
+                    await OrdersDb.RemoveOrderAsync(buyOrder);
 
-                await MarketDb.AddSellOrderAsync(sellOrder);
+                await OrdersDb.AddOrUpdateOrderAsync(sellOrder);
                 await StateManager.OnItemSellingAsync(sellOrder);
                 Log.Information("Sell order {0} (Price: {1}) placed successfully.", sellOrder.EngItemName, sellOrder.SellPrice);
             }

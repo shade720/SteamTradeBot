@@ -15,7 +15,7 @@ public interface IStateManager
     public Task OnLoggedOutAsync();
     public Task OnErrorAsync(Exception exception);
     public Task OnItemAnalyzingAsync(ItemPage itemPage);
-    public Task OnItemSellingAsync(SellOrder order);
-    public Task OnItemBuyingAsync(BuyOrder order);
-    public Task OnItemCancellingAsync(BuyOrder order);
+    public Task OnItemSellingAsync(Order order);
+    public Task OnItemBuyingAsync(Order order);
+    public Task OnItemCancellingAsync(Order order);
 }

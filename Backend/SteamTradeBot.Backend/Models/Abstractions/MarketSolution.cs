@@ -9,18 +9,18 @@ public abstract class MarketSolution
     protected readonly ISteamApi SteamApi;
     protected readonly IConfigurationManager ConfigurationManager;
     protected readonly IStateManager StateManager;
-    protected readonly MarketDbAccess MarketDb;
+    protected readonly OrdersDbAccess OrdersDb;
 
     protected MarketSolution(
         ISteamApi api, 
         IConfigurationManager configurationManager, 
         IStateManager stateManager, 
-        MarketDbAccess marketDb)
+        OrdersDbAccess ordersDb)
     {
         SteamApi = api;
         ConfigurationManager = configurationManager;
         StateManager = stateManager;
-        MarketDb = marketDb;
+        OrdersDb = ordersDb;
     }
 
     public abstract void Perform(ItemPage itemPage);

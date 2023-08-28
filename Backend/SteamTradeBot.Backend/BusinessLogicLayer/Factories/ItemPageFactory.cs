@@ -33,7 +33,7 @@ public sealed class ItemPageFactory
 
         if (quantity.HasValue && price.HasValue)
         {
-            itemPage.MyBuyOrder = new BuyOrder
+            itemPage.MyBuyOrder = new Order
             {
                 EngItemName = itemPage.EngItemName,
                 RusItemName = itemPage.RusItemName,

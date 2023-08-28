@@ -18,16 +18,16 @@ public sealed class SolutionsFactory
         ISteamApi api, 
         IConfigurationManager configurationManager, 
         IStateManager stateManager, 
-        MarketDbAccess marketDb, 
+        OrdersDbAccess ordersDb, 
         MarketRules rules)
     {
         _rules = rules;
         _stateManager = stateManager;
         _solutions = new Dictionary<string, MarketSolution>
         {
-            { nameof(BuyMarketSolution), new BuyMarketSolution(api, configurationManager, stateManager, marketDb) },
-            { nameof(SellMarketSolution), new SellMarketSolution(api, configurationManager, stateManager, marketDb) },
-            { nameof(CancelMarketSolution), new CancelMarketSolution(api, configurationManager, stateManager, marketDb) }
+            { nameof(BuyMarketSolution), new BuyMarketSolution(api, configurationManager, stateManager, ordersDb) },
+            { nameof(SellMarketSolution), new SellMarketSolution(api, configurationManager, stateManager, ordersDb) },
+            { nameof(CancelMarketSolution), new CancelMarketSolution(api, configurationManager, stateManager, ordersDb) }
         };
     }
 

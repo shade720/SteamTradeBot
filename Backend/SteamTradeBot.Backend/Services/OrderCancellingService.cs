@@ -2,24 +2,25 @@
 using Serilog;
 using SteamTradeBot.Backend.DataAccessLayer;
 using SteamTradeBot.Backend.Models.Abstractions;
+using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.Services;
 
 public class OrderCancellingService
 {
     private readonly ISteamApi _api;
-    private readonly MarketDbAccess _marketDb;
+    private readonly OrdersDbAccess _ordersDb;
 
-    public OrderCancellingService(ISteamApi api, MarketDbAccess marketDb)
+    public OrderCancellingService(ISteamApi api, OrdersDbAccess ordersDb)
     {
         _api = api;
-        _marketDb = marketDb;
+        _ordersDb = ordersDb;
     }
 
     public async Task ClearBuyOrdersAsync(string apiKey)
     {
         Log.Logger.Information("Start buy orders canceling...");
-        var buyOrders = await _marketDb.GetBuyOrdersAsync(apiKey);
+        var buyOrders = await _ordersDb.GetOrdersAsync(apiKey, OrderType.BuyOrder);
         foreach (var order in buyOrders)
         {
             Log.Logger.Information("Cancelling item {0} (Price: {1}, Quantity: {2})", 
@@ -27,7 +28,7 @@ public class OrderCancellingService
             var successfullyCanceled = await _api.CancelBuyOrderAsync(order.ItemUrl);
             if (successfullyCanceled)
             {
-                await _marketDb.RemoveBuyOrderAsync(order);
+                await _ordersDb.RemoveOrderAsync(order);
                 Log.Logger.Information("Item {0} (Price: {1}, Quantity: {2}) was canceled", 
                     order.EngItemName, order.BuyPrice, order.Quantity);
             }

@@ -10,12 +10,12 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 public sealed class AvailableBalanceRule : IBuyRule
 {
     private readonly IConfigurationManager _configurationManager;
-    private readonly MarketDbAccess _marketDbAccess;
+    private readonly OrdersDbAccess _ordersDbAccess;
 
-    public AvailableBalanceRule(IConfigurationManager configurationManager, MarketDbAccess marketDbAccess)
+    public AvailableBalanceRule(IConfigurationManager configurationManager, OrdersDbAccess ordersDbAccess)
     {
         _configurationManager = configurationManager;
-        _marketDbAccess = marketDbAccess;
+        _ordersDbAccess = ordersDbAccess;
     }
     public bool IsFollowed(ItemPage itemPage)
     {
@@ -24,7 +24,7 @@ public sealed class AvailableBalanceRule : IBuyRule
 
     public async Task<bool> IsFollowedAsync(ItemPage itemPage)
     {
-        var balanceInWork = (await _marketDbAccess.GetBuyOrdersAsync(_configurationManager.ApiKey)).Sum(buyOrder => buyOrder.BuyPrice);
+        var balanceInWork = (await _ordersDbAccess.GetOrdersAsync(_configurationManager.ApiKey, OrderType.BuyOrder)).Sum(buyOrder => buyOrder.BuyPrice);
         var availableBalance = (itemPage.CurrentBalance - balanceInWork ) * _configurationManager.AvailableBalance;
 
         if (availableBalance > (itemPage.EstimatedBuyPrice ?? 0))

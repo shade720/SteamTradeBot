@@ -81,7 +81,7 @@ builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>(_ => new SeleniumStea
     return new ChromeDriver(driverService, chromeOptions);
 }));
 
-builder.Services.AddTransient<MarketDbAccess>();
+builder.Services.AddTransient<OrdersDbAccess>();
 builder.Services.AddTransient<HistoryDbAccess>();
 builder.Services.AddTransient<StateDbAccess>();
 builder.Services.AddTransient<TokenDbAccess>();

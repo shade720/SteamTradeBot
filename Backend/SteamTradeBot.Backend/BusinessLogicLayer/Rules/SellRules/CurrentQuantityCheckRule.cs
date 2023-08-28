@@ -9,12 +9,12 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
 public sealed class CurrentQuantityCheckRule : ISellRule
 {
     private readonly IConfigurationManager _configurationManager;
-    private readonly MarketDbAccess _marketDb;
+    private readonly OrdersDbAccess _ordersDb;
 
-    public CurrentQuantityCheckRule(IConfigurationManager configurationManager, MarketDbAccess marketDb)
+    public CurrentQuantityCheckRule(IConfigurationManager configurationManager, OrdersDbAccess ordersDb)
     {
         _configurationManager = configurationManager;
-        _marketDb = marketDb;
+        _ordersDb = ordersDb;
     }
 
     public bool IsFollowed(ItemPage itemPage)
@@ -24,7 +24,7 @@ public sealed class CurrentQuantityCheckRule : ISellRule
 
     public async Task<bool> IsFollowedAsync(ItemPage itemPage)
     {
-        var localOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey);
+        var localOrder = await _ordersDb.GetOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey, OrderType.BuyOrder);
         if (localOrder is null)
         {
             Log.Logger.Information("Can't check if buy order was executed. No stored buy orders for this item.");

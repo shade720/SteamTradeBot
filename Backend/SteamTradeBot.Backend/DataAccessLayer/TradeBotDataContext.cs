@@ -7,8 +7,7 @@ namespace SteamTradeBot.Backend.DataAccessLayer;
 
 public sealed class TradeBotDataContext : DbContext
 {
-    public DbSet<BuyOrder> BuyOrders { get; set; }
-    public DbSet<SellOrder> SellOrders { get; set; }
+    public DbSet<Order> Orders { get; set; }
     public DbSet<TradingEvent> History { get; set; }
     public DbSet<ServiceState> ServiceStates { get; set; }
     public DbSet<ApiKey> ApiKeys { get; set; }
@@ -17,5 +16,11 @@ public sealed class TradeBotDataContext : DbContext
     {
         //Database.EnsureDeleted();
         Database.EnsureCreated();
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Order>()
+            .HasKey(o => new { o.EngItemName, o.ApiKey, o.OrderType});
     }
 }

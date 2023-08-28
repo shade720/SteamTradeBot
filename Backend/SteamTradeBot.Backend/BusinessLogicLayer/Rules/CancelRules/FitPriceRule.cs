@@ -10,13 +10,13 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
 
 public sealed class FitPriceRule : ICancelRule
 {
-    private readonly MarketDbAccess _marketDb;
+    private readonly OrdersDbAccess _ordersDb;
     private readonly IConfigurationManager _configurationManager;
 
-    public FitPriceRule(IConfigurationManager configurationManager, MarketDbAccess marketDb)
+    public FitPriceRule(IConfigurationManager configurationManager, OrdersDbAccess ordersDb)
     {
         _configurationManager = configurationManager;
-        _marketDb = marketDb;
+        _ordersDb = ordersDb;
     }
 
     public bool IsFollowed(ItemPage itemPage)
@@ -36,7 +36,7 @@ public sealed class FitPriceRule : ICancelRule
             Log.Information("Can't check if order obsolete. Buy order book is empty.");
             return false;
         }
-        var existedBuyOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey);
+        var existedBuyOrder = await _ordersDb.GetOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey, OrderType.BuyOrder);
 
         var isOrderObsolete = existedBuyOrder is not null && itemPage.BuyOrderBook.Any(x =>
             Math.Abs(x.Price - existedBuyOrder.BuyPrice) > _configurationManager.FitPriceRange);
