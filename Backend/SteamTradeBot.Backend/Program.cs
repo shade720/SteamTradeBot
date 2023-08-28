@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
 using Serilog;
 using Serilog.Events;
 using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
@@ -18,7 +20,6 @@ using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Services;
 using System;
 using System.IO;
-using OpenQA.Selenium.Remote;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
@@ -39,6 +40,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Log.Logger);
 
+builder.Configuration
+    .SetBasePath(Environment.CurrentDirectory)
+    .AddJsonFile("appsettings.json", true, true);
 
 builder.Services.AddDbContextFactory<TradeBotDataContext>(options =>
 {
@@ -54,6 +58,9 @@ builder.Services.AddDbContextFactory<TradeBotDataContext>(options =>
 
 var webDriverHostFromEnvironment = Environment.GetEnvironmentVariable("SELENIUM_HOST");
 
+builder.Services.AddSingleton<WorkerService>();
+builder.Services.AddSingleton<IConfigurationManager, JsonFileBasedConfigurationManagerService>();
+builder.Services.AddSingleton<IStateManager, DbBasedStateManagerService>();
 builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>(_ => new SeleniumSteamApi(() =>
 {
     var chromeOptions = new ChromeOptions();
@@ -79,9 +86,6 @@ builder.Services.AddTransient<HistoryDbAccess>();
 builder.Services.AddTransient<StateDbAccess>();
 builder.Services.AddTransient<TokenDbAccess>();
 
-JsonFileBasedConfigurationManagerService.AddUsersConfigurations(builder.Configuration);
-builder.Services.AddSingleton<IConfigurationManager, JsonFileBasedConfigurationManagerService>();
-builder.Services.AddSingleton<IStateManager, DbBasedStateManagerService>();
 builder.Services.AddTransient<LogsProviderService>();
 builder.Services.AddTransient<OrderCancellingService>();
 
@@ -98,8 +102,6 @@ builder.Services.AddTransient<MarketRules>();
 builder.Services.AddTransient<SolutionsFactory>();
 builder.Services.AddTransient<ItemPageFactory>();
 builder.Services.AddTransient<ItemsNamesProvider>();
-
-builder.Services.AddSingleton<WorkerService>();
 
 builder.Services.AddControllers();
 

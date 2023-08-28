@@ -70,7 +70,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
     private const int SellListingPagesOffset = 1;
 
     private static By GetSellListingPriceElementByRow(int rowIndex)
-        => By.CssSelector($"//*[@id='searchResultsRows']/div[{rowIndex}]/div[2]/div[2]/span[1]/span[1]");
+        => By.XPath($"//*[@id='searchResultsRows']/div[{rowIndex}]/div[2]/div[2]/span[1]/span[1]");
 
     private static By GetSellListingPageButton(int pageNum)
         => By.XPath($"//*[@id='searchResults_links']/span[{pageNum + SellListingPagesOffset}]");
@@ -289,7 +289,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
     private const string BuyOrderPriceTextBoxId = "market_buy_commodity_input_price";
     private static readonly By BuyOrderPriceTextBox = By.Id(BuyOrderPriceTextBoxId);
 
-    private const string BuyOrderQuantityTextBoxId = "input_quantity";
+    private const string BuyOrderQuantityTextBoxId = "market_buy_commodity_input_quantity";
     private static readonly By BuyOrderQuantityTextBox = By.Id(BuyOrderQuantityTextBoxId);
 
     private const string BuyAgreementCheckBoxId = "market_buyorder_dialog_accept_ssa";
@@ -315,7 +315,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
         {
             SetPage(itemUrl);
             ClickOnElement(PlaceOrderButton);
-            SendKey(BuyOrderPriceTextBox, $"\b\b\b\b\b\b\b\b\b\b\b{Math.Round(price + 0.01, 2, MidpointRounding.AwayFromZero)}");
+            SendKey(BuyOrderPriceTextBox, $"\b\b\b\b\b\b\b\b\b\b\b{Math.Round(price + 0.01, 2, MidpointRounding.AwayFromZero)}", true);
             SendKey(BuyOrderQuantityTextBox, $"\b{quantity}");
             ClickOnElement(BuyAgreementCheckBox);
             ClickOnElement(BuyConfirmationButton);
@@ -372,7 +372,8 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
         {
             SetPage(itemUrl);
             ClickOnElement(ExistingBuyOrderCancelButton);
-            return true;
+            var quantityToCheck = GetBuyOrderQuantityAsync(itemUrl).Result;
+            return quantityToCheck is null;
         }, true);
     }
 
@@ -462,7 +463,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
     public async Task<bool> LogIn(string login, string password, string secret)
     {
         Log.Information("Signing in...");
-        Log.Information($"Incoming user data {login}, {password}, {secret}");
+        Log.Information($"User {login}");
 
         if (IsAuthenticated(login))
             return true;

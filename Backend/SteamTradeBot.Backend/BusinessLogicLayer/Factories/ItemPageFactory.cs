@@ -61,8 +61,8 @@ public sealed class ItemPageFactory
 
         Log.Logger.Information("Item {0} provided:\r\nUrl: {1}\r\nRusName: {2}\r\nExisting order: (Price: {3}; Quantity: {4})\r\nBuy order book: {5}...\r\nSell order book: {6}...",
             itemPage.ToString(), itemPage.ItemUrl, itemPage.RusItemName, price is null? "null" : price, quantity is null ? "null" : quantity, 
-            string.Join(", ", itemPage.BuyOrderBook.Select(x => Math.Round(x.Price, 2, MidpointRounding.AwayFromZero)).Take(3)), 
-            string.Join(", ", itemPage.SellOrderBook.Select(x => Math.Round(x.Price, 2, MidpointRounding.AwayFromZero)).Take(3)));
+            string.Join("; ", itemPage.BuyOrderBook.Select(x => Math.Round(x.Price, 2, MidpointRounding.AwayFromZero)).Take(3)), 
+            string.Join("; ", itemPage.SellOrderBook.Select(x => Math.Round(x.Price, 2, MidpointRounding.AwayFromZero)).Take(3)));
 
         return itemPage;
     }

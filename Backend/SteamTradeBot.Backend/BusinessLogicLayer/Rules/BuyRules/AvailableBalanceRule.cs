@@ -27,12 +27,12 @@ public sealed class AvailableBalanceRule : IBuyRule
         var balanceInWork = (await _marketDbAccess.GetBuyOrdersAsync(_configurationManager.ApiKey)).Sum(buyOrder => buyOrder.BuyPrice);
         var availableBalance = (itemPage.CurrentBalance - balanceInWork ) * _configurationManager.AvailableBalance;
 
-        if (availableBalance > itemPage.EstimatedBuyPrice)
+        if (availableBalance > (itemPage.EstimatedBuyPrice ?? 0))
         {
             Log.Information("Available balance is ok.");
             return true;
         }
-        Log.Information("Available balance is bad. Reason: no money for this item. Available balance: {0} < Price: {1}", availableBalance, itemPage.EstimatedBuyPrice);
+        Log.Information("Available balance is bad. No money for this item. Available balance: {0} < Price: {1}", availableBalance, itemPage.EstimatedBuyPrice);
         return false;
     }
 }

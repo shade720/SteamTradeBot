@@ -32,7 +32,7 @@ public sealed class TrendRule : IBuyRule
                 Log.Information("Trend is ok.");
                 return true;
             }
-            Log.Information("Trend is bad. Reason: lower than needed. Current trend: {0} < Required trend: {1}",
+            Log.Information("Trend is bad. Lower than needed. Current trend: {0} < Required trend: {1}",
                 trend.ToString("F10"), _configurationManager.Trend);
             return false;
         });

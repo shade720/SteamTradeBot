@@ -131,25 +131,26 @@ public sealed class DbBasedStateManagerService : IStateManager
             Type = InfoType.ItemSold,
             Time = DateTime.UtcNow,
             Info = order.EngItemName,
-            SellPrice = order.Price,
-            Profit = order.Price - order.Price
+            SellPrice = order.SellPrice,
+            Profit = order.SellPrice - order.SellPrice
         });
     }
 
     public async Task OnItemBuyingAsync(BuyOrder order)
     {
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
+                          ?? throw new Exception("There is no state for this api key");
+        storedState.ItemsBought++;
+        await _stateDb.AddOrUpdateStateAsync(storedState);
         await _historyDb.AddNewEventAsync(new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemBought,
             Time = DateTime.UtcNow,
             Info = order.EngItemName,
-            BuyPrice = order.BuyPrice
+            BuyPrice = order.BuyPrice,
+            SellPrice = order.EstimatedSellPrice
         });
-        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
-                          ?? throw new Exception("There is no state for this api key");
-        storedState.ItemsBought++;
-        await _stateDb.AddOrUpdateStateAsync(storedState);
     }
 
     public async Task OnItemCancellingAsync(BuyOrder order)

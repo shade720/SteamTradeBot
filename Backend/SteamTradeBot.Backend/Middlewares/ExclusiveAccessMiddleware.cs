@@ -24,7 +24,7 @@ public class ExclusiveAccessMiddleware
         if (states.Any(s => s.WorkingState == ServiceWorkingState.Up && s.ApiKey != token))
         {
             context.Response.StatusCode = 403;
-            await context.Response.WriteAsync("Invalid token!");
+            await context.Response.WriteAsync("Application is already in work.");
         }
         else
         {

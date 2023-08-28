@@ -18,7 +18,7 @@ public sealed class OrderAlreadyExistRule : IBuyRule
         {
             var isOrderAlreadyExist = itemPage.MyBuyOrder is not null;
             if (!isOrderAlreadyExist) return true;
-            Log.Information("Item is bad. Reason: Order already exist.");
+            Log.Information("Item is bad. Order already exist.");
             return false;
         });
     }

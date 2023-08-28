@@ -28,12 +28,12 @@ public sealed class FitPriceRule : ICancelRule
     {
         if (itemPage.MyBuyOrder is null)
         {
-            Log.Information("Can't check if order obsolete. Reason: buy order does not exist.");
+            Log.Information("Can't check if order obsolete. Buy order does not exist.");
             return false;
         }
         if (itemPage.BuyOrderBook.Count <= 0)
         {
-            Log.Information("Can't check if order obsolete. Reason: buy order book is empty.");
+            Log.Information("Can't check if order obsolete. Buy order book is empty.");
             return false;
         }
         var existedBuyOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey);

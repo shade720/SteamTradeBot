@@ -28,12 +28,12 @@ public sealed class RequiredProfitRule : IBuyRule
         {
             if (itemPage.BuyOrderBook.Count <= 0)
             {
-                Log.Information("Required profit is bad. Reason: can't find profitable order, buy order book is empty.");
+                Log.Information("Required profit is bad. Can't find profitable order, buy order book is empty.");
                 return false;
             }
             if ( itemPage.SellOrderBook.Count <= 0)
             {
-                Log.Information("Required profit is bad. Reason: can't find profitable order, sell order book is empty.");
+                Log.Information("Required profit is bad. Can't find profitable order, sell order book is empty.");
                 return false;
             }
             
@@ -46,7 +46,7 @@ public sealed class RequiredProfitRule : IBuyRule
 
             if (!isPricesFound)
             {
-                Log.Information("Required profit is bad. Reason: can't find profitable order, prices not found.");
+                Log.Information("Required profit is bad. Can't find profitable order, prices not found.");
                 return false;
             }
 

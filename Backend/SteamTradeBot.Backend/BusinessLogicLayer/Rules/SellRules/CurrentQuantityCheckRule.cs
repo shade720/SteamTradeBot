@@ -27,7 +27,7 @@ public sealed class CurrentQuantityCheckRule : ISellRule
         var localOrder = await _marketDb.GetBuyOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey);
         if (localOrder is null)
         {
-            Log.Logger.Information("Nothing to check. No buy orders for this item.");
+            Log.Logger.Information("Can't check if buy order was executed. No stored buy orders for this item.");
             return false;
         }
 

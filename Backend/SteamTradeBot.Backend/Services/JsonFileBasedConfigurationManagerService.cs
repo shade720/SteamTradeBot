@@ -21,31 +21,31 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
         _configuration = configuration;
     }
 
-    public void SetConfigurationContextForUser(string apiKey)
-    {
-        if (!File.Exists(GetFilePathForUser(apiKey)))
-            throw new Exception("Configuration does not exist");
-        _targetSection = _configuration.GetSection(apiKey);
-    }
+    #region Settings
 
-    public static void AddUsersConfigurations(ConfigurationManager configurationBuilder)
-    {
-        if (!Directory.Exists(UserSettingsFolderPath))
-            Directory.CreateDirectory(UserSettingsFolderPath);
-        var builder = configurationBuilder.SetBasePath(Environment.CurrentDirectory);
-        foreach (var configFilePath in Directory.GetFiles(UserSettingsFolderPath, "*.json", SearchOption.AllDirectories))
-        {
-            builder.AddJsonFile(configFilePath, true, true);
-        }
-    }
+    public string ApiKey => _configuration.GetValue<string>("ApiKey", string.Empty)!;
+    public double Trend => _configuration.GetValue<double>("Trend");
+    public double AveragePriceRatio => _configuration.GetValue<double>("AveragePriceRatio");
+    public int SalesPerDay => _configuration.GetValue<int>("SalesPerDay");
+    public string SteamUserId => _configuration.GetValue("SteamUserId", string.Empty)!;
+    public double FitPriceRange => _configuration.GetValue<double>("FitPriceRange");
+    public int SellListingFindRange => _configuration.GetValue<int>("SellListingFindRange");
+    public double SalesRatio => _configuration.GetValue<double>("SalesRatio");
+    public int AnalysisIntervalDays => _configuration.GetValue<int>("AnalysisIntervalDays");
+    public int OrderQuantity => _configuration.GetValue<int>("OrderQuantity");
+    public double MinPrice => _configuration.GetValue<double>("MinPrice");
+    public double MaxPrice => _configuration.GetValue<double>("MaxPrice");
+    public int ItemListSize => _configuration.GetValue<int>("ItemListSize");
+    public double SteamCommission => _configuration.GetValue<double>("SteamCommission");
+    public double RequiredProfit => _configuration.GetValue<double>("RequiredProfit");
+    public double AvailableBalance => _configuration.GetValue<double>("AvailableBalance");
+
+    #endregion
 
     public async Task<bool> RefreshConfigurationAsync(string apiKey, UserConfiguration userConfiguration)
     {
-        if (!File.Exists(GetFilePathForUser(apiKey)))
-            AddUserConfigurationFile(apiKey, userConfiguration);
-
         Log.Logger.Information("Start settings update...");
-        var currentSettings = await File.ReadAllTextAsync(GetFilePathForUser(apiKey));
+        var currentSettings = await File.ReadAllTextAsync(SettingsPath);
 
         userConfiguration.ApiKey = apiKey;
 
@@ -68,7 +68,7 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
         }
 
         var newConfigDict = (IDictionary<string, object>)newConfig;
-        var currentConfigDict = (IDictionary<string, object>)((IDictionary<string, object>)currentConfig)[apiKey];
+        var currentConfigDict = (IDictionary<string, object>)currentConfig;
 
         foreach (var pair in newConfigDict)
         {
@@ -77,13 +77,11 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
         }
 
         var updatedSettings = JsonConvert.SerializeObject(currentConfig, Formatting.Indented, jsonSettings);
-        await File.WriteAllTextAsync(GetFilePathForUser(apiKey), updatedSettings);
-
-        SetConfigurationContextForUser(apiKey);
+        await File.WriteAllTextAsync(SettingsPath, updatedSettings);
 
         if (!CheckIntegrity())
         {
-            await File.WriteAllTextAsync(GetFilePathForUser(apiKey), currentSettings);
+            await File.WriteAllTextAsync(SettingsPath, currentSettings);
             Log.Logger.Information("Settings have not been updated. UserConfiguration was corrupted.");
             return false;
         }
@@ -91,44 +89,13 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
         return true;
     }
 
-    #region Settings
-
-    public string ApiKey => _targetSection.GetValue<string>("ApiKey", string.Empty)!;
-    public double Trend => _targetSection.GetValue<double>("Trend");
-    public double AveragePriceRatio => _targetSection.GetValue<double>("AveragePriceRatio");
-    public int SalesPerDay => _targetSection.GetValue<int>("SalesPerDay");
-    public string SteamUserId => _targetSection.GetValue("SteamUserId", string.Empty)!;
-    public double FitPriceRange => _targetSection.GetValue<double>("FitPriceRange");
-    public int SellListingFindRange => _targetSection.GetValue<int>("SellListingFindRange");
-    public double SalesRatio => _targetSection.GetValue<double>("SalesRatio");
-    public int AnalysisIntervalDays => _targetSection.GetValue<int>("AnalysisIntervalDays");
-    public int OrderQuantity => _targetSection.GetValue<int>("OrderQuantity");
-    public double MinPrice => _targetSection.GetValue<double>("MinPrice");
-    public double MaxPrice => _targetSection.GetValue<double>("MaxPrice");
-    public int ItemListSize => _targetSection.GetValue<int>("ItemListSize");
-    public double SteamCommission => _targetSection.GetValue<double>("SteamCommission");
-    public double RequiredProfit => _targetSection.GetValue<double>("RequiredProfit");
-    public double AvailableBalance => _targetSection.GetValue<double>("AvailableBalance");
-
-    #endregion
-
     #endregion
 
     #region Private
-
-    private const string UserSettingsFolderName = "UserSettings";
-    private static readonly string UserSettingsFolderPath = Path.Combine(Environment.CurrentDirectory, UserSettingsFolderName);
+    
+    private static readonly string SettingsPath = Path.Combine(Environment.CurrentDirectory, "appsettings.json");
 
     private readonly IConfiguration _configuration;
-    private IConfigurationSection? _targetSection;
-
-    private static void AddUserConfigurationFile(string apiKey, UserConfiguration userConfiguration)
-    {
-        Directory.CreateDirectory(GetFolderPathForUser(apiKey));
-        userConfiguration.ApiKey = apiKey;
-        var configurationJson = JsonConvert.SerializeObject(new Dictionary<string, UserConfiguration> { { apiKey, userConfiguration } });
-        File.WriteAllText(GetFilePathForUser(apiKey), configurationJson);
-    }
 
     private bool CheckIntegrity()
     {
@@ -192,15 +159,6 @@ public class JsonFileBasedConfigurationManagerService : IConfigurationManager
             return false;
         }
     }
-
-    private static string GetFileNameForUser(string username) =>
-        $"appsettings-{username}.json" ;
-
-    private static string GetFilePathForUser(string username)
-        => Path.Combine(UserSettingsFolderPath, username, GetFileNameForUser(username));
-
-    private static string GetFolderPathForUser(string username)
-        => Path.Combine(UserSettingsFolderPath, username);
 
     #endregion
 }

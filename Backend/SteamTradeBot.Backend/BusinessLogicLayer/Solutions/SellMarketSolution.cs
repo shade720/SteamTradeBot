@@ -41,13 +41,14 @@ public sealed class SellMarketSolution : MarketSolution
             EngItemName = itemPage.EngItemName,
             RusItemName = itemPage.RusItemName,
             ItemUrl = itemPage.ItemUrl,
-            Price = buyOrder.EstimatedSellPrice,
+            PurchasedPrice = buyOrder.BuyPrice,
+            SellPrice = buyOrder.EstimatedSellPrice,
             Quantity = 1
         };
 
         for (var itemNum = 0; itemNum < itemsCountToSell; itemNum++)
         {
-            var isPlacedSuccessfully = await SteamApi.PlaceSellOrderAsync(sellOrder.EngItemName, sellOrder.Price,
+            var isPlacedSuccessfully = await SteamApi.PlaceSellOrderAsync(sellOrder.EngItemName, sellOrder.SellPrice,
                 ConfigurationManager.SteamUserId);
             if (isPlacedSuccessfully)
             {
@@ -59,10 +60,10 @@ public sealed class SellMarketSolution : MarketSolution
 
                 await MarketDb.AddSellOrderAsync(sellOrder);
                 await StateManager.OnItemSellingAsync(sellOrder);
-                Log.Information("Sell order {0} (Price: {1}) placed successfully.", sellOrder.EngItemName, sellOrder.Price);
+                Log.Information("Sell order {0} (Price: {1}) placed successfully.", sellOrder.EngItemName, sellOrder.SellPrice);
             }
             else
-                Log.Error("Can't place sell order {0} (Price: {1}). Item not found in inventory!", sellOrder.EngItemName, sellOrder.Price);
+                Log.Error("Can't place sell order {0} (Price: {1}). Item not found in inventory!", sellOrder.EngItemName, sellOrder.SellPrice);
         }
     }
 }

@@ -29,7 +29,7 @@ public sealed class SalesCountRule : IBuyRule
                 Log.Information("Sales count is ok.");
                 return true;
             }
-            Log.Information("Sales count is bad. Reason: sales volume is lower than needed. Current sales: {0} < Required sales: {1}", 
+            Log.Information("Sales count is bad. Sales volume is lower than needed. Current sales: {0} < Required sales: {1}", 
                 salesPerDayFromChart, _configurationManager.SalesPerDay);
             return false;
         });

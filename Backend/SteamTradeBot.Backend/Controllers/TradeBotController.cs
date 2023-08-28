@@ -21,14 +21,8 @@ public class TradeBotController : ControllerBase
         WorkerService worker,
         ISteamApi api,
         IStateManager stateManager,
-        IConfigurationManager configurationManager,
-        Credentials credentials,
-        [FromQuery] string apiKey)
+        Credentials credentials)
     {
-        if (configurationManager is not JsonFileBasedConfigurationManagerService jsonFileBasedConfigurationManager)
-            throw new ApplicationException("Application error: configurationManager does not configured");
-        jsonFileBasedConfigurationManager.SetConfigurationContextForUser(apiKey);
-
         if (stateManager is not DbBasedStateManagerService dbBasedStateManager)
             throw new ApplicationException("Application error: stateManager does not configured");
         await dbBasedStateManager.EnsureStateCreated();
@@ -38,7 +32,7 @@ public class TradeBotController : ControllerBase
         if (!isAuthenticated)
         {
             await stateManager.OnLoggedOutAsync();
-            return Results.BadRequest("Authorization failed. User data are incorrect.");
+            return Results.BadRequest("Authorization failed.");
         }
         await stateManager.OnLoggedInAsync();
         await worker.StartAsync();

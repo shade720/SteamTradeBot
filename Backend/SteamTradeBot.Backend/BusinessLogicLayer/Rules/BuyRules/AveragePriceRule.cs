@@ -25,7 +25,7 @@ public sealed class AveragePriceRule : IBuyRule
         {
             if (itemPage.BuyOrderBook.Count <= 0)
             {
-                Log.Information("Average price is bad. Reason: can't check average price, buy order book is empty.");
+                Log.Information("Average price is bad. Can't check average price, buy order book is empty.");
                 return false;
             }
 
@@ -35,7 +35,7 @@ public sealed class AveragePriceRule : IBuyRule
                 Log.Information("Average price is ok.");
                 return true;
             }
-            Log.Information("Average price is bad. Reason: average price is higher than needed. Min buy price: {0} < Required average price: {1}",
+            Log.Information("Average price is bad. Average price is higher than needed. Min buy price: {0} < Required average price: {1}",
                 itemPage.BuyOrderBook.Min(buyOrder => buyOrder.Price), avgPriceFromChart * (1 + _configurationManager.AveragePriceRatio));
             return false;
         });

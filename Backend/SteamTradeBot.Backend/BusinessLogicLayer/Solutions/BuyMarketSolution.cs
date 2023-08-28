@@ -30,6 +30,7 @@ public sealed class BuyMarketSolution : MarketSolution
         
         var buyOrder = new BuyOrder
         {
+            ApiKey = ConfigurationManager.ApiKey,
             EngItemName = itemPage.EngItemName,
             RusItemName = itemPage.RusItemName,
             ItemUrl = itemPage.ItemUrl,
