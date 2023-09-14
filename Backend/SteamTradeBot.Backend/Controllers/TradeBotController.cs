@@ -77,6 +77,15 @@ public class TradeBotController : ControllerBase
         return await stateManager.GetServiceStateAsync(apiKey);
     }
 
+    [HttpPost]
+    [Route("clearState")]
+    public async Task CancelOrders(
+        IStateManager cancellingService,
+        [FromQuery] string apiKey)
+    {
+        await cancellingService.ClearServiceStateAsync(apiKey);
+    }
+
     [HttpGet]
     [Route("logs")]
     public async Task<string> GetLogs(

@@ -42,6 +42,26 @@ public sealed class DbBasedStateManagerService : IStateManager
         return currentState ?? new ServiceState();
     }
 
+    public async Task ClearServiceStateAsync(string apiKey)
+    {
+        var stateToClear = await _stateDb.GetStateAsync(apiKey);
+
+        if (stateToClear is null)
+            return;
+
+        stateToClear.Errors = 0;
+        stateToClear.Warnings = 0;
+        stateToClear.ItemCanceled = 0;
+        stateToClear.ItemsAnalyzed = 0;
+        stateToClear.ItemsBought = 0;
+        stateToClear.ItemsSold = 0;
+        stateToClear.Uptime = TimeSpan.Zero;
+        stateToClear.IsLoggedIn = LogInState.NotLoggedIn;
+        stateToClear.WorkingState = ServiceWorkingState.Down;
+
+        await _stateDb.AddOrUpdateStateAsync(stateToClear);
+    }
+
     public async Task OnTradingStartedAsync()
     {
         var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 

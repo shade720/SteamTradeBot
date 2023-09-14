@@ -1,5 +1,4 @@
-﻿using System;
-using Serilog;
+﻿using Serilog;
 using SteamTradeBot.Backend.DataAccessLayer;
 using System.Collections.Generic;
 using System.Linq;

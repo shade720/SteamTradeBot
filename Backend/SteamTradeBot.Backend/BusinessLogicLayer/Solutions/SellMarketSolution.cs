@@ -28,6 +28,7 @@ public sealed class SellMarketSolution : MarketSolution
 
         if (buyOrder is null)
             throw new Exception("Can't load stored buy order for sell order forming.");
+
         if (itemPage.MyBuyOrder is not null && itemPage.MyBuyOrder.Quantity == buyOrder.Quantity)
             throw new Exception($"Can't form sell order. Nothing was bought. Current quantity: {itemPage.MyBuyOrder.Quantity}; Stored quantity: {buyOrder.Quantity}");
 
