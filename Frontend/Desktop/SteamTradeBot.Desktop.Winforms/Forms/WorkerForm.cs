@@ -150,4 +150,16 @@ public partial class WorkerForm : Form
         if (StateRefresher.IsBusy != true)
             StateRefresher.RunWorkerAsync();
     }
+
+    private async void ResetStateButton_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            await _steamTradeBotServiceClient.ResetState();
+        }
+        catch (Exception exception)
+        {
+            MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
 }

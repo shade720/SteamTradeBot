@@ -71,6 +71,13 @@ public class SteamTradeBotRestClient
         }
     }
 
+    public async Task ResetState()
+    {
+        using var restClient = _clientProvider.Create();
+        var response = await restClient.PostAsync($"/api/clearState?apiKey={_keyProvider.GetApiKey()}", null);
+        await GetResponseContent(response);
+    }
+
     public async Task<string> GetLogFile()
     {
         using var restClient = _clientProvider.Create();

@@ -222,7 +222,7 @@
             SteamCommissionTextBox.BorderStyle = BorderStyle.FixedSingle;
             SteamCommissionTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             SteamCommissionTextBox.ForeColor = Color.Black;
-            SteamCommissionTextBox.Location = new Point(175, 221);
+            SteamCommissionTextBox.Location = new Point(171, 230);
             SteamCommissionTextBox.Margin = new Padding(4);
             SteamCommissionTextBox.Name = "SteamCommissionTextBox";
             SteamCommissionTextBox.Size = new Size(179, 29);
@@ -235,7 +235,7 @@
             SteamUserIdTextBox.BorderStyle = BorderStyle.FixedSingle;
             SteamUserIdTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             SteamUserIdTextBox.ForeColor = Color.Black;
-            SteamUserIdTextBox.Location = new Point(175, 177);
+            SteamUserIdTextBox.Location = new Point(171, 186);
             SteamUserIdTextBox.Margin = new Padding(4);
             SteamUserIdTextBox.Name = "SteamUserIdTextBox";
             SteamUserIdTextBox.Size = new Size(179, 29);
@@ -248,7 +248,7 @@
             label1.BackColor = Color.Transparent;
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label1.ForeColor = Color.DodgerBlue;
-            label1.Location = new Point(55, 179);
+            label1.Location = new Point(51, 188);
             label1.Name = "label1";
             label1.Size = new Size(106, 21);
             label1.TabIndex = 74;
@@ -261,7 +261,7 @@
             label2.BackColor = Color.Transparent;
             label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label2.ForeColor = Color.DodgerBlue;
-            label2.Location = new Point(20, 223);
+            label2.Location = new Point(16, 232);
             label2.Name = "label2";
             label2.Size = new Size(141, 21);
             label2.TabIndex = 75;
@@ -345,7 +345,7 @@
             MaFilePathTextBox.BackColor = SystemColors.ControlLightLight;
             MaFilePathTextBox.BorderStyle = BorderStyle.FixedSingle;
             MaFilePathTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            MaFilePathTextBox.Location = new Point(175, 128);
+            MaFilePathTextBox.Location = new Point(171, 137);
             MaFilePathTextBox.Margin = new Padding(3, 2, 3, 2);
             MaFilePathTextBox.Name = "MaFilePathTextBox";
             MaFilePathTextBox.Size = new Size(179, 29);
@@ -356,7 +356,7 @@
             label14.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label14.AutoSize = true;
             label14.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label14.Location = new Point(36, 130);
+            label14.Location = new Point(32, 139);
             label14.Name = "label14";
             label14.Size = new Size(125, 21);
             label14.TabIndex = 8;
@@ -368,7 +368,7 @@
             PasswordTextBox.BackColor = SystemColors.ControlLightLight;
             PasswordTextBox.BorderStyle = BorderStyle.FixedSingle;
             PasswordTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            PasswordTextBox.Location = new Point(175, 83);
+            PasswordTextBox.Location = new Point(171, 92);
             PasswordTextBox.Margin = new Padding(3, 2, 3, 2);
             PasswordTextBox.Name = "PasswordTextBox";
             PasswordTextBox.PasswordChar = '*';
@@ -380,7 +380,7 @@
             label15.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label15.AutoSize = true;
             label15.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label15.Location = new Point(37, 85);
+            label15.Location = new Point(33, 94);
             label15.Name = "label15";
             label15.Size = new Size(124, 21);
             label15.TabIndex = 2;
@@ -392,7 +392,7 @@
             LogInTextBox.BackColor = SystemColors.ControlLightLight;
             LogInTextBox.BorderStyle = BorderStyle.FixedSingle;
             LogInTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            LogInTextBox.Location = new Point(175, 39);
+            LogInTextBox.Location = new Point(171, 48);
             LogInTextBox.Margin = new Padding(3, 2, 3, 2);
             LogInTextBox.Name = "LogInTextBox";
             LogInTextBox.Size = new Size(179, 29);
@@ -403,7 +403,7 @@
             label16.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label16.AutoSize = true;
             label16.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label16.Location = new Point(69, 41);
+            label16.Location = new Point(65, 50);
             label16.Name = "label16";
             label16.Size = new Size(92, 21);
             label16.TabIndex = 0;
