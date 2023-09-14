@@ -28,13 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
-            ResetStateButton = new Button();
             UptimeLabel = new Label();
-            CheckConnectionButton = new Button();
             WarningsLabel = new Label();
             ErrorsLabel = new Label();
             ItemsSoldLabel = new Label();
@@ -50,6 +48,8 @@
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
+            ResetStateButton = new Button();
+            CheckConnectionButton = new Button();
             groupBox2 = new GroupBox();
             HistoryDataGridView = new DataGridView();
             TimeColumn = new DataGridViewTextBoxColumn();
@@ -104,22 +104,6 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "State";
             // 
-            // ResetStateButton
-            // 
-            ResetStateButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            ResetStateButton.BackColor = Color.DodgerBlue;
-            ResetStateButton.FlatStyle = FlatStyle.Flat;
-            ResetStateButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
-            ResetStateButton.ForeColor = Color.White;
-            ResetStateButton.Location = new Point(27, 88);
-            ResetStateButton.Margin = new Padding(2);
-            ResetStateButton.Name = "ResetStateButton";
-            ResetStateButton.Size = new Size(140, 48);
-            ResetStateButton.TabIndex = 16;
-            ResetStateButton.Text = "Reset state";
-            ResetStateButton.UseVisualStyleBackColor = false;
-            ResetStateButton.Click += ResetStateButton_Click;
-            // 
             // UptimeLabel
             // 
             UptimeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -132,22 +116,6 @@
             UptimeLabel.Padding = new Padding(4);
             UptimeLabel.Size = new Size(8, 29);
             UptimeLabel.TabIndex = 15;
-            // 
-            // CheckConnectionButton
-            // 
-            CheckConnectionButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            CheckConnectionButton.BackColor = Color.DodgerBlue;
-            CheckConnectionButton.FlatStyle = FlatStyle.Flat;
-            CheckConnectionButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
-            CheckConnectionButton.ForeColor = Color.White;
-            CheckConnectionButton.Location = new Point(27, 36);
-            CheckConnectionButton.Margin = new Padding(2);
-            CheckConnectionButton.Name = "CheckConnectionButton";
-            CheckConnectionButton.Size = new Size(140, 48);
-            CheckConnectionButton.TabIndex = 3;
-            CheckConnectionButton.Text = "Check state";
-            CheckConnectionButton.UseVisualStyleBackColor = false;
-            CheckConnectionButton.Click += CheckConnectionButton_Click;
             // 
             // WarningsLabel
             // 
@@ -344,6 +312,38 @@
             label1.TabIndex = 0;
             label1.Text = "Connection state:";
             // 
+            // ResetStateButton
+            // 
+            ResetStateButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            ResetStateButton.BackColor = Color.DodgerBlue;
+            ResetStateButton.FlatStyle = FlatStyle.Flat;
+            ResetStateButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
+            ResetStateButton.ForeColor = Color.White;
+            ResetStateButton.Location = new Point(27, 88);
+            ResetStateButton.Margin = new Padding(2);
+            ResetStateButton.Name = "ResetStateButton";
+            ResetStateButton.Size = new Size(140, 48);
+            ResetStateButton.TabIndex = 16;
+            ResetStateButton.Text = "Reset state";
+            ResetStateButton.UseVisualStyleBackColor = false;
+            ResetStateButton.Click += ResetStateButton_Click;
+            // 
+            // CheckConnectionButton
+            // 
+            CheckConnectionButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            CheckConnectionButton.BackColor = Color.DodgerBlue;
+            CheckConnectionButton.FlatStyle = FlatStyle.Flat;
+            CheckConnectionButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
+            CheckConnectionButton.ForeColor = Color.White;
+            CheckConnectionButton.Location = new Point(108, 36);
+            CheckConnectionButton.Margin = new Padding(2);
+            CheckConnectionButton.Name = "CheckConnectionButton";
+            CheckConnectionButton.Size = new Size(140, 48);
+            CheckConnectionButton.TabIndex = 3;
+            CheckConnectionButton.Text = "Check state";
+            CheckConnectionButton.UseVisualStyleBackColor = false;
+            CheckConnectionButton.Click += CheckConnectionButton_Click;
+            // 
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -369,24 +369,24 @@
             HistoryDataGridView.BorderStyle = BorderStyle.None;
             HistoryDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             HistoryDataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = Color.DodgerBlue;
-            dataGridViewCellStyle7.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle7.ForeColor = Color.White;
-            dataGridViewCellStyle7.SelectionBackColor = Color.White;
-            dataGridViewCellStyle7.SelectionForeColor = Color.DodgerBlue;
-            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.True;
-            HistoryDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.DodgerBlue;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = Color.White;
+            dataGridViewCellStyle1.SelectionForeColor = Color.DodgerBlue;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            HistoryDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             HistoryDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             HistoryDataGridView.Columns.AddRange(new DataGridViewColumn[] { TimeColumn, Item, OrderTypeColumn, BuyPrice, SellPrice, Profit });
-            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = Color.White;
-            dataGridViewCellStyle8.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle8.ForeColor = Color.DodgerBlue;
-            dataGridViewCellStyle8.SelectionBackColor = Color.Red;
-            dataGridViewCellStyle8.SelectionForeColor = Color.White;
-            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
-            HistoryDataGridView.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.White;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = Color.DodgerBlue;
+            dataGridViewCellStyle2.SelectionBackColor = Color.Red;
+            dataGridViewCellStyle2.SelectionForeColor = Color.White;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            HistoryDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             HistoryDataGridView.EnableHeadersVisualStyles = false;
             HistoryDataGridView.Location = new Point(10, 39);
             HistoryDataGridView.Margin = new Padding(2);
@@ -394,14 +394,14 @@
             HistoryDataGridView.ReadOnly = true;
             HistoryDataGridView.RowHeadersVisible = false;
             HistoryDataGridView.RowHeadersWidth = 51;
-            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = Color.White;
-            dataGridViewCellStyle9.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle9.ForeColor = Color.Black;
-            dataGridViewCellStyle9.SelectionBackColor = Color.DodgerBlue;
-            dataGridViewCellStyle9.SelectionForeColor = Color.White;
-            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.True;
-            HistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.White;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle3.ForeColor = Color.Black;
+            dataGridViewCellStyle3.SelectionBackColor = Color.DodgerBlue;
+            dataGridViewCellStyle3.SelectionForeColor = Color.White;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            HistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
             HistoryDataGridView.RowTemplate.Height = 29;
             HistoryDataGridView.Size = new Size(907, 566);
             HistoryDataGridView.TabIndex = 0;
