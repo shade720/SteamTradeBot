@@ -40,22 +40,15 @@
             panel3 = new Panel();
             label13 = new Label();
             panel8 = new Panel();
-            panel2 = new Panel();
-            panel5 = new Panel();
-            LogInLabel = new Label();
-            LogInButton = new Button();
-            LogOutButton = new Button();
-            LogOutLabel = new Label();
             LoadingPictureBox = new PictureBox();
             Frame = new Panel();
             CurrentWorkLabel = new Label();
+            panel2 = new Panel();
             panel1.SuspendLayout();
             panel4.SuspendLayout();
             ServiceStatePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SteamLogoPictureBox).BeginInit();
             panel3.SuspendLayout();
-            panel2.SuspendLayout();
-            panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)LoadingPictureBox).BeginInit();
             SuspendLayout();
             // 
@@ -194,89 +187,6 @@
             panel8.Size = new Size(1334, 706);
             panel8.TabIndex = 57;
             // 
-            // panel2
-            // 
-            panel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            panel2.BackColor = Color.RoyalBlue;
-            panel2.Controls.Add(panel5);
-            panel2.ForeColor = Color.LightSkyBlue;
-            panel2.Location = new Point(219, 0);
-            panel2.Margin = new Padding(3, 2, 3, 2);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(1352, 38);
-            panel2.TabIndex = 55;
-            // 
-            // panel5
-            // 
-            panel5.Controls.Add(LogInLabel);
-            panel5.Controls.Add(LogInButton);
-            panel5.Controls.Add(LogOutButton);
-            panel5.Controls.Add(LogOutLabel);
-            panel5.Dock = DockStyle.Right;
-            panel5.Location = new Point(1004, 0);
-            panel5.Name = "panel5";
-            panel5.Size = new Size(348, 38);
-            panel5.TabIndex = 4;
-            // 
-            // LogInLabel
-            // 
-            LogInLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            LogInLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            LogInLabel.ForeColor = Color.White;
-            LogInLabel.Location = new Point(19, 4);
-            LogInLabel.Name = "LogInLabel";
-            LogInLabel.Size = new Size(268, 30);
-            LogInLabel.TabIndex = 6;
-            LogInLabel.Text = "Sign In";
-            LogInLabel.TextAlign = ContentAlignment.MiddleRight;
-            LogInLabel.Click += LogInLabel_Click;
-            // 
-            // LogInButton
-            // 
-            LogInButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            LogInButton.BackgroundImage = (Image)resources.GetObject("LogInButton.BackgroundImage");
-            LogInButton.BackgroundImageLayout = ImageLayout.Zoom;
-            LogInButton.FlatAppearance.BorderSize = 0;
-            LogInButton.FlatStyle = FlatStyle.Flat;
-            LogInButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            LogInButton.ForeColor = Color.White;
-            LogInButton.Location = new Point(295, 4);
-            LogInButton.Margin = new Padding(3, 2, 3, 2);
-            LogInButton.Name = "LogInButton";
-            LogInButton.Size = new Size(35, 30);
-            LogInButton.TabIndex = 4;
-            LogInButton.UseVisualStyleBackColor = true;
-            LogInButton.Click += LogInButton_Click;
-            // 
-            // LogOutButton
-            // 
-            LogOutButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            LogOutButton.BackgroundImage = Properties.Resources.LogoutIcon;
-            LogOutButton.BackgroundImageLayout = ImageLayout.Zoom;
-            LogOutButton.FlatAppearance.BorderSize = 0;
-            LogOutButton.FlatStyle = FlatStyle.Flat;
-            LogOutButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            LogOutButton.ForeColor = Color.White;
-            LogOutButton.Location = new Point(295, 4);
-            LogOutButton.Margin = new Padding(3, 2, 3, 2);
-            LogOutButton.Name = "LogOutButton";
-            LogOutButton.Size = new Size(35, 30);
-            LogOutButton.TabIndex = 5;
-            LogOutButton.UseVisualStyleBackColor = true;
-            LogOutButton.Visible = false;
-            // 
-            // LogOutLabel
-            // 
-            LogOutLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            LogOutLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            LogOutLabel.ForeColor = Color.White;
-            LogOutLabel.Location = new Point(26, 4);
-            LogOutLabel.Name = "LogOutLabel";
-            LogOutLabel.Size = new Size(268, 30);
-            LogOutLabel.TabIndex = 7;
-            LogOutLabel.TextAlign = ContentAlignment.MiddleRight;
-            LogOutLabel.Visible = false;
-            // 
             // LoadingPictureBox
             // 
             LoadingPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
@@ -312,6 +222,17 @@
             CurrentWorkLabel.TextAlign = ContentAlignment.MiddleRight;
             CurrentWorkLabel.Visible = false;
             // 
+            // panel2
+            // 
+            panel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panel2.BackColor = Color.RoyalBlue;
+            panel2.ForeColor = Color.LightSkyBlue;
+            panel2.Location = new Point(219, 0);
+            panel2.Margin = new Padding(3, 2, 3, 2);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(1335, 38);
+            panel2.TabIndex = 55;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -340,8 +261,6 @@
             ServiceStatePanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)SteamLogoPictureBox).EndInit();
             panel3.ResumeLayout(false);
-            panel2.ResumeLayout(false);
-            panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)LoadingPictureBox).EndInit();
             ResumeLayout(false);
         }
@@ -353,7 +272,6 @@
 
         #endregion
         private Panel panel1;
-        private Panel panel2;
         private Panel panel3;
         private Label label13;
         private Panel ServiceStatePanel;
@@ -367,11 +285,7 @@
         private Button StatsNavButton;
         private Button WorkerNavButton;
         private Panel panel6;
-        private Panel panel5;
-        private Label LogInLabel;
-        private Button LogInButton;
-        private Button LogOutButton;
-        private Label LogOutLabel;
+        private Panel panel2;
     }
 }
 

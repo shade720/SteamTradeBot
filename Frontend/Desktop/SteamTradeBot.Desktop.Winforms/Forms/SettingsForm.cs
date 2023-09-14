@@ -1,61 +1,67 @@
-﻿using System.Globalization;
+﻿using System.Dynamic;
+using System.Globalization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
 using SteamTradeBot.Desktop.Winforms.Models;
-using SteamTradeBot.Desktop.Winforms.ServiceAccess;
+using SteamTradeBot.Desktop.Winforms.Models.DTOs;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
 public partial class SettingsForm : Form
 {
     private readonly SteamTradeBotRestClient _steamTradeBotRestClient;
-    public Configuration? Configuration { get; set; }
-    public ConnectionInfo? ConnectionInfo { get; set; }
 
     public SettingsForm(SteamTradeBotRestClient steamTradeBotRestClient)
     {
         InitializeComponent();
         _steamTradeBotRestClient = steamTradeBotRestClient;
-        Configuration = Program.LoadConfiguration() ?? new Configuration();
-        AvailibleBalanceTextBox.Text = Configuration.AvailableBalance.ToString(CultureInfo.InvariantCulture);
-        AnalysisIntervalComboBox.SelectedItem = Configuration.AnalysisIntervalDays.ToString();
-        AveragePriceRatioTextBox.Text = Configuration.AveragePriceRatio.ToString(CultureInfo.InvariantCulture);
-        OrderQuantityTextBox.Text = Configuration.OrderQuantity.ToString();
-        FitRangePriceTextBox.Text = Configuration.FitPriceRange.ToString(CultureInfo.InvariantCulture);
-        ItemListSizeTextBox.Text = Configuration.ItemListSize.ToString(CultureInfo.InvariantCulture);
-        SellListingFindRangeTextBox.Text = Configuration.SellListingFindRange.ToString();
-        MaxPriceTextBox.Text = Configuration.MaxPrice.ToString(CultureInfo.InvariantCulture);
-        MinPriceTextBox.Text = Configuration.MinPrice.ToString(CultureInfo.InvariantCulture);
-        RequiredProfitTextBox.Text = Configuration.RequiredProfit.ToString(CultureInfo.InvariantCulture);
-        TrendTextBox.Text = Configuration.Trend.ToString(CultureInfo.InvariantCulture);
-        SalesPerDayTextBox.Text = Configuration.SalesPerDay.ToString(CultureInfo.InvariantCulture);
-        SteamUserIdTextBox.Text = Configuration.SteamUserId;
-        SteamCommissionTextBox.Text = Configuration.SteamCommission.ToString(CultureInfo.InvariantCulture);
-        SalesRatio.Text = Configuration.SalesRatio.ToString(CultureInfo.InvariantCulture);
 
-        ConnectionInfo = Program.LoadConnectionInfo() ?? new ConnectionInfo();
-        ConnectionAddressTextBox.Text = ConnectionInfo.ServerAddress;
+        var settings = Program.LoadConfiguration() ?? new ApplicationSettings();
+        AvailibleBalanceTextBox.Text = settings.AvailableBalance.ToString(CultureInfo.InvariantCulture);
+        AnalysisIntervalComboBox.SelectedItem = settings.AnalysisIntervalDays.ToString();
+        AveragePriceRatioTextBox.Text = settings.AveragePriceRatio.ToString(CultureInfo.InvariantCulture);
+        OrderQuantityTextBox.Text = settings.OrderQuantity.ToString();
+        FitRangePriceTextBox.Text = settings.FitPriceRange.ToString(CultureInfo.InvariantCulture);
+        ItemListSizeTextBox.Text = settings.ItemListSize.ToString(CultureInfo.InvariantCulture);
+        SellListingFindRangeTextBox.Text = settings.SellListingFindRange.ToString();
+        MaxPriceTextBox.Text = settings.MaxPrice.ToString(CultureInfo.InvariantCulture);
+        MinPriceTextBox.Text = settings.MinPrice.ToString(CultureInfo.InvariantCulture);
+        RequiredProfitTextBox.Text = settings.RequiredProfit.ToString(CultureInfo.InvariantCulture);
+        TrendTextBox.Text = settings.Trend.ToString(CultureInfo.InvariantCulture);
+        SalesPerDayTextBox.Text = settings.SalesPerDay.ToString(CultureInfo.InvariantCulture);
+        SteamUserIdTextBox.Text = settings.SteamUserId;
+        SteamCommissionTextBox.Text = settings.SteamCommission.ToString(CultureInfo.InvariantCulture);
+        SalesRatio.Text = settings.SalesRatio.ToString(CultureInfo.InvariantCulture);
+        ConnectionAddressTextBox.Text = settings.ServerAddress;
+        LogInTextBox.Text = settings.Login;
+        PasswordTextBox.Text = settings.Password;
+        ApiKeyTextBox.Text = settings.ApiKey;
     }
 
-    private async void UploadSettingsButton_Click(object sender, EventArgs e)
+    private void ChooseMaFileButton_Click(object sender, EventArgs e)
     {
-        try
+        if (OpenFileDialog.ShowDialog() == DialogResult.OK)
         {
-            var configuration = GetCurrentConfiguration();
-            var credentials = Program.LoadCredentials();
-            configuration.ApiKey = credentials.ApiKey;
-            await _steamTradeBotRestClient.UploadSettings(JsonConvert.SerializeObject(configuration));
-            MessageBox.Show(@"Configuration was uploaded!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-        catch (Exception exception)
-        {
-            MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MaFilePathTextBox.Text = OpenFileDialog.FileName;
         }
     }
 
-    private Configuration GetCurrentConfiguration()
+    private static string? GetSecret(string maFilePath)
     {
-        return new Configuration
+        var maFileJson = File.ReadAllText(maFilePath);
+        var jsonSettings = new JsonSerializerSettings();
+        jsonSettings.Converters.Add(new ExpandoObjectConverter());
+        jsonSettings.Converters.Add(new StringEnumConverter());
+        dynamic? maFile = JsonConvert.DeserializeObject<ExpandoObject>(maFileJson, jsonSettings);
+        return maFile is null ? throw new JsonException() : ((IDictionary<string, object>)maFile)["shared_secret"].ToString();
+    }
+
+    private ApplicationSettings GetCurrentConfiguration()
+    {
+        return new ApplicationSettings
         {
+            ApiKey = ApiKeyTextBox.Text,
             AvailableBalance = double.Parse(AvailibleBalanceTextBox.Text, CultureInfo.InvariantCulture),
             AnalysisIntervalDays = int.Parse(AnalysisIntervalComboBox.SelectedItem.ToString()),
             AveragePriceRatio = double.Parse(AveragePriceRatioTextBox.Text, CultureInfo.InvariantCulture),
@@ -70,7 +76,9 @@ public partial class SettingsForm : Form
             SalesPerDay = int.Parse(SalesPerDayTextBox.Text),
             SteamUserId = SteamUserIdTextBox.Text,
             SteamCommission = double.Parse(SteamCommissionTextBox.Text, CultureInfo.InvariantCulture),
-            SalesRatio = double.Parse(SalesRatio.Text, CultureInfo.InvariantCulture)
+            SalesRatio = double.Parse(SalesRatio.Text, CultureInfo.InvariantCulture),
+            Login = LogInTextBox.Text,
+            Password = PasswordTextBox.Text
         };
     }
 
@@ -91,26 +99,44 @@ public partial class SettingsForm : Form
         SalesPerDayTextBox.Text = string.Empty;
         SteamCommissionTextBox.Text = string.Empty;
         SalesRatio.Text = string.Empty;
-        Configuration = null;
-
         ConnectionAddressTextBox.Text = string.Empty;
-        ConnectionInfo = null;
+        LogInTextBox.Text = string.Empty;
+        PasswordTextBox.Text = string.Empty;
+        MaFilePathTextBox.Enabled = true;
+        MaFilePathTextBox.Text = string.Empty;
+        ApiKeyTextBox.Text = string.Empty;
 
-        Program.EraseConnectionInfo();
         Program.EraseConfiguration();
 
         MessageBox.Show(@"Settings was erased!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
-    private void SaveSettingsButton_Click(object sender, EventArgs e)
+    private async void SaveSettingsButton_Click(object sender, EventArgs e)
     {
+        var currentConfiguration = GetCurrentConfiguration();
+        if (!string.IsNullOrEmpty(MaFilePathTextBox.Text))
+        {
+            var secret = GetSecret(MaFilePathTextBox.Text);
+            if (secret is null)
+            {
+                MessageBox.Show(@"Can't extract the secret from this maFile", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            currentConfiguration.Secret = secret;
+        }
+        else
+        {
+            MessageBox.Show(@"Wrong maFile", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        Program.SaveConfiguration(currentConfiguration);
+        MessageBox.Show(@"Configuration was saved locally!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
         try
         {
-            var currentConfiguration = GetCurrentConfiguration();
-            Program.SaveConfiguration(currentConfiguration);
-
-            Program.SaveConnectionInfo(new ConnectionInfo { ServerAddress = ConnectionAddressTextBox.Text });
-            MessageBox.Show(@"Configuration was saved!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            await _steamTradeBotRestClient.UploadSettings(new RemoteSettings(currentConfiguration));
+            MessageBox.Show(@"Configuration was saved remotely!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch (Exception exception)
         {

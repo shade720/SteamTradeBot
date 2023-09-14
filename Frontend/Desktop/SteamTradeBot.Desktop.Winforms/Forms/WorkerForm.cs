@@ -1,6 +1,8 @@
-﻿using SteamTradeBot.Desktop.Winforms.ServiceAccess;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using SteamTradeBot.Desktop.Winforms.Models;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
+using SteamTradeBot.Desktop.Winforms.Models.DTOs;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -22,21 +24,19 @@ public partial class WorkerForm : Form
     {
         try
         {
-            var credentials = Program.LoadCredentials();
-            if (credentials is null)
+            var settings = Program.LoadConfiguration();
+            if (settings is null)
             {
                 MessageBox.Show(@"Incorrect credentials!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            var configuration = Program.LoadConfiguration();
-            if (configuration is null || configuration.CheckIntegrity())
-            {
-                MessageBox.Show(@"Incorrect configuration!", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
             StartButton.Enabled = false;
-            await _steamTradeBotServiceClient.Start(credentials);
+            await _steamTradeBotServiceClient.Start(new Credentials
+            {
+                Login = settings.Login,
+                Password = settings.Password,
+                Token = settings.Secret
+            });
         }
         catch (Exception exception)
         {

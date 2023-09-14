@@ -1,4 +1,4 @@
-﻿namespace SteamTradeBot.Desktop.Winforms;
+﻿namespace SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
 
 public static class ThreadHelperClass
 {

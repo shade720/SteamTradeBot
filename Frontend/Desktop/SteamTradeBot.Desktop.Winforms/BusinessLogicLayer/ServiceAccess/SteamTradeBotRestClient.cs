@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
 using SteamTradeBot.Desktop.Winforms.Models;
+using SteamTradeBot.Desktop.Winforms.Models.DTOs;
 using System.Text;
 
-namespace SteamTradeBot.Desktop.Winforms.ServiceAccess;
+namespace SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
 
 public class SteamTradeBotRestClient
 {
@@ -10,7 +11,7 @@ public class SteamTradeBotRestClient
     private readonly ApiKeyProvider _keyProvider;
 
     public SteamTradeBotRestClient(
-        HttpClientProvider clientProvider, 
+        HttpClientProvider clientProvider,
         ApiKeyProvider keyProvider)
     {
         _clientProvider = clientProvider;
@@ -32,10 +33,10 @@ public class SteamTradeBotRestClient
         await GetResponseContent(response);
     }
 
-    public async Task UploadSettings(string configurationJson)
+    public async Task UploadSettings(RemoteSettings remoteSettings)
     {
         using var restClient = _clientProvider.Create();
-        var response = await restClient.PostAsync($"/api/refreshConfiguration?apiKey={_keyProvider.GetApiKey()}", new StringContent(configurationJson, Encoding.UTF8, "application/json"));
+        var response = await restClient.PostAsync($"/api/refreshConfiguration?apiKey={_keyProvider.GetApiKey()}", new StringContent(JsonConvert.SerializeObject(remoteSettings), Encoding.UTF8, "application/json"));
         await GetResponseContent(response);
     }
 
@@ -56,7 +57,7 @@ public class SteamTradeBotRestClient
             var stateInfoObject = JsonConvert.DeserializeObject<StateInfo>(stateInfoJson);
             return stateInfoObject ?? new StateInfo
             {
-                Connection = StateInfo.ConnectionState.Disconnected, 
+                Connection = StateInfo.ConnectionState.Disconnected,
                 WorkingState = StateInfo.ServiceWorkingState.Down
             };
         }
