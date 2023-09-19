@@ -131,7 +131,7 @@
             SaveSettingsButton.FlatStyle = FlatStyle.Flat;
             SaveSettingsButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
             SaveSettingsButton.ForeColor = Color.White;
-            SaveSettingsButton.Location = new Point(1083, 554);
+            SaveSettingsButton.Location = new Point(556, 544);
             SaveSettingsButton.Margin = new Padding(3, 2, 3, 2);
             SaveSettingsButton.Name = "SaveSettingsButton";
             SaveSettingsButton.Size = new Size(175, 45);
@@ -151,7 +151,7 @@
             groupBox2.Controls.Add(label8);
             groupBox2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox2.ForeColor = Color.DodgerBlue;
-            groupBox2.Location = new Point(423, 32);
+            groupBox2.Location = new Point(423, 55);
             groupBox2.Margin = new Padding(3, 2, 3, 2);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(3, 2, 3, 2);
@@ -204,12 +204,12 @@
             ResetSettingsButton.Anchor = AnchorStyles.Bottom;
             ResetSettingsButton.BackColor = Color.DodgerBlue;
             ResetSettingsButton.FlatStyle = FlatStyle.Flat;
-            ResetSettingsButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            ResetSettingsButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             ResetSettingsButton.ForeColor = Color.White;
-            ResetSettingsButton.Location = new Point(37, 554);
+            ResetSettingsButton.Location = new Point(1175, 0);
             ResetSettingsButton.Margin = new Padding(3, 2, 3, 2);
             ResetSettingsButton.Name = "ResetSettingsButton";
-            ResetSettingsButton.Size = new Size(175, 45);
+            ResetSettingsButton.Size = new Size(136, 33);
             ResetSettingsButton.TabIndex = 93;
             ResetSettingsButton.Text = "Reset Settings";
             ResetSettingsButton.UseVisualStyleBackColor = false;
@@ -299,7 +299,7 @@
             groupBox5.Controls.Add(label16);
             groupBox5.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox5.ForeColor = Color.DodgerBlue;
-            groupBox5.Location = new Point(865, 31);
+            groupBox5.Location = new Point(865, 54);
             groupBox5.Margin = new Padding(3, 2, 3, 2);
             groupBox5.Name = "groupBox5";
             groupBox5.Padding = new Padding(3, 2, 3, 2);
@@ -418,7 +418,7 @@
             groupBox4.Controls.Add(label12);
             groupBox4.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox4.ForeColor = Color.DodgerBlue;
-            groupBox4.Location = new Point(423, 306);
+            groupBox4.Location = new Point(423, 329);
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
@@ -501,7 +501,7 @@
             groupBox1.Controls.Add(FitRangePriceTextBox);
             groupBox1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox1.ForeColor = Color.DodgerBlue;
-            groupBox1.Location = new Point(37, 32);
+            groupBox1.Location = new Point(37, 55);
             groupBox1.Margin = new Padding(4);
             groupBox1.Name = "groupBox1";
             groupBox1.Padding = new Padding(3, 2, 3, 2);

@@ -11,6 +11,7 @@ namespace SteamTradeBot.Desktop.Winforms.Forms;
 public partial class SettingsForm : Form
 {
     private readonly SteamTradeBotRestClient _steamTradeBotRestClient;
+    private readonly string _secret;
 
     public SettingsForm(SteamTradeBotRestClient steamTradeBotRestClient)
     {
@@ -37,24 +38,40 @@ public partial class SettingsForm : Form
         LogInTextBox.Text = settings.Login;
         PasswordTextBox.Text = settings.Password;
         ApiKeyTextBox.Text = settings.ApiKey;
+
+        if (string.IsNullOrEmpty(settings.Secret))
+        {
+            MaFilePathTextBox.Text = string.Empty;
+            MaFilePathTextBox.Enabled = true;
+            _secret = string.Empty;
+        }
+        else
+        {
+            MaFilePathTextBox.Text = @"The secret is loaded";
+            MaFilePathTextBox.Enabled = false;
+            _secret = settings.Secret;
+        }
     }
 
     private void ChooseMaFileButton_Click(object sender, EventArgs e)
     {
-        if (OpenFileDialog.ShowDialog() == DialogResult.OK)
-        {
-            MaFilePathTextBox.Text = OpenFileDialog.FileName;
-        }
+        if (OpenFileDialog.ShowDialog() != DialogResult.OK) return;
+        MaFilePathTextBox.Text = OpenFileDialog.FileName;
+        MaFilePathTextBox.Enabled = true;
     }
 
     private static string? GetSecret(string maFilePath)
     {
+        if (!File.Exists(maFilePath))
+            return null;
         var maFileJson = File.ReadAllText(maFilePath);
         var jsonSettings = new JsonSerializerSettings();
         jsonSettings.Converters.Add(new ExpandoObjectConverter());
         jsonSettings.Converters.Add(new StringEnumConverter());
         dynamic? maFile = JsonConvert.DeserializeObject<ExpandoObject>(maFileJson, jsonSettings);
-        return maFile is null ? throw new JsonException() : ((IDictionary<string, object>)maFile)["shared_secret"].ToString();
+        return maFile is null
+            ? null
+            : ((IDictionary<string, object>)maFile)["shared_secret"].ToString();
     }
 
     private ApplicationSettings GetCurrentConfiguration()
@@ -78,7 +95,8 @@ public partial class SettingsForm : Form
             SteamCommission = double.Parse(SteamCommissionTextBox.Text, CultureInfo.InvariantCulture),
             SalesRatio = double.Parse(SalesRatio.Text, CultureInfo.InvariantCulture),
             Login = LogInTextBox.Text,
-            Password = PasswordTextBox.Text
+            Password = PasswordTextBox.Text,
+            Secret = _secret
         };
     }
 
@@ -114,25 +132,11 @@ public partial class SettingsForm : Form
     private async void SaveSettingsButton_Click(object sender, EventArgs e)
     {
         var currentConfiguration = GetCurrentConfiguration();
-        if (!string.IsNullOrEmpty(MaFilePathTextBox.Text))
-        {
-            var secret = GetSecret(MaFilePathTextBox.Text);
-            if (secret is null)
-            {
-                MessageBox.Show(@"Can't extract the secret from this maFile", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            currentConfiguration.Secret = secret;
-        }
-        else
-        {
-            MessageBox.Show(@"Wrong maFile", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
-        }
 
+        EnsureThatSecretIsLoaded(currentConfiguration);
         Program.SaveConfiguration(currentConfiguration);
-        MessageBox.Show(@"Configuration was saved locally!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+        MessageBox.Show(@"Configuration was saved locally!", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         try
         {
             await _steamTradeBotRestClient.UploadSettings(new RemoteSettings(currentConfiguration));
@@ -141,6 +145,26 @@ public partial class SettingsForm : Form
         catch (Exception exception)
         {
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void EnsureThatSecretIsLoaded(ApplicationSettings settings)
+    {
+        if (!string.IsNullOrEmpty(settings.Secret))
+            return;
+        if (!string.IsNullOrEmpty(MaFilePathTextBox.Text))
+        {
+            var secret = GetSecret(MaFilePathTextBox.Text);
+            if (secret is null)
+            {
+                MessageBox.Show(@"Can't extract the secret from this maFile", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            settings.Secret = secret;
+        }
+        else
+        {
+            MessageBox.Show(@"Wrong maFile", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

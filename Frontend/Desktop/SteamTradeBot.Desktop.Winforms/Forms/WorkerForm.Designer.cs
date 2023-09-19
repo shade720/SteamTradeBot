@@ -335,7 +335,7 @@
             CheckConnectionButton.FlatStyle = FlatStyle.Flat;
             CheckConnectionButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
             CheckConnectionButton.ForeColor = Color.White;
-            CheckConnectionButton.Location = new Point(108, 36);
+            CheckConnectionButton.Location = new Point(27, 36);
             CheckConnectionButton.Margin = new Padding(2);
             CheckConnectionButton.Name = "CheckConnectionButton";
             CheckConnectionButton.Size = new Size(140, 48);
