@@ -81,7 +81,7 @@ public class SteamTradeBotRestClient
     public async Task<string> GetLogFile()
     {
         using var restClient = _clientProvider.Create();
-        var response = await restClient.GetAsync($"logs?apiKey={_keyProvider.GetApiKey()}");
+        var response = await restClient.GetAsync($"/api/logs?apiKey={_keyProvider.GetApiKey()}");
         return await GetResponseContent(response);
     }
 

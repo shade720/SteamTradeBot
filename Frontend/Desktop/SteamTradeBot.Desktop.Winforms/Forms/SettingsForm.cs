@@ -96,7 +96,8 @@ public partial class SettingsForm : Form
             SalesRatio = double.Parse(SalesRatio.Text, CultureInfo.InvariantCulture),
             Login = LogInTextBox.Text,
             Password = PasswordTextBox.Text,
-            Secret = _secret
+            Secret = _secret,
+            ServerAddress = ConnectionAddressTextBox.Text
         };
     }
 
