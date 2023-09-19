@@ -1,37 +1,33 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.WaitHelpers;
 using Serilog;
+using SteamTradeBot.Backend.BusinessLogicLayer;
 using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.Services;
 
 public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 {
-    private readonly IWebDriver _chromeBrowser;
+    private readonly SeleniumWebDriver _webDriver;
 
-    public SeleniumSteamApi(Func<IWebDriver> webDriver)
+    public SeleniumSteamApi(SeleniumWebDriver webDriver)
     {
-        Log.Logger.Information("Creating selenium steam API...");
-        _chromeBrowser = webDriver.Invoke();
-        Log.Logger.Information("Selenium steam API created!");
+        _webDriver = webDriver;
     }
 
     #region Balance
 
     private const string BalanceLabelId = "header_wallet_balance";
     private static readonly By BalanceLabel = By.Id(BalanceLabelId);
+
     public async Task<double> GetBalanceAsync()
     {
-        return await SafeConnect(() => ParsePrice(ReadFromElement(BalanceLabel)));
+        return await _webDriver.SafeConnect(() => ParsePrice(_webDriver.ReadFromElement(BalanceLabel)));
     }
 
     #endregion
@@ -51,16 +47,16 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<List<OrderBookItem>> GetBuyOrdersBookAsync(string itemUrl, int buyListingFindRange)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            SetPage(itemUrl);
+            _webDriver.SetPage(itemUrl);
             var orderBook = new List<OrderBookItem>();
-            ClickOnElement(BuyListingDetailsButton);
+            _webDriver.ClickOnElement(BuyListingDetailsButton);
 
             for (var rowIdx = HtmlElementOffset; rowIdx < buyListingFindRange + HtmlElementOffset; rowIdx++)
             {
-                var price = ParsePrice(ReadFromElement(GetBuyListingPriceElementByRow(rowIdx)));
-                var quantity = int.Parse(ReadFromElement(GetBuyListingQuantityElementByRow(rowIdx)));
+                var price = ParsePrice(_webDriver.ReadFromElement(GetBuyListingPriceElementByRow(rowIdx)));
+                var quantity = int.Parse(_webDriver.ReadFromElement(GetBuyListingQuantityElementByRow(rowIdx)));
                 orderBook.Add(new OrderBookItem(price, quantity));
             }
             return orderBook.OrderByDescending(x => x.Price).ToList();
@@ -77,9 +73,9 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<List<OrderBookItem>> GetSellOrdersBookAsync(string itemUrl, int sellListingFindRange)
     {
-        await SafeConnect(() =>
+        await _webDriver.SafeConnect(() =>
         {
-            SetPage(itemUrl);
+            _webDriver.SetPage(itemUrl);
             return true;
         });
 
@@ -88,16 +84,16 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
         {
             for (var rowIdx = HtmlElementOffset; rowIdx < SellListingPageSize + HtmlElementOffset; rowIdx++)
             {
-                var sellPriceStr = await SafeConnect(() => ReadFromElement(GetSellListingPriceElementByRow(rowIdx)));
+                var sellPriceStr = await _webDriver.SafeConnect(() => _webDriver.ReadFromElement(GetSellListingPriceElementByRow(rowIdx)));
                 var parsedSellPrice = ParsePrice(sellPriceStr);
                 if (parsedSellPrice == 0)
                     continue;
                 orderBook.Add(new OrderBookItem(parsedSellPrice, 1));
             }
 
-            await SafeConnect(() =>
+            await _webDriver.SafeConnect(() =>
             {
-                ClickOnElement(GetSellListingPageButton(pageIdx));
+                _webDriver.ClickOnElement(GetSellListingPageButton(pageIdx));
                 return true;
             }, true);
         }
@@ -149,15 +145,15 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<Chart> GetChartAsync(string itemUrl, DateTime fromDate)
     {
-        var isChartReceivedSuccessfully = await SafeConnect(() =>
+        var isChartReceivedSuccessfully = await _webDriver.SafeConnect(() =>
         {
-            SetPage(itemUrl);
-            ClickOnElement(MonthlyChartScaleButton);
+            _webDriver.SetPage(itemUrl);
+            _webDriver.ClickOnElement(MonthlyChartScaleButton);
             return true;
         });
         if (!isChartReceivedSuccessfully) return new Chart();
 
-        var chartHtmlString = string.Join("", _chromeBrowser.PageSource
+        var chartHtmlString = string.Join("", _webDriver.GetPageSource()
             .Split("\n")
             .First(x => x.StartsWith("\t\t\tvar line1="))
             .SkipWhile(x => x != '['));
@@ -212,7 +208,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
     private const string SellConfirmationButtonId = "market_sell_dialog_ok";
     private static readonly By SellConfirmationButton = By.Id(SellConfirmationButtonId);
 
-    private static string GetInventoryPageAddress(string userId) => 
+    private static string GetInventoryPageAddress(string userId) =>
         $"https://steamcommunity.com/profiles/{userId}/inventory/#730";
 
     private static By GetInventoryItemElement(string userId, int itemNum) =>
@@ -223,22 +219,22 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<bool> PlaceSellOrderAsync(string itemName, double price, string userId, int inventoryFindRange = 15)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            SetPage(GetInventoryPageAddress(userId));
+            _webDriver.SetPage(GetInventoryPageAddress(userId));
             for (var itemNum = 0; itemNum < inventoryFindRange; itemNum++)
             {
-                ClickOnElement(GetInventoryItemElement(userId, itemNum));
-                var currentItemName = ReadFromElement(ItemNameLabel).Trim();
-                var currentItemQuality = GetItemQuality(ReadFromElement(ItemDescriptionLabel));
+                _webDriver.ClickOnElement(GetInventoryItemElement(userId, itemNum));
+                var currentItemName = _webDriver.ReadFromElement(ItemNameLabel).Trim();
+                var currentItemQuality = GetItemQuality(_webDriver.ReadFromElement(ItemDescriptionLabel));
                 var fullItemName = $"{currentItemName} ({currentItemQuality})";
                 if (itemName != fullItemName) continue;
-                ExecuteJs(ScrollPageJScript);
-                ExecuteJs(SellSelectedItemJScript);
-                SendKey(SellPriceTextBox, $"\b\b\b\b\b{price}");
-                ClickOnElement(SellAgreementCheckBox);
-                ClickOnElement(SellAgreementButton);
-                ClickOnElement(SellConfirmationButton, true, 2);
+                _webDriver.ExecuteJs(ScrollPageJScript);
+                _webDriver.ExecuteJs(SellSelectedItemJScript);
+                _webDriver.SendKey(SellPriceTextBox, $"\b\b\b\b\b{price}");
+                _webDriver.ClickOnElement(SellAgreementCheckBox);
+                _webDriver.ClickOnElement(SellAgreementButton);
+                _webDriver.ClickOnElement(SellConfirmationButton, true, 2);
                 return true;
             }
             return false;
@@ -247,12 +243,12 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<double?> GetSellOrderPriceAsync(string itemUrl)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            SetPage(itemUrl);
+            _webDriver.SetPage(itemUrl);
             try
             {
-                var priceStr = ReadFromElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[1]/div[2]/div/div[2]/span/span/span/span[1]"), true);
+                var priceStr = _webDriver.ReadFromElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[1]/div[2]/div/div[2]/span/span/span/span[1]"), true);
                 return ParsePrice(priceStr);
             }
             catch
@@ -264,11 +260,11 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<bool> CancelSellOrderAsync(string itemUrl)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            SetPage(itemUrl);
-            ClickOnElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[1]/div[2]/div/div[5]/div/a/span[2]"));
-            ClickOnElement(By.XPath("//*[@id='market_removelisting_dialog_accept']"));
+            _webDriver.SetPage(itemUrl);
+            _webDriver.ClickOnElement(By.XPath("/html/body/div[1]/div[7]/div[4]/div[1]/div[4]/div[1]/div[2]/div/div[5]/div/div[1]/div[2]/div/div[5]/div/a/span[2]"));
+            _webDriver.ClickOnElement(By.XPath("//*[@id='market_removelisting_dialog_accept']"));
             return true;
         });
     }
@@ -300,25 +296,25 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<string> GetRusItemNameAsync(string itemUrl)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            SetPage(itemUrl);
-            var itemName = ReadFromElement(RusItemNameLabel);
-            var quality = GetItemQuality(ReadFromElement(RusItemDescriptionLabel));
+            _webDriver.SetPage(itemUrl);
+            var itemName = _webDriver.ReadFromElement(RusItemNameLabel);
+            var quality = GetItemQuality(_webDriver.ReadFromElement(RusItemDescriptionLabel));
             return $"{itemName} ({quality})";
         });
     }
 
     public async Task<bool> PlaceBuyOrderAsync(string itemUrl, double price, int quantity)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            SetPage(itemUrl);
-            ClickOnElement(PlaceOrderButton);
-            SendKey(BuyOrderPriceTextBox, $"\b\b\b\b\b\b\b\b\b\b\b{Math.Round(price + 0.01, 2, MidpointRounding.AwayFromZero)}", true);
-            SendKey(BuyOrderQuantityTextBox, $"\b{quantity}");
-            ClickOnElement(BuyAgreementCheckBox);
-            ClickOnElement(BuyConfirmationButton);
+            _webDriver.SetPage(itemUrl);
+            _webDriver.ClickOnElement(PlaceOrderButton);
+            _webDriver.SendKey(BuyOrderPriceTextBox, $"\b\b\b\b\b\b\b\b\b\b\b{Math.Round(price + 0.01, 2, MidpointRounding.AwayFromZero)}", true);
+            _webDriver.SendKey(BuyOrderQuantityTextBox, $"\b{quantity}");
+            _webDriver.ClickOnElement(BuyAgreementCheckBox);
+            _webDriver.ClickOnElement(BuyConfirmationButton);
             return true;
         }, true);
     }
@@ -328,12 +324,12 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<int?> GetBuyOrderQuantityAsync(string itemUrl)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            SetPage(itemUrl);
+            _webDriver.SetPage(itemUrl);
             try
             {
-                var quantity = int.Parse(ReadFromElement(ExistingBuyOrderPriceLabel, true));
+                var quantity = int.Parse(_webDriver.ReadFromElement(ExistingBuyOrderPriceLabel, true));
                 return quantity;
             }
             catch
@@ -348,12 +344,12 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<double?> GetBuyOrderPriceAsync(string itemUrl)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            SetPage(itemUrl);
+            _webDriver.SetPage(itemUrl);
             try
             {
-                var price = ReadFromElement(ExistingBuyOrderQuantityLabel, true);
+                var price = _webDriver.ReadFromElement(ExistingBuyOrderQuantityLabel, true);
                 return ParsePrice(price);
             }
             catch
@@ -368,10 +364,10 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<bool> CancelBuyOrderAsync(string itemUrl)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            SetPage(itemUrl);
-            ClickOnElement(ExistingBuyOrderCancelButton);
+            _webDriver.SetPage(itemUrl);
+            _webDriver.ClickOnElement(ExistingBuyOrderCancelButton);
             var quantityToCheck = GetBuyOrderQuantityAsync(itemUrl).Result;
             return quantityToCheck is null;
         }, true);
@@ -379,69 +375,14 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     #endregion
 
-    #region GetItemList
-
-    public async Task<List<string>> GetItemNamesListAsync(double startPrice, double endPrice, double salesVolumeByWeek, int listSize)
-    {
-        return await SafeConnect(() =>
-        {
-            var result = new List<string>();
-            SetPage("https://skins-table.xyz/table/");
-            try
-            {
-                Log.Logger.Information("Check if we are already logged in...");
-                ClickOnElement(By.XPath("/html/body/div[1]/div[4]/div/div/center/div/div/div[2]/form/div[2]/a"), true);
-                ClickOnElement(By.Id("imageLogin"));
-                Log.Logger.Information("Logged in successfully on skins-table.xyz");
-            }
-            catch
-            {
-                Log.Logger.Information("Already logged in on skins-table.xyz");
-            }
-
-            SetPage("https://skins-table.xyz/table/");
-
-            ClickOnElement(By.CssSelector("#scroll > div > div.sites.first > div:nth-child(30)"));
-            ClickOnElement(By.CssSelector("#scroll > div > div.sites.second > div:nth-child(29)"));
-            SendKey(By.Id("price1_from"), $"\b\b\b\b\b\b\b{startPrice}");
-            SendKey(By.Id("price1_to"), $"\b\b\b\b\b\b\b{endPrice}");
-            SendKey(By.Id("price2_from"), $"\b\b\b\b\b\b\b{startPrice}");
-            SendKey(By.Id("price2_to"), $"\b\b\b\b\b\b\b{endPrice}");
-            SendKey(By.Id("sc1"), $"\b\b\b\b{salesVolumeByWeek}");
-            ClickOnElement(By.Id("change1"));
-
-            var js = _chromeBrowser as IJavaScriptExecutor;
-            Thread.Sleep(15000);
-            for (var i = 1; i < 10; i++)
-            {
-                js?.ExecuteScript("scroll(0, 20000000);");
-            }
-
-            var htmlCode = _chromeBrowser.PageSource;
-            var regex = new Regex(@"data-clipboard-text=\p{P}[^\p{P}]*\p{P}?[^\p{P}]*\p{P}?[^\p{P}]*\p{P}?[^\p{P}]*\p{P}[^\p{P}]*\p{P}?[^\p{P}]*\p{P}\p{P}");
-            var matches = regex.Matches(htmlCode);
-
-            if (matches.Count <= 0)
-                return new List<string>();
-
-            for (var i = 0; i < listSize; i++)
-            {
-                var itemName = string.Join("", matches[i].ToString().SkipWhile(x => x != '=').Skip(2).SkipLast(1));
-                if (itemName.Contains("Sealed Graffiti") || itemName.Contains("Sticker") || itemName.Contains("Case"))
-                    continue;
-                Log.Logger.Information("Got {0} item name", itemName);
-                result.Add(itemName);
-            }
-            return result;
-        });
-    }
+    #region ItemUrl
 
     public async Task<string> GetItemUrlAsync(string itemName)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            _chromeBrowser.Navigate().GoToUrl($"https://steamcommunity.com/market/listings/730/{itemName}");
-            return _chromeBrowser.Url;
+            _webDriver.SetPage($"https://steamcommunity.com/market/listings/730/{itemName}");
+            return _webDriver.GetCurrentPageUrl();
         }, true);
     }
 
@@ -456,7 +397,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
     private static readonly By LoginButton = By.XPath("//*[@id='responsive_page_template_content']/div[1]/div[1]/div/div/div/div[2]/div/form/div[4]/button");
     private static readonly By TwoFactorTextBox = By.XPath("//*[@id='responsive_page_template_content']/div[1]/div[1]/div/div/div/div[2]/form/div/div[2]/div[1]/div/input[1]");
     private static readonly By LoginCheckButton = By.XPath("//*[@id='account_pulldown']");
-    private static readonly By LoginCheckTextBox = By.XPath("//*[@id='account_dropdown']/div/a[3]/span");
+    private static readonly By LoginCheckTextBox = By.XPath("//*[@id='account_dropdown']/div/a[2]/span");
 
     #endregion
 
@@ -472,18 +413,18 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
         var token = await GetTokenAsync(secret);
 
-        await SafeConnect(() =>
+        await _webDriver.SafeConnect(() =>
         {
-            SetPage("https://steamcommunity.com/login/home/?goto=");
-            WriteToElement(LoginTextBox, login);
-            WriteToElement(PasswordTextBox, password);
-            ClickOnElement(LoginButton);
+            _webDriver.SetPage("https://steamcommunity.com/login/home/?goto=");
+            _webDriver.WriteToElement(LoginTextBox, login);
+            _webDriver.WriteToElement(PasswordTextBox, password);
+            _webDriver.ClickOnElement(LoginButton);
             return true;
         }, true);
 
         try
         {
-            WriteToElement(TwoFactorTextBox, token, true);
+            _webDriver.WriteToElement(TwoFactorTextBox, token, true);
         }
         catch
         {
@@ -505,8 +446,8 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
         Log.Information("Checking authentication state...");
         try
         {
-            ClickOnElement(LoginCheckButton, true);
-            var currentLogin = ReadFromElement(LoginCheckTextBox, true);
+            _webDriver.ClickOnElement(LoginCheckButton, true);
+            var currentLogin = _webDriver.ReadFromElement(LoginCheckTextBox, true);
             if (currentLogin == loginToCompare)
             {
                 Log.Information("Successfully authenticated");
@@ -528,17 +469,17 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
     private const string GenerateTokenButtonId = "generate";
     private static readonly By GenerateTokenButton = By.Id(GenerateTokenButtonId);
 
-    private const string TokenLabelId = "result"; 
+    private const string TokenLabelId = "result";
     private static readonly By TokenLabel = By.Id(TokenLabelId);
 
     private async Task<string> GetTokenAsync(string secret)
     {
-        return await SafeConnect(() =>
+        return await _webDriver.SafeConnect(() =>
         {
-            SetPage("https://www.chescos.me/js-steam-authcode-generator/?");
-            SendKey(SecretTextBox, secret);
-            ClickOnElement(GenerateTokenButton);
-            return ReadFromElement(TokenLabel);
+            _webDriver.SetPage("https://www.chescos.me/js-steam-authcode-generator/?");
+            _webDriver.SendKey(SecretTextBox, secret);
+            _webDriver.ClickOnElement(GenerateTokenButton);
+            return _webDriver.ReadFromElement(TokenLabel);
         }, true);
     }
 
@@ -547,110 +488,15 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
     public void LogOut()
     {
         Log.Information("Signing out...");
-        SetPage("https://steamcommunity.com");
-        ExecuteJs(LogOutJScript);
+        _webDriver.SetPage("https://steamcommunity.com");
+        _webDriver.ExecuteJs(LogOutJScript);
         Log.Information("Successful sign out");
-    }
-
-    #endregion
-
-    #region SeleniumMethods
-
-    private const int DefaultImplicitWaitTime = 5;
-
-    private void WriteToElement(By by, string message, bool explicitly = false, int waitTime = 5)
-    {
-        if (explicitly)
-        {
-            ExplicitWait(by, waitTime).SendKeys(message);
-            return;
-        }
-        ImplicitWait(by, DefaultImplicitWaitTime).SendKeys(message);
-    }
-
-    private string ReadFromElement(By by, bool explicitly = false, int waitTime = 5)
-    {
-        return explicitly ? ExplicitWait(by, waitTime).Text : ImplicitWait(by, DefaultImplicitWaitTime).Text;
-    }
-
-    private void ClickOnElement(By by, bool explicitly = false, int waitTime = 5)
-    {
-        if (explicitly)
-        {
-            ExplicitWait(by, waitTime).Click();
-            return;
-        }
-        ImplicitWait(by, DefaultImplicitWaitTime).Click();
-    }
-
-    private void SendKey(By by, string key, bool explicitly = false, int waitTime = 5)
-    {
-        if (explicitly)
-        {
-            ExplicitWait(by, waitTime).SendKeys(key);
-            return;
-        }
-        ImplicitWait(by, DefaultImplicitWaitTime).SendKeys(key);
-    }
-
-    private IWebElement ExplicitWait(By by, int waitTime)
-    {
-        _chromeBrowser.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
-        return new WebDriverWait(_chromeBrowser, TimeSpan.FromSeconds(waitTime)).Until(ExpectedConditions.ElementIsVisible(by));
-    }
-    private IWebElement ImplicitWait(By by, int waitTime)
-    {
-        _chromeBrowser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(waitTime);
-        return _chromeBrowser.FindElement(by);
-    }
-
-    private void SetPage(string url)
-    {
-        if (_chromeBrowser.Url != url)
-            _chromeBrowser.Navigate().GoToUrl(url);
-    }
-
-    private void ExecuteJs(string script)
-    {
-        ((IJavaScriptExecutor)_chromeBrowser).ExecuteScript(script);
-    }
-
-    #endregion
-
-    #region SafeConnect
-
-    private const int RequestDelayMs = 5000;
-    private const int RetryWaitTimeMs = 2000;
-    private const int RetriesCount = 5;
-
-    private async Task<T> SafeConnect<T>(Func<T> unsafeFunc, bool isDelayNeeded = false)
-    {
-        var retryWaitTimeMs = isDelayNeeded ? RequestDelayMs : 0;
-        for (var attempt = 0; attempt < RetriesCount; attempt++)
-        {
-            try
-            {
-                Thread.Sleep(retryWaitTimeMs);
-                return await Task.Run(unsafeFunc);
-            }
-            catch (Exception e)
-            {
-                Log.Error("Connection error! Attempt: {0}/{1}\r\nMessage: {2}\r\nStack trace: {3}", attempt + 1, RetriesCount, e.Message, e.StackTrace);
-                retryWaitTimeMs = RetryWaitTimeMs;
-                _chromeBrowser.Navigate().Refresh();
-            }
-        }
-        Log.Error("Number of attempts are expired!");
-        throw new Exception("Number of attempts are expired!");
     }
 
     #endregion
 
     public void Dispose()
     {
-        Log.Logger.Information("Disposing steam Api...");
-        _chromeBrowser.Quit();
-        _chromeBrowser.Dispose();
-        Log.Logger.Information("Steam Api disposed!");
+        _webDriver.Dispose();
     }
 }

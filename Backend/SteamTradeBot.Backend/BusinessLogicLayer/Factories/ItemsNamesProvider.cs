@@ -9,12 +9,12 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
 public sealed class ItemsNamesProvider
 {
+    private readonly IItemsTableApi _api;
     private readonly IConfigurationManager _configurationManager;
-    private readonly ISteamApi _api;
     private readonly OrdersDbAccess _ordersDb;
 
     public ItemsNamesProvider(
-        ISteamApi api, 
+        IItemsTableApi api, 
         IConfigurationManager configurationManager, 
         OrdersDbAccess ordersDb)
     {

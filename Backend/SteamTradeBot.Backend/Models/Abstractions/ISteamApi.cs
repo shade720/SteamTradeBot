@@ -21,6 +21,5 @@ public interface ISteamApi
     public Task<bool> PlaceSellOrderAsync(string itemName, double price, string userId, int inventoryFindRange = 10);
     public Task<bool> CancelBuyOrderAsync(string itemUrl);
     public Task<bool> CancelSellOrderAsync(string itemUrl);
-    public Task<List<string>> GetItemNamesListAsync(double startPrice, double endPrice, double salesVolumeByWeek, int listSize);
     public Task<double> GetBalanceAsync();
 }

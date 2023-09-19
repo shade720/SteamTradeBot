@@ -20,6 +20,7 @@ using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Services;
 using System;
 using System.IO;
+using SteamTradeBot.Backend.BusinessLogicLayer;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
@@ -61,7 +62,10 @@ var webDriverHostFromEnvironment = Environment.GetEnvironmentVariable("SELENIUM_
 builder.Services.AddSingleton<WorkerService>();
 builder.Services.AddSingleton<IConfigurationManager, JsonFileBasedConfigurationManagerService>();
 builder.Services.AddSingleton<IStateManager, DbBasedStateManagerService>();
-builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>(_ => new SeleniumSteamApi(() =>
+
+builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>();
+builder.Services.AddSingleton<IItemsTableApi, SkinsTableApi>();
+builder.Services.AddSingleton(_ => new SeleniumWebDriver(() =>
 {
     var chromeOptions = new ChromeOptions();
     chromeOptions.AddArgument("--disable-gpu");
@@ -70,7 +74,7 @@ builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>(_ => new SeleniumStea
     chromeOptions.AddArgument("--disable-dev-shm-usage");
     chromeOptions.AddArgument("--start-maximized");
     chromeOptions.AddArgument("--window-size=1920,1080");
-    chromeOptions.AddArgument("--headless");
+    //chromeOptions.AddArgument("--headless");
     chromeOptions.AddArgument("--disable-logging");
     chromeOptions.AddArgument("--log-level=3");
     if (webDriverHostFromEnvironment is not null)

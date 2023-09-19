@@ -35,7 +35,7 @@ public partial class WorkerForm : Form
             {
                 Login = settings.Login,
                 Password = settings.Password,
-                Token = settings.Secret
+                Secret = settings.Secret
             });
         }
         catch (Exception exception)
@@ -56,6 +56,7 @@ public partial class WorkerForm : Form
         {
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+        StopButton.Enabled = true;
     }
 
     private async void CancelOrdersButtons_Click(object sender, EventArgs e)
