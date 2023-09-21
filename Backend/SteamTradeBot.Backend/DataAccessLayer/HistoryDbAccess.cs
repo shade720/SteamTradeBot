@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamTradeBot.Backend.Models.StateModel;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.DataAccessLayer;
@@ -21,10 +22,10 @@ public sealed class HistoryDbAccess
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<TradingEvent>> GetHistoryAsync()
+    public async Task<List<TradingEvent>> GetHistoryAsync(string apiKey)
     {
         await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
-        return await context.History.ToListAsync();
+        return await context.History.Where(x => x.ApiKey == apiKey).ToListAsync();
     }
 
     public async Task ClearHistoryAsync()

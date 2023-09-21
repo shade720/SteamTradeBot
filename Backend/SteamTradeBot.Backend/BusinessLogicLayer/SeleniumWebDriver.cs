@@ -95,10 +95,11 @@ public class SeleniumWebDriver : IDisposable
                 Log.Error("Connection error! Attempt: {0}/{1}\r\nMessage: {2}\r\nStack trace: {3}", attempt + 1, RetriesCount, e.Message, e.StackTrace);
                 retryWaitTimeMs = RetryWaitTimeMs;
                 _chromeBrowser.Navigate().Refresh();
+                if (attempt == RetriesCount - 1)
+                    throw;
             }
         }
-        Log.Error("Number of attempts are expired!");
-        throw new Exception("Number of attempts are expired!");
+        return default;
     }
 
     public void Dispose()

@@ -12,7 +12,6 @@ public class StateInfo
     public int Errors { get; set; }
     public int Warnings { get; set; }
     public TimeSpan Uptime { get; set; }
-    public List<string> Events { get; } = new();
 
     public enum ServiceWorkingState
     {

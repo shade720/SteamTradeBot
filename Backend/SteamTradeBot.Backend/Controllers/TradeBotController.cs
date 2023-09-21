@@ -5,6 +5,7 @@ using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.StateModel;
 using SteamTradeBot.Backend.Services;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.Controllers;
@@ -23,7 +24,7 @@ public class TradeBotController : ControllerBase
         IStateManager stateManager,
         Credentials credentials)
     {
-        if (stateManager is not DbBasedStateManagerService dbBasedStateManager)
+        if (stateManager is not StateManagerService dbBasedStateManager)
             throw new ApplicationException("Application error: stateManager does not configured");
         await dbBasedStateManager.EnsureStateCreated();
 
@@ -75,6 +76,15 @@ public class TradeBotController : ControllerBase
         [FromQuery] string apiKey)
     {
         return await stateManager.GetServiceStateAsync(apiKey);
+    }
+
+    [HttpGet]
+    [Route("history")]
+    public async Task<List<TradingEvent>> GetHistory(
+        IStateManager stateManager,
+        [FromQuery] string apiKey)
+    {
+        return await stateManager.GetServiceHistoryAsync(apiKey);
     }
 
     [HttpPost]

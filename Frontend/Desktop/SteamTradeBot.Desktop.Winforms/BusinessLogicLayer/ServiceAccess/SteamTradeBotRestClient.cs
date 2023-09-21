@@ -47,7 +47,7 @@ public class SteamTradeBotRestClient
         await GetResponseContent(response);
     }
 
-    public async Task<StateInfo> CheckState()
+    public async Task<StateInfo> GetInitState()
     {
         using var restClient = _clientProvider.Create();
         try
@@ -69,6 +69,15 @@ public class SteamTradeBotRestClient
                 WorkingState = StateInfo.ServiceWorkingState.Down
             };
         }
+    }
+
+    public async Task<List<TradingEvent>> GetInitHistory()
+    {
+        using var restClient = _clientProvider.Create();
+        var response = await restClient.GetAsync($"/api/history?apiKey={_keyProvider.GetApiKey()}");
+        var eventsJson = await GetResponseContent(response);
+        var eventsObject = JsonConvert.DeserializeObject<List<TradingEvent>>(eventsJson);
+        return eventsObject;
     }
 
     public async Task ResetState()

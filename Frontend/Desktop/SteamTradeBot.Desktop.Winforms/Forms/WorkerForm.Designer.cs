@@ -63,7 +63,6 @@
             CancelOrdersButtons = new Button();
             StartButton = new Button();
             StopButton = new Button();
-            StateRefresher = new System.ComponentModel.BackgroundWorker();
             panel1 = new Panel();
             panel2 = new Panel();
             groupBox1.SuspendLayout();
@@ -396,11 +395,11 @@
             HistoryDataGridView.RowHeadersWidth = 51;
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = Color.White;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
             dataGridViewCellStyle3.ForeColor = Color.Black;
             dataGridViewCellStyle3.SelectionBackColor = Color.DodgerBlue;
             dataGridViewCellStyle3.SelectionForeColor = Color.White;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
             HistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
             HistoryDataGridView.RowTemplate.Height = 29;
             HistoryDataGridView.Size = new Size(907, 566);
@@ -537,10 +536,6 @@
             StopButton.UseVisualStyleBackColor = false;
             StopButton.Click += StopButton_Click;
             // 
-            // StateRefresher
-            // 
-            StateRefresher.DoWork += StateRefresher_DoWork;
-            // 
             // panel1
             // 
             panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -613,7 +608,6 @@
         private Button CancelOrdersButtons;
         private Button ViewLogsButton;
         private DataGridView HistoryDataGridView;
-        private System.ComponentModel.BackgroundWorker StateRefresher;
         private Panel panel1;
         private Panel panel2;
         private DataGridViewTextBoxColumn TimeColumn;

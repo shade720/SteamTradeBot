@@ -14,7 +14,8 @@ public partial class MainForm : Form
         InitializeComponent();
 
         var steamTradeBotRestClient = new SteamTradeBotRestClient(new HttpClientProvider(), new ApiKeyProvider());
-        _workerForm = new WorkerForm(steamTradeBotRestClient);
+        var steamTradeBotSignalRClient = new SteamTradeBotSignalRClient(new ApiKeyProvider());
+        _workerForm = new WorkerForm(steamTradeBotRestClient, steamTradeBotSignalRClient);
         _settingsForm = new SettingsForm(steamTradeBotRestClient);
 
         _settingsForm.TopLevel = false;

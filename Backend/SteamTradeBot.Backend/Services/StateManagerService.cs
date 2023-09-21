@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Serilog;
 using SteamTradeBot.Backend.DataAccessLayer;
@@ -6,21 +7,27 @@ using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Models.StateModel;
 using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
+using Microsoft.AspNetCore.SignalR;
 
 namespace SteamTradeBot.Backend.Services;
 
-public sealed class DbBasedStateManagerService : IStateManager
+public sealed class StateManagerService : Hub, IStateManager
 {
     private readonly IConfigurationManager _configurationManager;
     private readonly StateDbAccess _stateDb;
     private readonly HistoryDbAccess _historyDb;
     private readonly UptimeProvider _uptimeProvider;
-    
-    public DbBasedStateManagerService(
-        IConfigurationManager configurationManager, 
-        StateDbAccess stateDb, 
-        HistoryDbAccess historyDb)
+    private IHubContext<StateManagerService> _context;
+
+    #region PublicInterface
+
+    public StateManagerService(
+        IConfigurationManager configurationManager,
+        StateDbAccess stateDb,
+        HistoryDbAccess historyDb,
+        IHubContext<StateManagerService> context)
     {
+        _context = context;
         _configurationManager = configurationManager;
         _stateDb = stateDb;
         _historyDb = historyDb;
@@ -38,8 +45,13 @@ public sealed class DbBasedStateManagerService : IStateManager
 
     public async Task<ServiceState> GetServiceStateAsync(string apiKey)
     {
-        var currentState =  await _stateDb.GetStateAsync(apiKey);
+        var currentState = await _stateDb.GetStateAsync(apiKey);
         return currentState ?? new ServiceState();
+    }
+
+    public async Task<List<TradingEvent>> GetServiceHistoryAsync(string apiKey)
+    {
+        return await _historyDb.GetHistoryAsync(apiKey);
     }
 
     public async Task ClearServiceStateAsync(string apiKey)
@@ -60,92 +72,105 @@ public sealed class DbBasedStateManagerService : IStateManager
         stateToClear.WorkingState = ServiceWorkingState.Down;
 
         await _stateDb.AddOrUpdateStateAsync(stateToClear);
+        await PublishState(stateToClear);
     }
 
     public async Task OnTradingStartedAsync()
     {
-        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.WorkingState = ServiceWorkingState.Up;
         await _stateDb.AddOrUpdateStateAsync(storedState);
         _uptimeProvider.StartCountdown();
+        await PublishState(storedState);
         Log.Information("Worker has started");
     }
 
     public async Task OnTradingStoppedAsync()
     {
-        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.WorkingState = ServiceWorkingState.Down;
         storedState.Uptime = TimeSpan.Zero;
         await _stateDb.AddOrUpdateStateAsync(storedState);
         _uptimeProvider.StopCountdown();
+        await PublishState(storedState);
         Log.Information("Worker has stopped");
     }
 
     public async Task OnLogInPendingAsync()
     {
-        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.IsLoggedIn = LogInState.Pending;
+        await PublishState(storedState);
         await _stateDb.AddOrUpdateStateAsync(storedState);
     }
 
     public async Task OnLoggedInAsync()
     {
-        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.IsLoggedIn = LogInState.LoggedIn;
         storedState.ApiKey = _configurationManager.ApiKey;
+        await PublishState(storedState);
         await _stateDb.AddOrUpdateStateAsync(storedState);
     }
 
     public async Task OnLoggedOutAsync()
     {
-        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.IsLoggedIn = LogInState.NotLoggedIn;
+        await PublishState(storedState);
         await _stateDb.AddOrUpdateStateAsync(storedState);
     }
 
     public async Task OnErrorAsync(Exception exception)
     {
-        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.Errors++;
         await _stateDb.AddOrUpdateStateAsync(storedState);
-        await _historyDb.AddNewEventAsync(new TradingEvent
+        await PublishState(storedState);
+        var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.Error,
             Time = DateTime.UtcNow,
             Info = $"Message: {exception.Message}, StackTrace: {exception.StackTrace}"
-        });
+        };
+        await _historyDb.AddNewEventAsync(tradingEvent);
+        await PublishEvent(tradingEvent);
     }
 
     public async Task OnItemAnalyzingAsync(ItemPage itemPage)
     {
-        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemsAnalyzed++;
         await _stateDb.AddOrUpdateStateAsync(storedState);
-        await _historyDb.AddNewEventAsync(new TradingEvent
+        await PublishState(storedState);
+        var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemAnalyzed,
             CurrentBalance = itemPage.CurrentBalance,
             Time = DateTime.UtcNow,
             Info = itemPage.EngItemName
-        });
+        };
+        await _historyDb.AddNewEventAsync(tradingEvent);
+        await PublishEvent(tradingEvent);
     }
 
     public async Task OnItemSellingAsync(Order order)
     {
-        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey) 
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemsSold++;
         await _stateDb.AddOrUpdateStateAsync(storedState);
-        await _historyDb.AddNewEventAsync(new TradingEvent
+        await PublishState(storedState);
+        var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemSold,
@@ -153,7 +178,9 @@ public sealed class DbBasedStateManagerService : IStateManager
             Info = order.EngItemName,
             SellPrice = order.SellPrice,
             Profit = order.SellPrice - order.BuyPrice - _configurationManager.SteamCommission
-        });
+        };
+        await _historyDb.AddNewEventAsync(tradingEvent);
+        await PublishEvent(tradingEvent);
     }
 
     public async Task OnItemBuyingAsync(Order order)
@@ -162,7 +189,8 @@ public sealed class DbBasedStateManagerService : IStateManager
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemsBought++;
         await _stateDb.AddOrUpdateStateAsync(storedState);
-        await _historyDb.AddNewEventAsync(new TradingEvent
+        await PublishState(storedState);
+        var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemBought,
@@ -170,7 +198,9 @@ public sealed class DbBasedStateManagerService : IStateManager
             Info = order.EngItemName,
             BuyPrice = order.BuyPrice,
             SellPrice = order.SellPrice
-        });
+        };
+        await _historyDb.AddNewEventAsync(tradingEvent);
+        await PublishEvent(tradingEvent);
     }
 
     public async Task OnItemCancellingAsync(Order order)
@@ -179,14 +209,29 @@ public sealed class DbBasedStateManagerService : IStateManager
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemCanceled++;
         await _stateDb.AddOrUpdateStateAsync(storedState);
-        await _historyDb.AddNewEventAsync(new TradingEvent
+        await PublishState(storedState);
+        var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemCanceled,
             Time = DateTime.UtcNow,
             Info = order.EngItemName,
             BuyPrice = order.BuyPrice
-        });
+        };
+        await _historyDb.AddNewEventAsync(tradingEvent);
+        await PublishEvent(tradingEvent);
+    }
+
+    #endregion
+
+    private async Task PublishState(ServiceState state)
+    {
+        await _context.Clients.All.SendAsync("getState", state);
+    }
+
+    private async Task PublishEvent(TradingEvent tradingEvent)
+    {
+        await _context.Clients.All.SendAsync("getEvents", tradingEvent);
     }
 
     private void OnUptimeUpdated(TimeSpan uptime)
@@ -195,5 +240,6 @@ public sealed class DbBasedStateManagerService : IStateManager
                           ?? throw new Exception("There is no state for this api key");
         storedState.Uptime = uptime;
         var _ = _stateDb.AddOrUpdateStateAsync(storedState);
+        var __ = PublishState(storedState);
     }
 }

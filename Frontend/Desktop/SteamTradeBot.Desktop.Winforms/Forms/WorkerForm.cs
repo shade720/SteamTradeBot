@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using SteamTradeBot.Desktop.Winforms.Models;
+﻿using SteamTradeBot.Desktop.Winforms.Models;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
 using SteamTradeBot.Desktop.Winforms.Models.DTOs;
@@ -8,16 +7,19 @@ namespace SteamTradeBot.Desktop.Winforms.Forms;
 
 public partial class WorkerForm : Form
 {
-    private readonly SteamTradeBotRestClient _steamTradeBotServiceClient;
-    private const int PollingDelayMs = 1000;
+    private readonly SteamTradeBotRestClient _restClient;
+    private readonly SteamTradeBotSignalRClient _signalRClient;
 
     public delegate void OnWorkingStateChanged(StateInfo state);
     public event OnWorkingStateChanged? OnWorkingStateChangedEvent;
 
-    public WorkerForm(SteamTradeBotRestClient steamTradeBotServiceClient)
+    public WorkerForm(SteamTradeBotRestClient restClient, SteamTradeBotSignalRClient signalRClient)
     {
         InitializeComponent();
-        _steamTradeBotServiceClient = steamTradeBotServiceClient;
+        _restClient = restClient;
+        _signalRClient = signalRClient;
+        _signalRClient.OnStateRefreshEvent += RefreshServiceStatePanel;
+        _signalRClient.OnHistoryRefreshEvent += RefreshHistoryTable;
     }
 
     private async void StartButton_Click(object sender, EventArgs e)
@@ -31,7 +33,7 @@ public partial class WorkerForm : Form
                 return;
             }
             StartButton.Enabled = false;
-            await _steamTradeBotServiceClient.Start(new Credentials
+            await _restClient.Start(new Credentials
             {
                 Login = settings.Login,
                 Password = settings.Password,
@@ -50,7 +52,7 @@ public partial class WorkerForm : Form
         try
         {
             StopButton.Enabled = false;
-            await _steamTradeBotServiceClient.Stop();
+            await _restClient.Stop();
         }
         catch (Exception exception)
         {
@@ -64,7 +66,7 @@ public partial class WorkerForm : Form
         try
         {
             CancelOrdersButtons.Enabled = false;
-            await _steamTradeBotServiceClient.CancelOrders();
+            await _restClient.CancelOrders();
         }
         catch (Exception exception)
         {
@@ -73,24 +75,14 @@ public partial class WorkerForm : Form
         CancelOrdersButtons.Enabled = true;
     }
 
-    private async void StateRefresher_DoWork(object sender, DoWorkEventArgs e)
-    {
-        while (!StateRefresher.CancellationPending)
-        {
-            await RefreshServiceStatePanel();
-            await Task.Delay(PollingDelayMs);
-        }
-        e.Cancel = true;
-    }
-
     private async void CheckConnectionButton_Click(object sender, EventArgs e)
     {
-        await RefreshServiceStatePanel();
+        var currentState = await _restClient.GetInitState();
+        RefreshServiceStatePanel(currentState);
     }
 
-    private async Task RefreshServiceStatePanel()
+    private void RefreshServiceStatePanel(StateInfo state)
     {
-        var state = await _steamTradeBotServiceClient.CheckState();
         OnWorkingStateChangedEvent?.Invoke(state);
         ThreadHelperClass.ExecOnForm(this, () => ItemsAnalyzedLabel.Text = state.ItemsAnalyzed.ToString());
         ThreadHelperClass.ExecOnForm(this, () => ItemsBoughtLabel.Text = state.ItemsBought.ToString());
@@ -100,24 +92,41 @@ public partial class WorkerForm : Form
         ThreadHelperClass.ExecOnForm(this, () => UptimeLabel.Text = state.Uptime.ToString(@"dd\.hh\:mm\:ss"));
         ThreadHelperClass.ExecOnForm(this, () => ConnectionStateLabel.Text = state.Connection.ToString());
         ThreadHelperClass.ExecOnForm(this, () => ServiceStateLabel.Text = state.WorkingState.ToString());
-        ThreadHelperClass.ExecOnForm(this, () =>
-        {
-            foreach (var eventInfo in state.Events)
-            {
-                AddIfNotExist(eventInfo);
-            }
-        });
         ThreadHelperClass.ExecOnForm(this, () => SetWorkingStateControlsVisibility(state.WorkingState == StateInfo.ServiceWorkingState.Up));
     }
 
-    private void AddIfNotExist(string eventInfo)
+    private void RefreshHistoryTable(TradingEvent eventInfo)
     {
-        var info = eventInfo.Split('#');
-        var entryFound = HistoryDataGridView.Rows.Cast<DataGridViewRow>().Any(row => row.Cells[0].Value.ToString() == info[0] && row.Cells[1].Value.ToString() == info[1]);
-        if (!entryFound)
+        ThreadHelperClass.ExecOnForm(this, () =>
         {
-            HistoryDataGridView.Rows.Add(info);
-        }
+            var type = eventInfo.Type switch
+            {
+                InfoType.ItemAnalyzed => "Analyzed",
+                InfoType.ItemBought => "Bought",
+                InfoType.ItemSold => "Sold",
+                InfoType.ItemCanceled => "Canceled",
+                InfoType.Error => "Error",
+                InfoType.Warning => "Warning",
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            var rowIndex = HistoryDataGridView.Rows.Add(
+                eventInfo.Time,
+                eventInfo.Info,
+                type,
+                eventInfo.BuyPrice == 0 ? string.Empty : eventInfo.BuyPrice,
+                eventInfo.SellPrice == 0 ? string.Empty : eventInfo.SellPrice,
+                eventInfo.Profit == 0 ? string.Empty : eventInfo.Profit);
+            HistoryDataGridView.Rows[rowIndex].DefaultCellStyle.BackColor = eventInfo.Type switch
+            {
+                InfoType.ItemAnalyzed => Color.White,
+                InfoType.ItemBought => Color.Orange,
+                InfoType.ItemSold => Color.Chartreuse,
+                InfoType.ItemCanceled => Color.Gray,
+                InfoType.Error => Color.Red,
+                InfoType.Warning => Color.Yellow,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        });
     }
 
     private void SetWorkingStateControlsVisibility(bool isWorking)
@@ -126,17 +135,11 @@ public partial class WorkerForm : Form
         StopButton.Visible = isWorking;
     }
 
-
-    private void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)
-    {
-        StateRefresher.CancelAsync();
-    }
-
     private async void ViewLogsButton_Click(object sender, EventArgs e)
     {
         try
         {
-            var logs = await _steamTradeBotServiceClient.GetLogFile();
+            var logs = await _restClient.GetLogFile();
             var logsForm = new LogForm(logs);
             logsForm.Show();
         }
@@ -146,17 +149,28 @@ public partial class WorkerForm : Form
         }
     }
 
-    private void WorkerForm_Load(object sender, EventArgs e)
+    private async void WorkerForm_Load(object sender, EventArgs e)
     {
-        if (StateRefresher.IsBusy != true)
-            StateRefresher.RunWorkerAsync();
+        await _signalRClient.Connect();
+        var initState = await _restClient.GetInitState();
+        RefreshServiceStatePanel(initState);
+        var initTradingHistory = await _restClient.GetInitHistory();
+        foreach (var tradingEvent in initTradingHistory)
+        {
+            RefreshHistoryTable(tradingEvent);
+        }
+    }
+
+    private async void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        await _signalRClient.Disconnect();
     }
 
     private async void ResetStateButton_Click(object sender, EventArgs e)
     {
         try
         {
-            await _steamTradeBotServiceClient.ResetState();
+            await _restClient.ResetState();
         }
         catch (Exception exception)
         {
