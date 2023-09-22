@@ -2,6 +2,7 @@
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
 using SteamTradeBot.Desktop.Winforms.Models.DTOs;
+using System.Data;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -18,8 +19,6 @@ public partial class WorkerForm : Form
         InitializeComponent();
         _restClient = restClient;
         _signalRClient = signalRClient;
-        _signalRClient.OnStateRefreshEvent += RefreshServiceStatePanel;
-        _signalRClient.OnHistoryRefreshEvent += RefreshHistoryTable;
     }
 
     private async void StartButton_Click(object sender, EventArgs e)
@@ -58,7 +57,6 @@ public partial class WorkerForm : Form
         {
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
-        StopButton.Enabled = true;
     }
 
     private async void CancelOrdersButtons_Click(object sender, EventArgs e)
@@ -97,6 +95,8 @@ public partial class WorkerForm : Form
 
     private void RefreshHistoryTable(TradingEvent eventInfo)
     {
+        if (eventInfo.Type == InfoType.ItemAnalyzed)
+            return;
         ThreadHelperClass.ExecOnForm(this, () =>
         {
             var type = eventInfo.Type switch
@@ -126,7 +126,21 @@ public partial class WorkerForm : Form
                 InfoType.Warning => Color.Yellow,
                 _ => throw new ArgumentOutOfRangeException()
             };
+            var filter = HistoryFilterComboBox.SelectedItem.ToString();
+            HistoryDataGridView.Rows[rowIndex].Visible = filter == "All" || filter == type;
         });
+    }
+
+    private void HistoryFilterComboBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (HistoryDataGridView.RowCount <= 0)
+            return;
+        var filter = HistoryFilterComboBox.SelectedItem.ToString();
+        foreach (var row in HistoryDataGridView.Rows.OfType<DataGridViewRow>())
+        {
+            row.Visible = filter == "All" ||
+                          filter == row.Cells[2].Value.ToString();
+        }
     }
 
     private void SetWorkingStateControlsVisibility(bool isWorking)
@@ -151,7 +165,9 @@ public partial class WorkerForm : Form
 
     private async void WorkerForm_Load(object sender, EventArgs e)
     {
-        await _signalRClient.Connect();
+        _signalRClient.OnStateRefreshEvent += RefreshServiceStatePanel;
+        _signalRClient.OnHistoryRefreshEvent += RefreshHistoryTable;
+        HistoryFilterComboBox.SelectedIndex = 0;
         var initState = await _restClient.GetInitState();
         RefreshServiceStatePanel(initState);
         var initTradingHistory = await _restClient.GetInitHistory();
@@ -163,7 +179,8 @@ public partial class WorkerForm : Form
 
     private async void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        await _signalRClient.Disconnect();
+        _signalRClient.OnStateRefreshEvent -= RefreshServiceStatePanel;
+        _signalRClient.OnHistoryRefreshEvent -= RefreshHistoryTable;
     }
 
     private async void ResetStateButton_Click(object sender, EventArgs e)

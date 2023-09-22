@@ -47,16 +47,21 @@ public sealed class ItemPageFactory
         itemPage.SalesChart = await _api.GetChartAsync(itemPage.ItemUrl, fromDate);
 
         itemPage.SellOrderBook = await _api.GetSellOrdersBookAsync(itemPage.ItemUrl, _configurationManager.SellListingFindRange);
+
+        var salesPerDay = itemPage.SalesChart
+            .GroupBy(x => x.Date.Date)
+            .Select(x => x.Sum(y => y.Quantity))
+            .Average();
+
         itemPage.BuyOrderBook = (await _api.GetBuyOrdersBookAsync(itemPage.ItemUrl, 5))
-            .Aggregate(new List<OrderBookItem>(), (list, order) =>
-            {
-                if (list.Sum(x => x.Quantity) < _configurationManager.SalesPerDay * _configurationManager.SalesRatio)
-                    list.Add(order);
-                return list;
-            })
-            .SkipLast(1)
             .OrderByDescending(x => x.Price)
-            .ToList();
+            .Aggregate(new List<OrderBookItem>(), (resultOrderBook, orderBookItem) =>
+            {
+                var salesToCompare = resultOrderBook.Sum(x => x.Quantity);
+                if (salesToCompare < salesPerDay * _configurationManager.SalesRatio)
+                    resultOrderBook.Add(orderBookItem);
+                return resultOrderBook;
+            });
         itemPage.CurrentBalance = await _api.GetBalanceAsync();
 
         Log.Logger.Information("Item {0} provided:\r\nUrl: {1}\r\nRusName: {2}\r\nExisting order: (Price: {3}; Quantity: {4})\r\nBuy order book: {5}...\r\nSell order book: {6}...",

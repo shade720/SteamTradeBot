@@ -7,6 +7,7 @@ public class SteamTradeBotSignalRClient
 {
     private const string DefaultHost = "http://localhost:5050";
     private const string SignalREndpoint = "stateManager";
+    private const int DelayBetweenAttemptsMs = 1000;
 
     private readonly HubConnection _hub;
 
@@ -42,7 +43,19 @@ public class SteamTradeBotSignalRClient
 
     public async Task Connect()
     {
-        await _hub.StartAsync();
+        while (true)
+        {
+            try
+            {
+                await _hub.StartAsync();
+                return;
+            }
+            catch
+            {
+                OnStateRefreshEvent?.Invoke(new StateInfo());
+                Thread.Sleep(DelayBetweenAttemptsMs);
+            }
+        }
     }
 
     public async Task Disconnect()

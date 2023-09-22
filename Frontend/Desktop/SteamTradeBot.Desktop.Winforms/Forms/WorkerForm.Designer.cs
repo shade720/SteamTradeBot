@@ -51,6 +51,7 @@
             ResetStateButton = new Button();
             CheckConnectionButton = new Button();
             groupBox2 = new GroupBox();
+            HistoryFilterComboBox = new ComboBox();
             HistoryDataGridView = new DataGridView();
             TimeColumn = new DataGridViewTextBoxColumn();
             Item = new DataGridViewTextBoxColumn();
@@ -346,6 +347,7 @@
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Controls.Add(HistoryFilterComboBox);
             groupBox2.Controls.Add(HistoryDataGridView);
             groupBox2.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
             groupBox2.ForeColor = Color.DodgerBlue;
@@ -357,6 +359,18 @@
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Trade history";
+            // 
+            // HistoryFilterComboBox
+            // 
+            HistoryFilterComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            HistoryFilterComboBox.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            HistoryFilterComboBox.FormattingEnabled = true;
+            HistoryFilterComboBox.Items.AddRange(new object[] { "All", "Bought", "Sold", "Canceled", "Error", "Warning" });
+            HistoryFilterComboBox.Location = new Point(154, 0);
+            HistoryFilterComboBox.Name = "HistoryFilterComboBox";
+            HistoryFilterComboBox.Size = new Size(125, 28);
+            HistoryFilterComboBox.TabIndex = 1;
+            HistoryFilterComboBox.SelectedIndexChanged += HistoryFilterComboBox_SelectedIndexChanged;
             // 
             // HistoryDataGridView
             // 
@@ -387,7 +401,7 @@
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             HistoryDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
             HistoryDataGridView.EnableHeadersVisualStyles = false;
-            HistoryDataGridView.Location = new Point(10, 39);
+            HistoryDataGridView.Location = new Point(10, 36);
             HistoryDataGridView.Margin = new Padding(2);
             HistoryDataGridView.Name = "HistoryDataGridView";
             HistoryDataGridView.ReadOnly = true;
@@ -402,7 +416,7 @@
             dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
             HistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
             HistoryDataGridView.RowTemplate.Height = 29;
-            HistoryDataGridView.Size = new Size(907, 566);
+            HistoryDataGridView.Size = new Size(907, 569);
             HistoryDataGridView.TabIndex = 0;
             // 
             // TimeColumn
@@ -617,5 +631,6 @@
         private DataGridViewTextBoxColumn SellPrice;
         private DataGridViewTextBoxColumn Profit;
         private Button ResetStateButton;
+        private ComboBox HistoryFilterComboBox;
     }
 }

@@ -27,9 +27,18 @@ public sealed class CancelMarketSolution : MarketSolution
         var order = await OrdersDb.GetOrderAsync(itemPage.EngItemName, ConfigurationManager.ApiKey, OrderType.BuyOrder);
         if (order is null)
             throw new Exception("Can't load stored buy order from database.");
-        await SteamApi.CancelBuyOrderAsync(order.ItemUrl);
-        await OrdersDb.RemoveOrderAsync(order);
-        await StateManager.OnItemCancellingAsync(order);
-        Log.Information("Buy order {0} (Price: {1}, Quantity: {2}) has been canceled.", order.EngItemName, order.BuyPrice, order.Quantity);
+        var successfullyCanceled = await SteamApi.CancelBuyOrderAsync(order.ItemUrl);
+        if (successfullyCanceled)
+        {
+            await OrdersDb.RemoveOrderAsync(order);
+            await OrdersDb.RemoveOrderAsync(order);
+            await StateManager.OnItemCancellingAsync(order);
+            Log.Information("Buy order {0} (Price: {1}, Quantity: {2}) has been canceled.", order.EngItemName, order.BuyPrice, order.Quantity);
+        }
+        else
+        {
+            Log.Logger.Warning("Can't cancel item {0} (Price: {1}, Quantity: {2})",
+                order.EngItemName, order.BuyPrice, order.Quantity);
+        }
     }
 }

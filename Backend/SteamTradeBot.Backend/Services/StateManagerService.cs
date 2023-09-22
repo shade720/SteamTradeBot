@@ -1,39 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.SignalR;
 using Serilog;
+using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 using SteamTradeBot.Backend.DataAccessLayer;
+using SteamTradeBot.Backend.Models.Abstractions;
 using SteamTradeBot.Backend.Models.ItemModel;
 using SteamTradeBot.Backend.Models.StateModel;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
-using Microsoft.AspNetCore.SignalR;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.Services;
 
 public sealed class StateManagerService : Hub, IStateManager
 {
     private readonly IConfigurationManager _configurationManager;
+    private readonly IHubContext<StateManagerService> _context;
     private readonly StateDbAccess _stateDb;
     private readonly HistoryDbAccess _historyDb;
     private readonly UptimeProvider _uptimeProvider;
-    private IHubContext<StateManagerService> _context;
-
+    
     #region PublicInterface
 
     public StateManagerService(
         IConfigurationManager configurationManager,
+        IHubContext<StateManagerService> context,
         StateDbAccess stateDb,
-        HistoryDbAccess historyDb,
-        IHubContext<StateManagerService> context)
+        HistoryDbAccess historyDb)
     {
-        _context = context;
         _configurationManager = configurationManager;
+        _context = context;
         _stateDb = stateDb;
         _historyDb = historyDb;
         _uptimeProvider = new UptimeProvider();
         _uptimeProvider.UptimeUpdate += OnUptimeUpdated;
     }
+
+    #region State
 
     public async Task EnsureStateCreated()
     {
@@ -47,11 +49,6 @@ public sealed class StateManagerService : Hub, IStateManager
     {
         var currentState = await _stateDb.GetStateAsync(apiKey);
         return currentState ?? new ServiceState();
-    }
-
-    public async Task<List<TradingEvent>> GetServiceHistoryAsync(string apiKey)
-    {
-        return await _historyDb.GetHistoryAsync(apiKey);
     }
 
     public async Task ClearServiceStateAsync(string apiKey)
@@ -126,6 +123,15 @@ public sealed class StateManagerService : Hub, IStateManager
         await _stateDb.AddOrUpdateStateAsync(storedState);
     }
 
+    #endregion
+
+    #region History
+
+    public async Task<List<TradingEvent>> GetServiceHistoryAsync(string apiKey)
+    {
+        return await _historyDb.GetHistoryAsync(apiKey);
+    }
+
     public async Task OnErrorAsync(Exception exception)
     {
         var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
@@ -137,7 +143,7 @@ public sealed class StateManagerService : Hub, IStateManager
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.Error,
-            Time = DateTime.UtcNow,
+            Time = DateTime.Now,
             Info = $"Message: {exception.Message}, StackTrace: {exception.StackTrace}"
         };
         await _historyDb.AddNewEventAsync(tradingEvent);
@@ -151,12 +157,13 @@ public sealed class StateManagerService : Hub, IStateManager
         storedState.ItemsAnalyzed++;
         await _stateDb.AddOrUpdateStateAsync(storedState);
         await PublishState(storedState);
+
         var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemAnalyzed,
             CurrentBalance = itemPage.CurrentBalance,
-            Time = DateTime.UtcNow,
+            Time = DateTime.Now,
             Info = itemPage.EngItemName
         };
         await _historyDb.AddNewEventAsync(tradingEvent);
@@ -174,10 +181,11 @@ public sealed class StateManagerService : Hub, IStateManager
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemSold,
-            Time = DateTime.UtcNow,
+            Time = DateTime.Now,
             Info = order.EngItemName,
+            BuyPrice = order.BuyPrice,
             SellPrice = order.SellPrice,
-            Profit = order.SellPrice - order.BuyPrice - _configurationManager.SteamCommission
+            Profit = (1 - _configurationManager.SteamCommission) * order.SellPrice - order.BuyPrice
         };
         await _historyDb.AddNewEventAsync(tradingEvent);
         await PublishEvent(tradingEvent);
@@ -194,7 +202,7 @@ public sealed class StateManagerService : Hub, IStateManager
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemBought,
-            Time = DateTime.UtcNow,
+            Time = DateTime.Now,
             Info = order.EngItemName,
             BuyPrice = order.BuyPrice,
             SellPrice = order.SellPrice
@@ -214,7 +222,7 @@ public sealed class StateManagerService : Hub, IStateManager
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemCanceled,
-            Time = DateTime.UtcNow,
+            Time = DateTime.Now,
             Info = order.EngItemName,
             BuyPrice = order.BuyPrice
         };
@@ -223,6 +231,10 @@ public sealed class StateManagerService : Hub, IStateManager
     }
 
     #endregion
+
+    #endregion
+
+    #region Private
 
     private async Task PublishState(ServiceState state)
     {
@@ -242,4 +254,6 @@ public sealed class StateManagerService : Hub, IStateManager
         var _ = _stateDb.AddOrUpdateStateAsync(storedState);
         var __ = PublishState(storedState);
     }
+
+    #endregion
 }

@@ -359,7 +359,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
         });
     }
 
-    private const string ExistingBuyOrderCancelButtonId = "//*[@id='tabContentsMyListings']/div/div[2]/div[2]/span/span";
+    private const string ExistingBuyOrderCancelButtonId = "//*[@id='tabContentsMyListings']/div/div[2]/div[5]/div/a";
     private static readonly By ExistingBuyOrderCancelButton = By.XPath(ExistingBuyOrderCancelButtonId);
 
     public async Task<bool> CancelBuyOrderAsync(string itemUrl)
@@ -368,8 +368,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
         {
             _webDriver.SetPage(itemUrl);
             _webDriver.ClickOnElement(ExistingBuyOrderCancelButton);
-            var quantityToCheck = GetBuyOrderQuantityAsync(itemUrl).Result;
-            return quantityToCheck is null;
+            return true;
         }, true);
     }
 

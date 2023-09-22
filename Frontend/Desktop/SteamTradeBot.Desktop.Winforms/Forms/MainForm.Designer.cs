@@ -44,12 +44,14 @@
             Frame = new Panel();
             CurrentWorkLabel = new Label();
             panel2 = new Panel();
+            panel5 = new Panel();
             panel1.SuspendLayout();
             panel4.SuspendLayout();
             ServiceStatePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SteamLogoPictureBox).BeginInit();
             panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)LoadingPictureBox).BeginInit();
+            panel5.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -76,7 +78,7 @@
             panel4.Location = new Point(0, 97);
             panel4.Margin = new Padding(3, 2, 3, 2);
             panel4.Name = "panel4";
-            panel4.Size = new Size(219, 246);
+            panel4.Size = new Size(219, 170);
             panel4.TabIndex = 1;
             // 
             // StatsNavButton
@@ -93,6 +95,7 @@
             StatsNavButton.TabIndex = 11;
             StatsNavButton.Text = "Stats";
             StatsNavButton.UseVisualStyleBackColor = true;
+            StatsNavButton.Click += StatsNavButton_Click;
             // 
             // SettingsNavButton
             // 
@@ -191,7 +194,7 @@
             // 
             LoadingPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
             LoadingPictureBox.Image = (Image)resources.GetObject("LoadingPictureBox.Image");
-            LoadingPictureBox.Location = new Point(1510, 672);
+            LoadingPictureBox.Location = new Point(1290, 1);
             LoadingPictureBox.Margin = new Padding(3, 2, 3, 2);
             LoadingPictureBox.Name = "LoadingPictureBox";
             LoadingPictureBox.Size = new Size(44, 38);
@@ -214,7 +217,7 @@
             // 
             CurrentWorkLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             CurrentWorkLabel.ForeColor = Color.Black;
-            CurrentWorkLabel.Location = new Point(1029, 672);
+            CurrentWorkLabel.Location = new Point(809, 1);
             CurrentWorkLabel.Name = "CurrentWorkLabel";
             CurrentWorkLabel.RightToLeft = RightToLeft.No;
             CurrentWorkLabel.Size = new Size(476, 38);
@@ -233,6 +236,16 @@
             panel2.Size = new Size(1335, 38);
             panel2.TabIndex = 55;
             // 
+            // panel5
+            // 
+            panel5.BackColor = Color.Azure;
+            panel5.Controls.Add(CurrentWorkLabel);
+            panel5.Controls.Add(LoadingPictureBox);
+            panel5.Location = new Point(218, 671);
+            panel5.Name = "panel5";
+            panel5.Size = new Size(1336, 40);
+            panel5.TabIndex = 0;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -241,9 +254,8 @@
             BackColor = Color.White;
             BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(1554, 711);
+            Controls.Add(panel5);
             Controls.Add(panel2);
-            Controls.Add(LoadingPictureBox);
-            Controls.Add(CurrentWorkLabel);
             Controls.Add(panel1);
             Controls.Add(Frame);
             DoubleBuffered = true;
@@ -262,6 +274,7 @@
             ((System.ComponentModel.ISupportInitialize)SteamLogoPictureBox).EndInit();
             panel3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)LoadingPictureBox).EndInit();
+            panel5.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -286,6 +299,7 @@
         private Button WorkerNavButton;
         private Panel panel6;
         private Panel panel2;
+        private Panel panel5;
     }
 }
 

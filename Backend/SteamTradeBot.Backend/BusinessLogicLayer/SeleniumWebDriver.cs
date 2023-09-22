@@ -99,7 +99,7 @@ public class SeleniumWebDriver : IDisposable
                     throw;
             }
         }
-        return default;
+        return default(T);
     }
 
     public void Dispose()

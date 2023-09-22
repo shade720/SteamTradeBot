@@ -16,13 +16,14 @@ public class StateInfo
     public enum ServiceWorkingState
     {
         Up,
-        Down
+        Down,
+        
     }
 
     public enum ConnectionState
     {
         Connected,
-        Disconnected
+        Disconnected,
     }
     public enum LogInState
     {

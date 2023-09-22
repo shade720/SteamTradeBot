@@ -88,6 +88,11 @@ public partial class MainForm : Form
         _workerForm.Hide();
     }
 
+    private void StatsNavButton_Click(object sender, EventArgs e)
+    {
+
+    }
+
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
         _workerForm.Dispose();
