@@ -38,13 +38,12 @@ public sealed class FitPriceRule : ICancelRule
         }
         var existedBuyOrder = await _ordersDb.GetOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey, OrderType.BuyOrder);
 
-        var isOrderObsolete = existedBuyOrder is not null && itemPage.BuyOrderBook.Any(x =>
-            Math.Abs(x.Price - existedBuyOrder.BuyPrice) > _configurationManager.FitPriceRange);
+        var isOrderObsolete = existedBuyOrder is not null && 
+                              itemPage.BuyOrderBook.All(x => Math.Abs(x.Price - existedBuyOrder.SellPrice) > _configurationManager.FitPriceRange);
         if (!isOrderObsolete)
         {
             Log.Information("Order is still relevant.");
             return false;
-            
         }
         Log.Information("Order is obsolete. Cancelling...");
         return true;
