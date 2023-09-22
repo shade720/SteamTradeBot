@@ -238,7 +238,7 @@
             // 
             // panel5
             // 
-            panel5.BackColor = Color.Azure;
+            panel5.BackColor = Color.SteelBlue;
             panel5.Controls.Add(CurrentWorkLabel);
             panel5.Controls.Add(LoadingPictureBox);
             panel5.Location = new Point(219, 672);

@@ -92,7 +92,7 @@
             label8.BackColor = Color.Transparent;
             label8.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label8.ForeColor = Color.DodgerBlue;
-            label8.Location = new Point(122, 173);
+            label8.Location = new Point(118, 113);
             label8.Name = "label8";
             label8.Size = new Size(64, 21);
             label8.TabIndex = 76;
@@ -105,7 +105,7 @@
             label6.BackColor = Color.Transparent;
             label6.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label6.ForeColor = Color.DodgerBlue;
-            label6.Location = new Point(106, 138);
+            label6.Location = new Point(102, 78);
             label6.Name = "label6";
             label6.Size = new Size(80, 21);
             label6.TabIndex = 75;
@@ -118,7 +118,7 @@
             label5.BackColor = Color.Transparent;
             label5.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label5.ForeColor = Color.DodgerBlue;
-            label5.Location = new Point(108, 103);
+            label5.Location = new Point(104, 43);
             label5.Name = "label5";
             label5.Size = new Size(78, 21);
             label5.TabIndex = 74;
@@ -151,11 +151,11 @@
             groupBox2.Controls.Add(label8);
             groupBox2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox2.ForeColor = Color.DodgerBlue;
-            groupBox2.Location = new Point(423, 55);
+            groupBox2.Location = new Point(875, 56);
             groupBox2.Margin = new Padding(3, 2, 3, 2);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(3, 2, 3, 2);
-            groupBox2.Size = new Size(436, 270);
+            groupBox2.Size = new Size(426, 159);
             groupBox2.TabIndex = 92;
             groupBox2.TabStop = false;
             groupBox2.Text = "Items list settings";
@@ -167,10 +167,10 @@
             ItemListSizeTextBox.BorderStyle = BorderStyle.FixedSingle;
             ItemListSizeTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ItemListSizeTextBox.ForeColor = Color.Black;
-            ItemListSizeTextBox.Location = new Point(192, 171);
+            ItemListSizeTextBox.Location = new Point(188, 111);
             ItemListSizeTextBox.Margin = new Padding(2);
             ItemListSizeTextBox.Name = "ItemListSizeTextBox";
-            ItemListSizeTextBox.Size = new Size(130, 29);
+            ItemListSizeTextBox.Size = new Size(120, 29);
             ItemListSizeTextBox.TabIndex = 89;
             // 
             // MaxPriceTextBox
@@ -180,10 +180,10 @@
             MaxPriceTextBox.BorderStyle = BorderStyle.FixedSingle;
             MaxPriceTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             MaxPriceTextBox.ForeColor = Color.Black;
-            MaxPriceTextBox.Location = new Point(192, 136);
+            MaxPriceTextBox.Location = new Point(188, 76);
             MaxPriceTextBox.Margin = new Padding(2);
             MaxPriceTextBox.Name = "MaxPriceTextBox";
-            MaxPriceTextBox.Size = new Size(130, 29);
+            MaxPriceTextBox.Size = new Size(120, 29);
             MaxPriceTextBox.TabIndex = 88;
             // 
             // MinPriceTextBox
@@ -193,10 +193,10 @@
             MinPriceTextBox.BorderStyle = BorderStyle.FixedSingle;
             MinPriceTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             MinPriceTextBox.ForeColor = Color.Black;
-            MinPriceTextBox.Location = new Point(192, 101);
+            MinPriceTextBox.Location = new Point(188, 41);
             MinPriceTextBox.Margin = new Padding(2);
             MinPriceTextBox.Name = "MinPriceTextBox";
-            MinPriceTextBox.Size = new Size(130, 29);
+            MinPriceTextBox.Size = new Size(120, 29);
             MinPriceTextBox.TabIndex = 87;
             // 
             // ResetSettingsButton
@@ -206,7 +206,7 @@
             ResetSettingsButton.FlatStyle = FlatStyle.Flat;
             ResetSettingsButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             ResetSettingsButton.ForeColor = Color.White;
-            ResetSettingsButton.Location = new Point(1122, -1);
+            ResetSettingsButton.Location = new Point(1175, 578);
             ResetSettingsButton.Margin = new Padding(3, 2, 3, 2);
             ResetSettingsButton.Name = "ResetSettingsButton";
             ResetSettingsButton.Size = new Size(136, 33);
@@ -222,10 +222,10 @@
             SteamCommissionTextBox.BorderStyle = BorderStyle.FixedSingle;
             SteamCommissionTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             SteamCommissionTextBox.ForeColor = Color.Black;
-            SteamCommissionTextBox.Location = new Point(171, 230);
+            SteamCommissionTextBox.Location = new Point(171, 147);
             SteamCommissionTextBox.Margin = new Padding(4);
             SteamCommissionTextBox.Name = "SteamCommissionTextBox";
-            SteamCommissionTextBox.Size = new Size(179, 29);
+            SteamCommissionTextBox.Size = new Size(222, 29);
             SteamCommissionTextBox.TabIndex = 88;
             // 
             // SteamUserIdTextBox
@@ -235,10 +235,10 @@
             SteamUserIdTextBox.BorderStyle = BorderStyle.FixedSingle;
             SteamUserIdTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             SteamUserIdTextBox.ForeColor = Color.Black;
-            SteamUserIdTextBox.Location = new Point(171, 186);
+            SteamUserIdTextBox.Location = new Point(171, 114);
             SteamUserIdTextBox.Margin = new Padding(4);
             SteamUserIdTextBox.Name = "SteamUserIdTextBox";
-            SteamUserIdTextBox.Size = new Size(179, 29);
+            SteamUserIdTextBox.Size = new Size(222, 29);
             SteamUserIdTextBox.TabIndex = 87;
             // 
             // label1
@@ -248,7 +248,7 @@
             label1.BackColor = Color.Transparent;
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label1.ForeColor = Color.DodgerBlue;
-            label1.Location = new Point(51, 188);
+            label1.Location = new Point(51, 116);
             label1.Name = "label1";
             label1.Size = new Size(106, 21);
             label1.TabIndex = 74;
@@ -261,7 +261,7 @@
             label2.BackColor = Color.Transparent;
             label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label2.ForeColor = Color.DodgerBlue;
-            label2.Location = new Point(16, 232);
+            label2.Location = new Point(16, 149);
             label2.Name = "label2";
             label2.Size = new Size(141, 21);
             label2.TabIndex = 75;
@@ -299,11 +299,11 @@
             groupBox5.Controls.Add(label16);
             groupBox5.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox5.ForeColor = Color.DodgerBlue;
-            groupBox5.Location = new Point(865, 54);
+            groupBox5.Location = new Point(426, 55);
             groupBox5.Margin = new Padding(3, 2, 3, 2);
             groupBox5.Name = "groupBox5";
             groupBox5.Padding = new Padding(3, 2, 3, 2);
-            groupBox5.Size = new Size(393, 464);
+            groupBox5.Size = new Size(436, 259);
             groupBox5.TabIndex = 97;
             groupBox5.TabStop = false;
             groupBox5.Text = "Steam settings";
@@ -313,12 +313,12 @@
             ChooseMaFileButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ChooseMaFileButton.BackColor = Color.DodgerBlue;
             ChooseMaFileButton.FlatStyle = FlatStyle.Flat;
-            ChooseMaFileButton.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            ChooseMaFileButton.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             ChooseMaFileButton.ForeColor = Color.White;
-            ChooseMaFileButton.Location = new Point(134, 419);
+            ChooseMaFileButton.Location = new Point(204, 213);
             ChooseMaFileButton.Margin = new Padding(3, 2, 3, 2);
             ChooseMaFileButton.Name = "ChooseMaFileButton";
-            ChooseMaFileButton.Size = new Size(142, 41);
+            ChooseMaFileButton.Size = new Size(159, 33);
             ChooseMaFileButton.TabIndex = 11;
             ChooseMaFileButton.Text = "Set MaFile Path";
             ChooseMaFileButton.UseVisualStyleBackColor = false;
@@ -331,7 +331,7 @@
             SaveCredentialsButton.FlatStyle = FlatStyle.Flat;
             SaveCredentialsButton.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
             SaveCredentialsButton.ForeColor = Color.White;
-            SaveCredentialsButton.Location = new Point(280, 717);
+            SaveCredentialsButton.Location = new Point(302, 512);
             SaveCredentialsButton.Margin = new Padding(3, 2, 3, 2);
             SaveCredentialsButton.Name = "SaveCredentialsButton";
             SaveCredentialsButton.Size = new Size(175, 45);
@@ -345,10 +345,10 @@
             MaFilePathTextBox.BackColor = SystemColors.ControlLightLight;
             MaFilePathTextBox.BorderStyle = BorderStyle.FixedSingle;
             MaFilePathTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            MaFilePathTextBox.Location = new Point(171, 137);
+            MaFilePathTextBox.Location = new Point(171, 180);
             MaFilePathTextBox.Margin = new Padding(3, 2, 3, 2);
             MaFilePathTextBox.Name = "MaFilePathTextBox";
-            MaFilePathTextBox.Size = new Size(179, 29);
+            MaFilePathTextBox.Size = new Size(222, 29);
             MaFilePathTextBox.TabIndex = 9;
             // 
             // label14
@@ -356,7 +356,7 @@
             label14.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label14.AutoSize = true;
             label14.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label14.Location = new Point(32, 139);
+            label14.Location = new Point(32, 182);
             label14.Name = "label14";
             label14.Size = new Size(125, 21);
             label14.TabIndex = 8;
@@ -368,11 +368,11 @@
             PasswordTextBox.BackColor = SystemColors.ControlLightLight;
             PasswordTextBox.BorderStyle = BorderStyle.FixedSingle;
             PasswordTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            PasswordTextBox.Location = new Point(171, 92);
+            PasswordTextBox.Location = new Point(171, 81);
             PasswordTextBox.Margin = new Padding(3, 2, 3, 2);
             PasswordTextBox.Name = "PasswordTextBox";
             PasswordTextBox.PasswordChar = '*';
-            PasswordTextBox.Size = new Size(179, 29);
+            PasswordTextBox.Size = new Size(222, 29);
             PasswordTextBox.TabIndex = 3;
             // 
             // label15
@@ -380,7 +380,7 @@
             label15.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label15.AutoSize = true;
             label15.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label15.Location = new Point(33, 94);
+            label15.Location = new Point(33, 83);
             label15.Name = "label15";
             label15.Size = new Size(124, 21);
             label15.TabIndex = 2;
@@ -395,7 +395,7 @@
             LogInTextBox.Location = new Point(171, 48);
             LogInTextBox.Margin = new Padding(3, 2, 3, 2);
             LogInTextBox.Name = "LogInTextBox";
-            LogInTextBox.Size = new Size(179, 29);
+            LogInTextBox.Size = new Size(222, 29);
             LogInTextBox.TabIndex = 1;
             // 
             // label16
@@ -418,11 +418,11 @@
             groupBox4.Controls.Add(label12);
             groupBox4.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox4.ForeColor = Color.DodgerBlue;
-            groupBox4.Location = new Point(423, 329);
+            groupBox4.Location = new Point(426, 318);
             groupBox4.Margin = new Padding(3, 2, 3, 2);
             groupBox4.Name = "groupBox4";
             groupBox4.Padding = new Padding(3, 2, 3, 2);
-            groupBox4.Size = new Size(436, 189);
+            groupBox4.Size = new Size(436, 200);
             groupBox4.TabIndex = 96;
             groupBox4.TabStop = false;
             groupBox4.Text = "Connection settings";
@@ -517,7 +517,7 @@
             label10.BackColor = Color.Transparent;
             label10.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label10.ForeColor = Color.DodgerBlue;
-            label10.Location = new Point(123, 331);
+            label10.Location = new Point(125, 345);
             label10.Name = "label10";
             label10.Size = new Size(82, 21);
             label10.TabIndex = 89;
@@ -530,7 +530,7 @@
             SalesRatio.BorderStyle = BorderStyle.FixedSingle;
             SalesRatio.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             SalesRatio.ForeColor = Color.Black;
-            SalesRatio.Location = new Point(210, 329);
+            SalesRatio.Location = new Point(212, 343);
             SalesRatio.Margin = new Padding(2);
             SalesRatio.Name = "SalesRatio";
             SalesRatio.Size = new Size(85, 29);
@@ -543,7 +543,7 @@
             label7.BackColor = Color.Transparent;
             label7.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label7.ForeColor = Color.DodgerBlue;
-            label7.Location = new Point(93, 296);
+            label7.Location = new Point(95, 310);
             label7.Name = "label7";
             label7.Size = new Size(112, 21);
             label7.TabIndex = 87;
@@ -556,7 +556,7 @@
             OrderQuantityTextBox.BorderStyle = BorderStyle.FixedSingle;
             OrderQuantityTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             OrderQuantityTextBox.ForeColor = Color.Black;
-            OrderQuantityTextBox.Location = new Point(210, 294);
+            OrderQuantityTextBox.Location = new Point(212, 308);
             OrderQuantityTextBox.Margin = new Padding(2);
             OrderQuantityTextBox.Name = "OrderQuantityTextBox";
             OrderQuantityTextBox.Size = new Size(85, 29);
@@ -569,7 +569,7 @@
             label5235262.BackColor = Color.Transparent;
             label5235262.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label5235262.ForeColor = Color.DodgerBlue;
-            label5235262.Location = new Point(99, 84);
+            label5235262.Location = new Point(101, 98);
             label5235262.Name = "label5235262";
             label5235262.Size = new Size(106, 21);
             label5235262.TabIndex = 58;
@@ -582,7 +582,7 @@
             label3.BackColor = Color.Transparent;
             label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label3.ForeColor = Color.DodgerBlue;
-            label3.Location = new Point(103, 49);
+            label3.Location = new Point(105, 63);
             label3.Name = "label3";
             label3.Size = new Size(102, 21);
             label3.TabIndex = 54;
@@ -595,7 +595,7 @@
             label9.BackColor = Color.Transparent;
             label9.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label9.ForeColor = Color.DodgerBlue;
-            label9.Location = new Point(156, 224);
+            label9.Location = new Point(158, 238);
             label9.Name = "label9";
             label9.Size = new Size(49, 21);
             label9.TabIndex = 85;
@@ -608,7 +608,7 @@
             label1525.BackColor = Color.Transparent;
             label1525.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label1525.ForeColor = Color.DodgerBlue;
-            label1525.Location = new Point(49, 366);
+            label1525.Location = new Point(51, 380);
             label1525.Name = "label1525";
             label1525.Size = new Size(156, 21);
             label1525.TabIndex = 56;
@@ -621,7 +621,7 @@
             TrendTextBox.BorderStyle = BorderStyle.FixedSingle;
             TrendTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             TrendTextBox.ForeColor = Color.Black;
-            TrendTextBox.Location = new Point(210, 222);
+            TrendTextBox.Location = new Point(212, 236);
             TrendTextBox.Margin = new Padding(2);
             TrendTextBox.Name = "TrendTextBox";
             TrendTextBox.Size = new Size(85, 29);
@@ -634,7 +634,7 @@
             label163463.BackColor = Color.Transparent;
             label163463.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label163463.ForeColor = Color.DodgerBlue;
-            label163463.Location = new Point(96, 154);
+            label163463.Location = new Point(98, 168);
             label163463.Name = "label163463";
             label163463.Size = new Size(109, 21);
             label163463.TabIndex = 59;
@@ -647,7 +647,7 @@
             label1515236.BackColor = Color.Transparent;
             label1515236.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label1515236.ForeColor = Color.DodgerBlue;
-            label1515236.Location = new Point(39, 119);
+            label1515236.Location = new Point(41, 133);
             label1515236.Name = "label1515236";
             label1515236.Size = new Size(166, 21);
             label1515236.TabIndex = 60;
@@ -660,7 +660,7 @@
             label11.BackColor = Color.Transparent;
             label11.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label11.ForeColor = Color.DodgerBlue;
-            label11.Location = new Point(89, 260);
+            label11.Location = new Point(91, 274);
             label11.Name = "label11";
             label11.Size = new Size(116, 21);
             label11.TabIndex = 61;
@@ -675,7 +675,7 @@
             AnalysisIntervalComboBox.ForeColor = Color.Black;
             AnalysisIntervalComboBox.FormattingEnabled = true;
             AnalysisIntervalComboBox.Items.AddRange(new object[] { "7", "30" });
-            AnalysisIntervalComboBox.Location = new Point(210, 257);
+            AnalysisIntervalComboBox.Location = new Point(212, 271);
             AnalysisIntervalComboBox.Margin = new Padding(2);
             AnalysisIntervalComboBox.Name = "AnalysisIntervalComboBox";
             AnalysisIntervalComboBox.Size = new Size(85, 29);
@@ -688,7 +688,7 @@
             SalesPerDayTextBox.BorderStyle = BorderStyle.FixedSingle;
             SalesPerDayTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             SalesPerDayTextBox.ForeColor = Color.Black;
-            SalesPerDayTextBox.Location = new Point(210, 47);
+            SalesPerDayTextBox.Location = new Point(212, 61);
             SalesPerDayTextBox.Margin = new Padding(2);
             SalesPerDayTextBox.Name = "SalesPerDayTextBox";
             SalesPerDayTextBox.Size = new Size(85, 29);
@@ -701,7 +701,7 @@
             SellListingFindRangeTextBox.BorderStyle = BorderStyle.FixedSingle;
             SellListingFindRangeTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             SellListingFindRangeTextBox.ForeColor = Color.Black;
-            SellListingFindRangeTextBox.Location = new Point(210, 364);
+            SellListingFindRangeTextBox.Location = new Point(212, 378);
             SellListingFindRangeTextBox.Margin = new Padding(2);
             SellListingFindRangeTextBox.Name = "SellListingFindRangeTextBox";
             SellListingFindRangeTextBox.Size = new Size(85, 29);
@@ -714,7 +714,7 @@
             AveragePriceRatioTextBox.BorderStyle = BorderStyle.FixedSingle;
             AveragePriceRatioTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             AveragePriceRatioTextBox.ForeColor = Color.Black;
-            AveragePriceRatioTextBox.Location = new Point(210, 187);
+            AveragePriceRatioTextBox.Location = new Point(212, 201);
             AveragePriceRatioTextBox.Margin = new Padding(2);
             AveragePriceRatioTextBox.Name = "AveragePriceRatioTextBox";
             AveragePriceRatioTextBox.Size = new Size(85, 29);
@@ -727,7 +727,7 @@
             RequiredProfitTextBox.BorderStyle = BorderStyle.FixedSingle;
             RequiredProfitTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             RequiredProfitTextBox.ForeColor = Color.Black;
-            RequiredProfitTextBox.Location = new Point(210, 82);
+            RequiredProfitTextBox.Location = new Point(212, 96);
             RequiredProfitTextBox.Margin = new Padding(2);
             RequiredProfitTextBox.Name = "RequiredProfitTextBox";
             RequiredProfitTextBox.Size = new Size(85, 29);
@@ -740,7 +740,7 @@
             label4.BackColor = Color.Transparent;
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             label4.ForeColor = Color.DodgerBlue;
-            label4.Location = new Point(64, 189);
+            label4.Location = new Point(66, 203);
             label4.Name = "label4";
             label4.Size = new Size(141, 21);
             label4.TabIndex = 72;
@@ -753,7 +753,7 @@
             AvailibleBalanceTextBox.BorderStyle = BorderStyle.FixedSingle;
             AvailibleBalanceTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             AvailibleBalanceTextBox.ForeColor = Color.Black;
-            AvailibleBalanceTextBox.Location = new Point(210, 117);
+            AvailibleBalanceTextBox.Location = new Point(212, 131);
             AvailibleBalanceTextBox.Margin = new Padding(2);
             AvailibleBalanceTextBox.Name = "AvailibleBalanceTextBox";
             AvailibleBalanceTextBox.Size = new Size(85, 29);
@@ -766,7 +766,7 @@
             FitRangePriceTextBox.BorderStyle = BorderStyle.FixedSingle;
             FitRangePriceTextBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             FitRangePriceTextBox.ForeColor = Color.Black;
-            FitRangePriceTextBox.Location = new Point(210, 152);
+            FitRangePriceTextBox.Location = new Point(212, 166);
             FitRangePriceTextBox.Margin = new Padding(2);
             FitRangePriceTextBox.Name = "FitRangePriceTextBox";
             FitRangePriceTextBox.Size = new Size(85, 29);
