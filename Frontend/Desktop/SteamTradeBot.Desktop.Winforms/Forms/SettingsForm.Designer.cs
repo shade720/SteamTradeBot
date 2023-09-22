@@ -206,7 +206,7 @@
             ResetSettingsButton.FlatStyle = FlatStyle.Flat;
             ResetSettingsButton.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             ResetSettingsButton.ForeColor = Color.White;
-            ResetSettingsButton.Location = new Point(1175, 0);
+            ResetSettingsButton.Location = new Point(1122, -1);
             ResetSettingsButton.Margin = new Padding(3, 2, 3, 2);
             ResetSettingsButton.Name = "ResetSettingsButton";
             ResetSettingsButton.Size = new Size(136, 33);

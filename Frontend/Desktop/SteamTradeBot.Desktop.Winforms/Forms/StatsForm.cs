@@ -1,7 +1,9 @@
-﻿using System.Windows.Forms.DataVisualization.Charting;
+﻿using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
 using SteamTradeBot.Desktop.Winforms.Models;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -21,108 +23,77 @@ public partial class StatsForm : Form
 
     private async void StatsForm_Load(object sender, EventArgs e)
     {
-        _signalRClient.OnStateRefreshEvent += RefreshInfo;
         _signalRClient.OnHistoryRefreshEvent += RefreshCharts;
         var initTradingHistory = await _restClient.GetInitHistory();
-        InitTradingChart(initTradingHistory);
-        InitBudgetChart(initTradingHistory);
-        InitUptimeChart(initTradingHistory);
+        InitInfoTable(initTradingHistory);
+        RenderChartsByTable();
     }
 
     private void StatsForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        _signalRClient.OnStateRefreshEvent -= RefreshInfo;
         _signalRClient.OnHistoryRefreshEvent -= RefreshCharts;
     }
 
-    #region ChartsInit
+    #region Init
 
-    private void InitTradingChart(IEnumerable<TradingEvent> history)
+    private void InitInfoTable(IEnumerable<TradingEvent> history)
+    {
+        var eventsPerDay = history
+            .GroupBy(x => x.Time.Date)
+            .OrderBy(x => x.Key);
+
+        foreach (var dayEvents in eventsPerDay)
+        {
+            var day = dayEvents.Key.ToLocalTime().Date;
+            var bought = dayEvents.Count(x => x.Type == InfoType.ItemBought);
+            var sold = dayEvents.Count(x => x.Type == InfoType.ItemSold);
+            var canceled = dayEvents.Count(x => x.Type == InfoType.ItemCanceled);
+            var uptime = dayEvents.GroupBy(x => x.Time.Hour).Count() / 24.0 * 100;
+            var balance = dayEvents.Max(x => x.CurrentBalance);
+            InfoTable.Rows.Add(day.ToString("dd.MM.yyyy"), bought, sold, canceled, $"{uptime}%", balance);
+        }
+    }
+
+    private void RenderChartsByTable()
     {
         var boughtSeries = GetSpecifiedSeries("Items bought", Color.Orange);
         var soldSeries = GetSpecifiedSeries("Items sold", Color.Chartreuse);
         var canceledSeries = GetSpecifiedSeries("Items canceled", Color.Gray);
 
-        var a = history
-            .OrderBy(x => x.Time)
-            .GroupBy(x => x.Type)
-            .Select(x => (x.Key, x.GroupBy(x => x.Time.Date)))
-            .Select(x =>
-            {
-                switch (x.Key)
-                {
-                    case InfoType.ItemAnalyzed:
-                        break;
-                    case InfoType.ItemBought:
-                        foreach (var a in x.Item2)
-                            boughtSeries.Points.AddXY(a.Key, a.Count());
-                        break;
-                    case InfoType.ItemSold:
-                        foreach (var a in x.Item2)
-                            soldSeries.Points.AddXY(a.Key, a.Count());
-                        break;
-                    case InfoType.ItemCanceled:
-                        foreach (var a in x.Item2)
-                            canceledSeries.Points.AddXY(a.Key, a.Count());
-                        break;
-                    case InfoType.Error:
-                        break;
-                    case InfoType.Warning:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-                return true;
-            })
-            .ToList();
-        TradingChart.Series.Clear();
-        TradingChart.Series.Add(boughtSeries);
-        TradingChart.Series.Add(soldSeries);
-        TradingChart.Series.Add(canceledSeries);
+        var balanceSeries = GetSpecifiedSeries("Balance", Color.Gold);
 
-        TradingChart.Legends[0].Font = new Font(new FontFamily("Segoe UI"), 10, FontStyle.Regular);
-    }
-
-    private void InitBudgetChart(IEnumerable<TradingEvent> history)
-    {
-        var budgetSeries = GetSpecifiedSeries("Balance", Color.Yellow);
-        var balancePerDay = history
-            .OrderBy(x => x.Time)
-            .GroupBy(x => x.Time.Date)
-            .Select(x => (x.Key, x.Max(x => x.CurrentBalance)));
-        foreach (var item in balancePerDay)
-        {
-            budgetSeries.Points.AddXY(item.Key, item.Item2);
-        }
-        BudgetChart.Series.Clear();
-        BudgetChart.Series.Add(budgetSeries);
-        BudgetChart.Legends[0].Font = new Font(new FontFamily("Segoe UI"), 10, FontStyle.Regular);
-
-        var maxBalance = balancePerDay.Max(x => x.Item2);
-        if (maxBalance > 0)
-        {
-            BudgetChart.ChartAreas[0].AxisY.Minimum = 0;
-            BudgetChart.ChartAreas[0].AxisY.Maximum = 2 * maxBalance;
-        }
-    }
-
-    private void InitUptimeChart(IEnumerable<TradingEvent> history)
-    {
         var uptimeSeries = GetSpecifiedSeries("Uptime", Color.DodgerBlue);
 
-        var uptimePerDay = history
-            .OrderBy(x => x.Time)
-            .GroupBy(x => x.Time.Date)
-            .Select(x => (x.Key, x.GroupBy(x => x.Time.Hour)))
-            .Select(x => (x.Key, x.Item2.Count() / 24.0 * 100));
-        foreach (var uptime in uptimePerDay)
+        foreach (var row in InfoTable.Rows.OfType<DataGridViewRow>().Where(x => x.Visible))
         {
-            uptimeSeries.Points.AddXY(uptime.Key, uptime.Item2);
+            var day = DateTime.Parse(row.Cells[0].Value.ToString());
+
+            boughtSeries.Points.AddXY(day, row.Cells[1].Value);
+            soldSeries.Points.AddXY(day, row.Cells[2].Value);
+            canceledSeries.Points.AddXY(day, row.Cells[3].Value);
+
+            balanceSeries.Points.AddXY(day, row.Cells[5].Value);
+
+            uptimeSeries.Points.AddXY(day, double.Parse(row.Cells[4].Value.ToString().Replace("%", "")));
         }
 
         UptimeChart.Series.Clear();
         UptimeChart.Series.Add(uptimeSeries);
         UptimeChart.Legends[0].Font = new Font(new FontFamily("Segoe UI"), 10, FontStyle.Regular);
+
+        BalanceChart.Series.Clear();
+        BalanceChart.Series.Add(balanceSeries);
+        BalanceChart.Legends[0].Font = new Font(new FontFamily("Segoe UI"), 10, FontStyle.Regular);
+
+        TradingChart.Series.Clear();
+        TradingChart.Series.Add(boughtSeries);
+        TradingChart.Series.Add(soldSeries);
+        TradingChart.Series.Add(canceledSeries);
+        TradingChart.Legends[0].Font = new Font(new FontFamily("Segoe UI"), 10, FontStyle.Regular);
+
+        UptimeChart.Refresh();
+        BalanceChart.Refresh();
+        TradingChart.Refresh();
     }
 
     private static Series GetSpecifiedSeries(string name, Color color)
@@ -143,11 +114,6 @@ public partial class StatsForm : Form
 
     #region RefreshingData
 
-    private void RefreshInfo(StateInfo stateInfo)
-    {
-        
-    }
-
     private void RefreshCharts(TradingEvent tradingEvent)
     {
         ThreadHelperClass.ExecOnForm(this, () =>
@@ -155,23 +121,27 @@ public partial class StatsForm : Form
             switch (tradingEvent.Type)
             {
                 case InfoType.ItemAnalyzed:
-                    BudgetChart.Series["Balance"].Points.ElementAt(^1).SetValueY(tradingEvent.CurrentBalance);
-                    BudgetChart.Refresh();
+                    InfoTable.Rows[^1].Cells[5].Value = tradingEvent.CurrentBalance;
+                    BalanceChart.Series["Balance"].Points.ElementAt(^1).SetValueY(tradingEvent.CurrentBalance);
+                    BalanceChart.Refresh();
                     break;
                 case InfoType.ItemBought:
-                    var previousBoughtValue = TradingChart.Series["Items bought"].Points.ElementAt(^1).YValues.Max();
+                    var previousBoughtValue = int.Parse(InfoTable.Rows[^1].Cells[1].Value.ToString());
                     TradingChart.Series["Items bought"].Points.ElementAt(^1).SetValueY(previousBoughtValue + 1);
                     TradingChart.Refresh();
+                    InfoTable.Rows[^1].Cells[1].Value = previousBoughtValue + 1;
                     break;
                 case InfoType.ItemSold:
-                    var previousSoldValue = TradingChart.Series["Items sold"].Points.ElementAt(^1).YValues.Max();
+                    var previousSoldValue = int.Parse(InfoTable.Rows[^1].Cells[2].Value.ToString());
                     TradingChart.Series["Items sold"].Points.ElementAt(^1).SetValueY(previousSoldValue + 1);
                     TradingChart.Refresh();
+                    InfoTable.Rows[^1].Cells[2].Value = previousSoldValue + 1;
                     break;
                 case InfoType.ItemCanceled:
-                    var previousCanceledValue = TradingChart.Series["Items canceled"].Points.ElementAt(^1).YValues.Max();
+                    var previousCanceledValue = int.Parse(InfoTable.Rows[^1].Cells[3].Value.ToString());
                     TradingChart.Series["Items canceled"].Points.ElementAt(^1).SetValueY(previousCanceledValue + 1);
                     TradingChart.Refresh();
+                    InfoTable.Rows[^1].Cells[3].Value = previousCanceledValue + 1;
                     break;
                 case InfoType.Error:
                     break;
@@ -185,4 +155,19 @@ public partial class StatsForm : Form
     }
 
     #endregion
+
+    private void RefreshButton_Click(object sender, EventArgs e)
+    {
+        var rowSetToHide = InfoTable.Rows.OfType<DataGridViewRow>();
+        foreach (var row in rowSetToHide)
+        {
+            if (DateTime.Parse(row.Cells[0].Value.ToString()) < FromDatePicker.Value ||
+                DateTime.Parse(row.Cells[0].Value.ToString()) > ToDatePicker.Value)
+                row.Visible = false;
+            else
+                row.Visible = true;
+        }
+
+        RenderChartsByTable();
+    }
 }

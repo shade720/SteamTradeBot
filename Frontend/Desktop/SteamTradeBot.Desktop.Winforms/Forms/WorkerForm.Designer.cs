@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             UptimeLabel = new Label();
             WarningsLabel = new Label();
@@ -48,9 +48,8 @@
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
-            ResetStateButton = new Button();
-            CheckConnectionButton = new Button();
             groupBox2 = new GroupBox();
+            ViewLogsButton = new Button();
             HistoryFilterComboBox = new ComboBox();
             HistoryDataGridView = new DataGridView();
             TimeColumn = new DataGridViewTextBoxColumn();
@@ -60,7 +59,6 @@
             SellPrice = new DataGridViewTextBoxColumn();
             Profit = new DataGridViewTextBoxColumn();
             groupBox3 = new GroupBox();
-            ViewLogsButton = new Button();
             CancelOrdersButtons = new Button();
             StartButton = new Button();
             StopButton = new Button();
@@ -93,7 +91,7 @@
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label1);
-            groupBox1.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
+            groupBox1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox1.ForeColor = Color.DodgerBlue;
             groupBox1.Location = new Point(0, 10);
             groupBox1.Margin = new Padding(2);
@@ -312,44 +310,13 @@
             label1.TabIndex = 0;
             label1.Text = "Connection state:";
             // 
-            // ResetStateButton
-            // 
-            ResetStateButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            ResetStateButton.BackColor = Color.DodgerBlue;
-            ResetStateButton.FlatStyle = FlatStyle.Flat;
-            ResetStateButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
-            ResetStateButton.ForeColor = Color.White;
-            ResetStateButton.Location = new Point(27, 88);
-            ResetStateButton.Margin = new Padding(2);
-            ResetStateButton.Name = "ResetStateButton";
-            ResetStateButton.Size = new Size(140, 48);
-            ResetStateButton.TabIndex = 16;
-            ResetStateButton.Text = "Reset state";
-            ResetStateButton.UseVisualStyleBackColor = false;
-            ResetStateButton.Click += ResetStateButton_Click;
-            // 
-            // CheckConnectionButton
-            // 
-            CheckConnectionButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            CheckConnectionButton.BackColor = Color.DodgerBlue;
-            CheckConnectionButton.FlatStyle = FlatStyle.Flat;
-            CheckConnectionButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
-            CheckConnectionButton.ForeColor = Color.White;
-            CheckConnectionButton.Location = new Point(27, 36);
-            CheckConnectionButton.Margin = new Padding(2);
-            CheckConnectionButton.Name = "CheckConnectionButton";
-            CheckConnectionButton.Size = new Size(140, 48);
-            CheckConnectionButton.TabIndex = 3;
-            CheckConnectionButton.Text = "Check state";
-            CheckConnectionButton.UseVisualStyleBackColor = false;
-            CheckConnectionButton.Click += CheckConnectionButton_Click;
-            // 
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Controls.Add(ViewLogsButton);
             groupBox2.Controls.Add(HistoryFilterComboBox);
             groupBox2.Controls.Add(HistoryDataGridView);
-            groupBox2.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
+            groupBox2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox2.ForeColor = Color.DodgerBlue;
             groupBox2.Location = new Point(11, 10);
             groupBox2.Margin = new Padding(2);
@@ -359,6 +326,22 @@
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Trade history";
+            // 
+            // ViewLogsButton
+            // 
+            ViewLogsButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            ViewLogsButton.BackColor = Color.DodgerBlue;
+            ViewLogsButton.FlatStyle = FlatStyle.Flat;
+            ViewLogsButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
+            ViewLogsButton.ForeColor = Color.White;
+            ViewLogsButton.Location = new Point(833, -5);
+            ViewLogsButton.Margin = new Padding(2);
+            ViewLogsButton.Name = "ViewLogsButton";
+            ViewLogsButton.Size = new Size(85, 33);
+            ViewLogsButton.TabIndex = 4;
+            ViewLogsButton.Text = "Logs";
+            ViewLogsButton.UseVisualStyleBackColor = false;
+            ViewLogsButton.Click += ViewLogsButton_Click;
             // 
             // HistoryFilterComboBox
             // 
@@ -382,24 +365,24 @@
             HistoryDataGridView.BorderStyle = BorderStyle.None;
             HistoryDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             HistoryDataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.DodgerBlue;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = Color.White;
-            dataGridViewCellStyle1.SelectionForeColor = Color.DodgerBlue;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            HistoryDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = Color.DodgerBlue;
+            dataGridViewCellStyle10.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle10.ForeColor = Color.White;
+            dataGridViewCellStyle10.SelectionBackColor = Color.White;
+            dataGridViewCellStyle10.SelectionForeColor = Color.DodgerBlue;
+            dataGridViewCellStyle10.WrapMode = DataGridViewTriState.True;
+            HistoryDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
             HistoryDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             HistoryDataGridView.Columns.AddRange(new DataGridViewColumn[] { TimeColumn, Item, OrderTypeColumn, BuyPrice, SellPrice, Profit });
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.White;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = Color.DodgerBlue;
-            dataGridViewCellStyle2.SelectionBackColor = Color.Red;
-            dataGridViewCellStyle2.SelectionForeColor = Color.White;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            HistoryDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = Color.White;
+            dataGridViewCellStyle11.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle11.ForeColor = Color.DodgerBlue;
+            dataGridViewCellStyle11.SelectionBackColor = Color.Red;
+            dataGridViewCellStyle11.SelectionForeColor = Color.White;
+            dataGridViewCellStyle11.WrapMode = DataGridViewTriState.True;
+            HistoryDataGridView.DefaultCellStyle = dataGridViewCellStyle11;
             HistoryDataGridView.EnableHeadersVisualStyles = false;
             HistoryDataGridView.Location = new Point(10, 36);
             HistoryDataGridView.Margin = new Padding(2);
@@ -407,14 +390,14 @@
             HistoryDataGridView.ReadOnly = true;
             HistoryDataGridView.RowHeadersVisible = false;
             HistoryDataGridView.RowHeadersWidth = 51;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = Color.White;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle3.ForeColor = Color.Black;
-            dataGridViewCellStyle3.SelectionBackColor = Color.DodgerBlue;
-            dataGridViewCellStyle3.SelectionForeColor = Color.White;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
-            HistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle12.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = Color.White;
+            dataGridViewCellStyle12.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle12.ForeColor = Color.Black;
+            dataGridViewCellStyle12.SelectionBackColor = Color.DodgerBlue;
+            dataGridViewCellStyle12.SelectionForeColor = Color.White;
+            dataGridViewCellStyle12.WrapMode = DataGridViewTriState.False;
+            HistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle12;
             HistoryDataGridView.RowTemplate.Height = 29;
             HistoryDataGridView.Size = new Size(907, 569);
             HistoryDataGridView.TabIndex = 0;
@@ -469,13 +452,10 @@
             // groupBox3
             // 
             groupBox3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            groupBox3.Controls.Add(ResetStateButton);
-            groupBox3.Controls.Add(CheckConnectionButton);
-            groupBox3.Controls.Add(ViewLogsButton);
             groupBox3.Controls.Add(CancelOrdersButtons);
             groupBox3.Controls.Add(StartButton);
             groupBox3.Controls.Add(StopButton);
-            groupBox3.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
+            groupBox3.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point);
             groupBox3.ForeColor = Color.DodgerBlue;
             groupBox3.Location = new Point(0, 428);
             groupBox3.Margin = new Padding(2);
@@ -486,22 +466,6 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "Control";
             // 
-            // ViewLogsButton
-            // 
-            ViewLogsButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            ViewLogsButton.BackColor = Color.DodgerBlue;
-            ViewLogsButton.FlatStyle = FlatStyle.Flat;
-            ViewLogsButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
-            ViewLogsButton.ForeColor = Color.White;
-            ViewLogsButton.Location = new Point(192, 88);
-            ViewLogsButton.Margin = new Padding(2);
-            ViewLogsButton.Name = "ViewLogsButton";
-            ViewLogsButton.Size = new Size(140, 48);
-            ViewLogsButton.TabIndex = 4;
-            ViewLogsButton.Text = "Logs";
-            ViewLogsButton.UseVisualStyleBackColor = false;
-            ViewLogsButton.Click += ViewLogsButton_Click;
-            // 
             // CancelOrdersButtons
             // 
             CancelOrdersButtons.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -509,7 +473,7 @@
             CancelOrdersButtons.FlatStyle = FlatStyle.Flat;
             CancelOrdersButtons.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
             CancelOrdersButtons.ForeColor = Color.White;
-            CancelOrdersButtons.Location = new Point(27, 140);
+            CancelOrdersButtons.Location = new Point(27, 82);
             CancelOrdersButtons.Margin = new Padding(2);
             CancelOrdersButtons.Name = "CancelOrdersButtons";
             CancelOrdersButtons.Size = new Size(140, 48);
@@ -525,7 +489,7 @@
             StartButton.FlatStyle = FlatStyle.Flat;
             StartButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
             StartButton.ForeColor = Color.White;
-            StartButton.Location = new Point(192, 140);
+            StartButton.Location = new Point(192, 82);
             StartButton.Margin = new Padding(2);
             StartButton.Name = "StartButton";
             StartButton.Size = new Size(140, 48);
@@ -541,7 +505,7 @@
             StopButton.FlatStyle = FlatStyle.Flat;
             StopButton.Font = new Font("Segoe UI Semibold", 12.75F, FontStyle.Bold, GraphicsUnit.Point);
             StopButton.ForeColor = Color.White;
-            StopButton.Location = new Point(192, 140);
+            StopButton.Location = new Point(192, 82);
             StopButton.Margin = new Padding(2);
             StopButton.Name = "StopButton";
             StopButton.Size = new Size(140, 48);
@@ -618,7 +582,6 @@
         private Label ItemsAnalyzedLabel;
         private Label ServiceStateLabel;
         private Label ConnectionStateLabel;
-        private Button CheckConnectionButton;
         private Button CancelOrdersButtons;
         private Button ViewLogsButton;
         private DataGridView HistoryDataGridView;
@@ -630,7 +593,6 @@
         private DataGridViewTextBoxColumn BuyPrice;
         private DataGridViewTextBoxColumn SellPrice;
         private DataGridViewTextBoxColumn Profit;
-        private Button ResetStateButton;
         private ComboBox HistoryFilterComboBox;
     }
 }
