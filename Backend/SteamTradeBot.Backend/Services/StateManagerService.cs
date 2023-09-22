@@ -143,7 +143,7 @@ public sealed class StateManagerService : Hub, IStateManager
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.Error,
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Info = $"Message: {exception.Message}, StackTrace: {exception.StackTrace}"
         };
         await _historyDb.AddNewEventAsync(tradingEvent);
@@ -163,7 +163,7 @@ public sealed class StateManagerService : Hub, IStateManager
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemAnalyzed,
             CurrentBalance = itemPage.CurrentBalance,
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Info = itemPage.EngItemName
         };
         await _historyDb.AddNewEventAsync(tradingEvent);
@@ -181,7 +181,7 @@ public sealed class StateManagerService : Hub, IStateManager
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemSold,
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Info = order.EngItemName,
             BuyPrice = order.BuyPrice,
             SellPrice = order.SellPrice,
@@ -202,7 +202,7 @@ public sealed class StateManagerService : Hub, IStateManager
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemBought,
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Info = order.EngItemName,
             BuyPrice = order.BuyPrice,
             SellPrice = order.SellPrice
@@ -222,7 +222,7 @@ public sealed class StateManagerService : Hub, IStateManager
         {
             ApiKey = _configurationManager.ApiKey,
             Type = InfoType.ItemCanceled,
-            Time = DateTime.Now,
+            Time = DateTime.UtcNow,
             Info = order.EngItemName,
             BuyPrice = order.BuyPrice
         };

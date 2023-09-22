@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms.DataVisualization.Charting;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
 using SteamTradeBot.Desktop.Winforms.Models;
 
@@ -43,7 +44,7 @@ public partial class StatsForm : Form
         var canceledSeries = GetSpecifiedSeries("Items canceled", Color.Gray);
 
         var a = history
-            .AsParallel()
+            .OrderBy(x => x.Time)
             .GroupBy(x => x.Type)
             .Select(x => (x.Key, x.GroupBy(x => x.Time.Date)))
             .Select(x =>
@@ -86,6 +87,7 @@ public partial class StatsForm : Form
     {
         var budgetSeries = GetSpecifiedSeries("Balance", Color.Yellow);
         var balancePerDay = history
+            .OrderBy(x => x.Time)
             .GroupBy(x => x.Time.Date)
             .Select(x => (x.Key, x.Max(x => x.CurrentBalance)));
         foreach (var item in balancePerDay)
@@ -109,6 +111,7 @@ public partial class StatsForm : Form
         var uptimeSeries = GetSpecifiedSeries("Uptime", Color.DodgerBlue);
 
         var uptimePerDay = history
+            .OrderBy(x => x.Time)
             .GroupBy(x => x.Time.Date)
             .Select(x => (x.Key, x.GroupBy(x => x.Time.Hour)))
             .Select(x => (x.Key, x.Item2.Count() / 24.0 * 100));
@@ -138,17 +141,47 @@ public partial class StatsForm : Form
 
     #endregion
 
-
     #region RefreshingData
 
-    private void RefreshInfo(StateInfo stateinfo)
+    private void RefreshInfo(StateInfo stateInfo)
     {
-        throw new NotImplementedException();
+        
     }
 
-    private void RefreshCharts(TradingEvent tradingevent)
+    private void RefreshCharts(TradingEvent tradingEvent)
     {
-        throw new NotImplementedException();
+        ThreadHelperClass.ExecOnForm(this, () =>
+        {
+            switch (tradingEvent.Type)
+            {
+                case InfoType.ItemAnalyzed:
+                    BudgetChart.Series["Balance"].Points.ElementAt(^1).SetValueY(tradingEvent.CurrentBalance);
+                    BudgetChart.Refresh();
+                    break;
+                case InfoType.ItemBought:
+                    var previousBoughtValue = TradingChart.Series["Items bought"].Points.ElementAt(^1).YValues.Max();
+                    TradingChart.Series["Items bought"].Points.ElementAt(^1).SetValueY(previousBoughtValue + 1);
+                    TradingChart.Refresh();
+                    break;
+                case InfoType.ItemSold:
+                    var previousSoldValue = TradingChart.Series["Items sold"].Points.ElementAt(^1).YValues.Max();
+                    TradingChart.Series["Items sold"].Points.ElementAt(^1).SetValueY(previousSoldValue + 1);
+                    TradingChart.Refresh();
+                    break;
+                case InfoType.ItemCanceled:
+                    var previousCanceledValue = TradingChart.Series["Items canceled"].Points.ElementAt(^1).YValues.Max();
+                    TradingChart.Series["Items canceled"].Points.ElementAt(^1).SetValueY(previousCanceledValue + 1);
+                    TradingChart.Refresh();
+                    break;
+                case InfoType.Error:
+                    break;
+                case InfoType.Warning:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+        });
     }
 
     #endregion

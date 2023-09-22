@@ -3,6 +3,7 @@ using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
 using SteamTradeBot.Desktop.Winforms.Models.DTOs;
 using System.Data;
+using System.Windows.Forms;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -110,17 +111,17 @@ public partial class WorkerForm : Form
                 _ => throw new ArgumentOutOfRangeException()
             };
             var rowIndex = HistoryDataGridView.Rows.Add(
-                eventInfo.Time,
+                eventInfo.Time.ToLocalTime(),
                 eventInfo.Info,
                 type,
                 eventInfo.BuyPrice == 0 ? string.Empty : eventInfo.BuyPrice,
                 eventInfo.SellPrice == 0 ? string.Empty : eventInfo.SellPrice,
                 eventInfo.Profit == 0 ? string.Empty : eventInfo.Profit);
-            HistoryDataGridView.Rows[rowIndex].DefaultCellStyle.BackColor = eventInfo.Type switch
+            HistoryDataGridView.Rows[rowIndex].DefaultCellStyle.ForeColor = eventInfo.Type switch
             {
                 InfoType.ItemAnalyzed => Color.White,
-                InfoType.ItemBought => Color.Orange,
-                InfoType.ItemSold => Color.Chartreuse,
+                InfoType.ItemBought => Color.DarkOrange,
+                InfoType.ItemSold => Color.LimeGreen,
                 InfoType.ItemCanceled => Color.Gray,
                 InfoType.Error => Color.Red,
                 InfoType.Warning => Color.Yellow,
@@ -128,6 +129,7 @@ public partial class WorkerForm : Form
             };
             var filter = HistoryFilterComboBox.SelectedItem.ToString();
             HistoryDataGridView.Rows[rowIndex].Visible = filter == "All" || filter == type;
+            HistoryDataGridView.FirstDisplayedScrollingRowIndex = HistoryDataGridView.RowCount - 1;
         });
     }
 
@@ -171,7 +173,7 @@ public partial class WorkerForm : Form
         var initState = await _restClient.GetInitState();
         RefreshServiceStatePanel(initState);
         var initTradingHistory = await _restClient.GetInitHistory();
-        foreach (var tradingEvent in initTradingHistory)
+        foreach (var tradingEvent in initTradingHistory.OrderBy(x => x.Time))
         {
             RefreshHistoryTable(tradingEvent);
         }

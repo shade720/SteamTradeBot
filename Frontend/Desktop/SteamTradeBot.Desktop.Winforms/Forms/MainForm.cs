@@ -25,9 +25,12 @@ public partial class MainForm : Form
         _settingsForm.Dock = DockStyle.Fill;
         _workerForm.TopLevel = false;
         _workerForm.Dock = DockStyle.Fill;
+        _statsForm.TopLevel = false;
+        _statsForm.Dock = DockStyle.Fill;
 
         Frame.Controls.Add(_workerForm);
         Frame.Controls.Add(_settingsForm);
+        Frame.Controls.Add(_statsForm);
         _workerForm.Show();
     }
 
