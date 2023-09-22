@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             panel1 = new Panel();
             panel4 = new Panel();
-            StatsNavButton = new Button();
             SettingsNavButton = new Button();
             WorkerNavButton = new Button();
             panel6 = new Panel();
@@ -45,6 +44,7 @@
             CurrentWorkLabel = new Label();
             panel2 = new Panel();
             panel5 = new Panel();
+            StatsNavButton = new Button();
             panel1.SuspendLayout();
             panel4.SuspendLayout();
             ServiceStatePanel.SuspendLayout();
@@ -78,24 +78,8 @@
             panel4.Location = new Point(0, 97);
             panel4.Margin = new Padding(3, 2, 3, 2);
             panel4.Name = "panel4";
-            panel4.Size = new Size(219, 170);
+            panel4.Size = new Size(219, 249);
             panel4.TabIndex = 1;
-            // 
-            // StatsNavButton
-            // 
-            StatsNavButton.Dock = DockStyle.Top;
-            StatsNavButton.FlatAppearance.BorderSize = 0;
-            StatsNavButton.FlatStyle = FlatStyle.Flat;
-            StatsNavButton.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold, GraphicsUnit.Point);
-            StatsNavButton.ForeColor = Color.White;
-            StatsNavButton.Location = new Point(0, 178);
-            StatsNavButton.Margin = new Padding(3, 2, 3, 2);
-            StatsNavButton.Name = "StatsNavButton";
-            StatsNavButton.Size = new Size(219, 52);
-            StatsNavButton.TabIndex = 11;
-            StatsNavButton.Text = "Stats";
-            StatsNavButton.UseVisualStyleBackColor = true;
-            StatsNavButton.Click += StatsNavButton_Click;
             // 
             // SettingsNavButton
             // 
@@ -246,6 +230,22 @@
             panel5.Size = new Size(1336, 40);
             panel5.TabIndex = 0;
             // 
+            // StatsNavButton
+            // 
+            StatsNavButton.Dock = DockStyle.Top;
+            StatsNavButton.FlatAppearance.BorderSize = 0;
+            StatsNavButton.FlatStyle = FlatStyle.Flat;
+            StatsNavButton.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold, GraphicsUnit.Point);
+            StatsNavButton.ForeColor = Color.White;
+            StatsNavButton.Location = new Point(0, 178);
+            StatsNavButton.Margin = new Padding(3, 2, 3, 2);
+            StatsNavButton.Name = "StatsNavButton";
+            StatsNavButton.Size = new Size(219, 52);
+            StatsNavButton.TabIndex = 13;
+            StatsNavButton.Text = "Stats";
+            StatsNavButton.UseVisualStyleBackColor = true;
+            StatsNavButton.Click += StatsNavButton_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -295,11 +295,11 @@
         private Label CurrentWorkLabel;
         private Panel panel4;
         private Button SettingsNavButton;
-        private Button StatsNavButton;
         private Button WorkerNavButton;
         private Panel panel6;
         private Panel panel2;
         private Panel panel5;
+        private Button StatsNavButton;
     }
 }
 

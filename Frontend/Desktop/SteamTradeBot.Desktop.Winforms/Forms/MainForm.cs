@@ -8,15 +8,18 @@ public partial class MainForm : Form
 {
     private readonly WorkerForm _workerForm;
     private readonly SettingsForm _settingsForm;
+    private readonly StatsForm _statsForm;
+    private readonly SteamTradeBotSignalRClient _steamTradeBotSignalRClient;
 
     public MainForm()
     {
         InitializeComponent();
 
         var steamTradeBotRestClient = new SteamTradeBotRestClient(new HttpClientProvider(), new ApiKeyProvider());
-        var steamTradeBotSignalRClient = new SteamTradeBotSignalRClient(new ApiKeyProvider());
-        _workerForm = new WorkerForm(steamTradeBotRestClient, steamTradeBotSignalRClient);
+        _steamTradeBotSignalRClient = new SteamTradeBotSignalRClient(new ApiKeyProvider());
+        _workerForm = new WorkerForm(steamTradeBotRestClient, _steamTradeBotSignalRClient);
         _settingsForm = new SettingsForm(steamTradeBotRestClient);
+        _statsForm = new StatsForm(steamTradeBotRestClient, _steamTradeBotSignalRClient);
 
         _settingsForm.TopLevel = false;
         _settingsForm.Dock = DockStyle.Fill;
@@ -28,12 +31,26 @@ public partial class MainForm : Form
         _workerForm.Show();
     }
 
+    private async void MainForm_Load(object sender, EventArgs e)
+    {
+        await _steamTradeBotSignalRClient.Connect();
+        _workerForm.OnWorkingStateChangedEvent += OnStateChanged;
+    }
+
+    private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        await _steamTradeBotSignalRClient.Disconnect();
+        _workerForm.Dispose();
+        _settingsForm.Dispose();
+    }
+
     #region Worker
 
     private void WorkerNavButton_Click(object sender, EventArgs e)
     {
-        _settingsForm.Hide();
         _workerForm.Show();
+        _settingsForm.Hide();
+        _statsForm.Hide();
     }
 
     private void OnStateChanged(StateInfo state)
@@ -66,8 +83,6 @@ public partial class MainForm : Form
         }
     }
 
-    #endregion
-
     private void StartDisplayLoadingIcon(string startActionText)
     {
         LoadingPictureBox.Visible = true;
@@ -82,25 +97,19 @@ public partial class MainForm : Form
         CurrentWorkLabel.Visible = false;
     }
 
+    #endregion
+
     private void SettingsNavButton_Click(object sender, EventArgs e)
     {
         _settingsForm.Show();
         _workerForm.Hide();
+        _statsForm.Hide();
     }
 
     private void StatsNavButton_Click(object sender, EventArgs e)
     {
-
-    }
-
-    private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-    {
-        _workerForm.Dispose();
-        _settingsForm.Dispose();
-    }
-
-    private void MainForm_Load(object sender, EventArgs e)
-    {
-        _workerForm.OnWorkingStateChangedEvent += OnStateChanged;
+        _statsForm.Show();
+        _settingsForm.Hide();
+        _workerForm.Hide();
     }
 }
