@@ -212,7 +212,7 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
         $"https://steamcommunity.com/profiles/{userId}/inventory/#730";
 
     private static By GetInventoryItemElement(string userId, int itemNum) =>
-        By.XPath($"//*[@id='inventory_{userId}_730_2']/div[{itemNum + 1}]/div/div");
+        By.XPath($"//*[@id='inventory_{userId}_730_2']/div/div[{itemNum + 1}]/div/a");
 
     private static string GetItemQuality(string itemDescription) =>
         string.Join("", itemDescription.SkipWhile(x => x != ':').Skip(2)).Trim();
@@ -231,7 +231,8 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
                 if (itemName != fullItemName) continue;
                 _webDriver.ExecuteJs(ScrollPageJScript);
                 _webDriver.ExecuteJs(SellSelectedItemJScript);
-                _webDriver.SendKey(SellPriceTextBox, $"\b\b\b\b\b{price}");
+                _webDriver.Clear(SellPriceTextBox);
+                _webDriver.SendKey(SellPriceTextBox, $"{price}");
                 _webDriver.ClickOnElement(SellAgreementCheckBox);
                 _webDriver.ClickOnElement(SellAgreementButton);
                 _webDriver.ClickOnElement(SellConfirmationButton, true, 2);

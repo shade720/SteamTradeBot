@@ -1,9 +1,7 @@
-﻿using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
+﻿using System.Windows.Forms.DataVisualization.Charting;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
 using SteamTradeBot.Desktop.Winforms.Models;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -39,6 +37,11 @@ public partial class StatsForm : Form
     private void InitInfoTable(IEnumerable<TradingEvent> history)
     {
         var eventsPerDay = history
+            .Select(x =>
+            {
+                x.Time = x.Time.ToLocalTime();
+                return x;
+            })
             .GroupBy(x => x.Time.Date)
             .OrderBy(x => x.Key);
 

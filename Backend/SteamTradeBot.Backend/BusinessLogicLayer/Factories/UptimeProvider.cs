@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
@@ -12,7 +13,7 @@ public sealed class UptimeProvider
     private const int UptimeUpdateDelayMs = 1000;
     private const int StartDelay = 0;
 
-    public delegate void UptimeUpdateHandler(TimeSpan currentUptime);
+    public delegate Task UptimeUpdateHandler(TimeSpan currentUptime);
     public event UptimeUpdateHandler? UptimeUpdate;
 
     public UptimeProvider()

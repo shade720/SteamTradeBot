@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             groupBox2 = new GroupBox();
             label3 = new Label();
             label2 = new Label();
@@ -91,7 +91,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label3.Location = new Point(496, 73);
+            label3.Location = new Point(495, 72);
             label3.Name = "label3";
             label3.Size = new Size(28, 21);
             label3.TabIndex = 7;
@@ -101,7 +101,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(495, 17);
+            label2.Location = new Point(495, 16);
             label2.Name = "label2";
             label2.Size = new Size(50, 21);
             label2.TabIndex = 6;
@@ -114,7 +114,7 @@
             RefreshButton.FlatStyle = FlatStyle.Flat;
             RefreshButton.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             RefreshButton.ForeColor = Color.White;
-            RefreshButton.Location = new Point(498, 153);
+            RefreshButton.Location = new Point(498, 152);
             RefreshButton.Margin = new Padding(2);
             RefreshButton.Name = "RefreshButton";
             RefreshButton.Size = new Size(149, 33);
@@ -127,7 +127,7 @@
             // 
             ToDatePicker.CalendarFont = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             ToDatePicker.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            ToDatePicker.Location = new Point(500, 97);
+            ToDatePicker.Location = new Point(500, 96);
             ToDatePicker.Name = "ToDatePicker";
             ToDatePicker.Size = new Size(147, 29);
             ToDatePicker.TabIndex = 2;
@@ -136,7 +136,7 @@
             // 
             FromDatePicker.CalendarFont = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             FromDatePicker.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            FromDatePicker.Location = new Point(500, 41);
+            FromDatePicker.Location = new Point(500, 40);
             FromDatePicker.Name = "FromDatePicker";
             FromDatePicker.Size = new Size(147, 29);
             FromDatePicker.TabIndex = 1;
@@ -152,24 +152,24 @@
             InfoTable.BorderStyle = BorderStyle.None;
             InfoTable.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             InfoTable.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.DodgerBlue;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = Color.White;
-            dataGridViewCellStyle1.SelectionForeColor = Color.DodgerBlue;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            InfoTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = Color.DodgerBlue;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle4.ForeColor = Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = Color.White;
+            dataGridViewCellStyle4.SelectionForeColor = Color.DodgerBlue;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            InfoTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             InfoTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             InfoTable.Columns.AddRange(new DataGridViewColumn[] { DayColumn, BoughtColumn, SoldColumn, CanceledColumn, UptimeColumn, BalanceColumn });
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.DodgerBlue;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = Color.DodgerBlue;
-            dataGridViewCellStyle2.SelectionBackColor = Color.White;
-            dataGridViewCellStyle2.SelectionForeColor = Color.DodgerBlue;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            InfoTable.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = Color.DodgerBlue;
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle5.ForeColor = Color.DodgerBlue;
+            dataGridViewCellStyle5.SelectionBackColor = Color.White;
+            dataGridViewCellStyle5.SelectionForeColor = Color.DodgerBlue;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
+            InfoTable.DefaultCellStyle = dataGridViewCellStyle5;
             InfoTable.EnableHeadersVisualStyles = false;
             InfoTable.GridColor = Color.White;
             InfoTable.Location = new Point(15, 41);
@@ -177,13 +177,13 @@
             InfoTable.ReadOnly = true;
             InfoTable.RowHeadersVisible = false;
             InfoTable.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = Color.White;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle3.ForeColor = Color.Black;
-            dataGridViewCellStyle3.SelectionBackColor = Color.DodgerBlue;
-            dataGridViewCellStyle3.SelectionForeColor = Color.White;
-            InfoTable.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.BackColor = Color.White;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle6.ForeColor = Color.Black;
+            dataGridViewCellStyle6.SelectionBackColor = Color.DodgerBlue;
+            dataGridViewCellStyle6.SelectionForeColor = Color.White;
+            InfoTable.RowsDefaultCellStyle = dataGridViewCellStyle6;
             InfoTable.RowTemplate.Height = 25;
             InfoTable.Size = new Size(478, 250);
             InfoTable.TabIndex = 0;
@@ -244,23 +244,23 @@
             // 
             // TradingChart
             // 
-            chartArea1.Name = "ChartArea1";
-            TradingChart.ChartAreas.Add(chartArea1);
-            legend1.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-            legend1.LegendStyle = System.Windows.Forms.DataVisualization.Charting.LegendStyle.Row;
-            legend1.Name = "Legend1";
-            TradingChart.Legends.Add(legend1);
+            chartArea4.Name = "ChartArea1";
+            TradingChart.ChartAreas.Add(chartArea4);
+            legend4.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend4.LegendStyle = System.Windows.Forms.DataVisualization.Charting.LegendStyle.Row;
+            legend4.Name = "Legend1";
+            TradingChart.Legends.Add(legend4);
             TradingChart.Location = new Point(16, 33);
             TradingChart.Name = "TradingChart";
-            series1.BorderWidth = 2;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Color = Color.Lime;
-            series1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            series1.Legend = "Legend1";
-            series1.MarkerBorderWidth = 2;
-            series1.Name = "Series1";
-            TradingChart.Series.Add(series1);
+            series4.BorderWidth = 2;
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series4.Color = Color.Lime;
+            series4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            series4.Legend = "Legend1";
+            series4.MarkerBorderWidth = 2;
+            series4.Name = "Series1";
+            TradingChart.Series.Add(series4);
             TradingChart.Size = new Size(624, 266);
             TradingChart.TabIndex = 1;
             // 
@@ -290,22 +290,22 @@
             // 
             // UptimeChart
             // 
-            chartArea2.Name = "ChartArea1";
-            UptimeChart.ChartAreas.Add(chartArea2);
-            legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-            legend2.Name = "Legend1";
-            UptimeChart.Legends.Add(legend2);
+            chartArea5.Name = "ChartArea1";
+            UptimeChart.ChartAreas.Add(chartArea5);
+            legend5.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend5.Name = "Legend1";
+            UptimeChart.Legends.Add(legend5);
             UptimeChart.Location = new Point(16, 33);
             UptimeChart.Name = "UptimeChart";
-            series2.BorderWidth = 2;
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Color = Color.Lime;
-            series2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            series2.Legend = "Legend1";
-            series2.MarkerBorderWidth = 2;
-            series2.Name = "Series1";
-            UptimeChart.Series.Add(series2);
+            series5.BorderWidth = 2;
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.Color = Color.Lime;
+            series5.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            series5.Legend = "Legend1";
+            series5.MarkerBorderWidth = 2;
+            series5.Name = "Series1";
+            UptimeChart.Series.Add(series5);
             UptimeChart.Size = new Size(624, 262);
             UptimeChart.TabIndex = 1;
             // 
@@ -323,22 +323,22 @@
             // 
             // BalanceChart
             // 
-            chartArea3.Name = "ChartArea1";
-            BalanceChart.ChartAreas.Add(chartArea3);
-            legend3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-            legend3.Name = "Legend1";
-            BalanceChart.Legends.Add(legend3);
+            chartArea6.Name = "ChartArea1";
+            BalanceChart.ChartAreas.Add(chartArea6);
+            legend6.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend6.Name = "Legend1";
+            BalanceChart.Legends.Add(legend6);
             BalanceChart.Location = new Point(16, 33);
             BalanceChart.Name = "BalanceChart";
-            series3.BorderWidth = 2;
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Color = Color.Lime;
-            series3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            series3.Legend = "Legend1";
-            series3.MarkerBorderWidth = 2;
-            series3.Name = "Series1";
-            BalanceChart.Series.Add(series3);
+            series6.BorderWidth = 2;
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series6.Color = Color.Lime;
+            series6.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            series6.Legend = "Legend1";
+            series6.MarkerBorderWidth = 2;
+            series6.Name = "Series1";
+            BalanceChart.Series.Add(series6);
             BalanceChart.Size = new Size(624, 261);
             BalanceChart.TabIndex = 1;
             // 

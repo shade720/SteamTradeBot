@@ -59,6 +59,16 @@ public class SeleniumWebDriver : IDisposable
         ImplicitWait(by, DefaultImplicitWaitTime).SendKeys(key);
     }
 
+    public void Clear(By by, bool explicitly = false, int waitTime = 5)
+    {
+        if (explicitly)
+        {
+            ExplicitWait(by, waitTime).Clear();
+            return;
+        }
+        ImplicitWait(by, DefaultImplicitWaitTime).Clear();
+    }
+
     public string GetPageSource()
     {
         return _chromeBrowser.PageSource;

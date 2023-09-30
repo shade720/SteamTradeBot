@@ -246,13 +246,13 @@ public sealed class StateManagerService : Hub, IStateManager
         await _context.Clients.All.SendAsync("getEvents", tradingEvent);
     }
 
-    private void OnUptimeUpdated(TimeSpan uptime)
+    private async Task OnUptimeUpdated(TimeSpan uptime)
     {
-        var storedState = _stateDb.GetStateAsync(_configurationManager.ApiKey).Result
+        var storedState = await _stateDb.GetStateAsync(_configurationManager.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.Uptime = uptime;
-        var _ = _stateDb.AddOrUpdateStateAsync(storedState);
-        var __ = PublishState(storedState);
+        await _stateDb.AddOrUpdateStateAsync(storedState);
+        await PublishState(storedState);
     }
 
     #endregion
