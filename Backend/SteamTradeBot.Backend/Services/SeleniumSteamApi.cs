@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.Services;
@@ -248,11 +249,34 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
                 _webDriver.SendKey(SellPriceTextBox, price.ToString());
                 _webDriver.ClickOnElement(SellAgreementCheckBox);
                 _webDriver.ClickOnElement(SellAgreementButton);
-                _webDriver.ClickOnElement(SellConfirmationButton, true);
+                if (!JavaScriptErrorRetry(() =>_webDriver.ClickOnElement(SellConfirmationButton, true)))
+                    throw new JavaScriptException("Message: javascript error: this.each is not a function.");
                 return true;
             }
             return false;
         });
+    }
+
+    /// <summary>
+    /// Temp.
+    /// </summary>
+    /// <param name="dangerAction"></param>
+    /// <returns></returns>
+    private static bool JavaScriptErrorRetry(Action dangerAction)
+    {
+        for (var i = 0; i < 10; i++)
+        {
+            try
+            {
+                dangerAction();
+                return true;
+            }
+            catch (JavaScriptException)
+            {
+                Thread.Sleep(1000);
+            }
+        }
+        return false;
     }
 
     public async Task<double?> GetSellOrderPriceAsync(string itemUrl)
