@@ -24,8 +24,8 @@ public sealed class AvailableBalanceRule : IBuyRule
 
     public async Task<bool> IsFollowedAsync(ItemPage itemPage)
     {
-        var balanceInWork = (await _ordersDbAccess.GetOrdersAsync(_configurationManager.ApiKey, OrderType.BuyOrder)).Sum(buyOrder => buyOrder.BuyPrice);
-        var availableBalance = (itemPage.CurrentBalance - balanceInWork ) * _configurationManager.AvailableBalance;
+        var balanceInWork = (await _ordersDbAccess.GetOrdersAsync(_configurationManager.ApiKey, OrderType.BuyOrder)).Sum(buyOrder => buyOrder.BuyPrice * buyOrder.Quantity);
+        var availableBalance = (itemPage.CurrentBalance - balanceInWork) * _configurationManager.AvailableBalance;
 
         if (availableBalance > (itemPage.EstimatedBuyPrice ?? 0))
         {
