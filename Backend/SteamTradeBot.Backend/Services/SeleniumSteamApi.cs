@@ -187,26 +187,32 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     #region SellOrder
 
-    private const string ItemNameLabelId = "iteminfo0_item_name";
-    private static readonly By ItemNameLabel = By.Id(ItemNameLabelId);
+    private const string ItemNameLabelId1 = "//*[@id='iteminfo0_item_name']";
+    private static readonly By ItemNameLabel1 = By.XPath(ItemNameLabelId1);
 
-    private const string ItemDescriptionId = "//*[@id='iteminfo0_item_descriptors']/div[1]";
-    private static readonly By ItemDescriptionLabel = By.XPath(ItemDescriptionId);
+    private const string ItemNameLabelId2 = "//*[@id='iteminfo1_item_name']";
+    private static readonly By ItemNameLabel2 = By.XPath(ItemNameLabelId2);
+
+    private const string ItemDescriptionId1 = "//*[@id='iteminfo0_item_descriptors']/div[1]";
+    private static readonly By ItemDescriptionLabel1 = By.XPath(ItemDescriptionId1);
+
+    private const string ItemDescriptionId2 = "//*[@id='iteminfo1_item_descriptors']/div[1]";
+    private static readonly By ItemDescriptionLabel2 = By.XPath(ItemDescriptionId2);
 
     private const string ScrollPageJScript = "scroll(0, 20000000);";
     private const string SellSelectedItemJScript = "javascript:SellCurrentSelection()";
 
-    private const string SellPriceTextBoxId = "market_sell_buyercurrency_input";
-    private static readonly By SellPriceTextBox = By.Id(SellPriceTextBoxId);
+    private const string SellPriceTextBoxId = "//*[@id='market_sell_buyercurrency_input']";
+    private static readonly By SellPriceTextBox = By.XPath(SellPriceTextBoxId);
 
-    private const string SellAgreementCheckBoxId = "market_sell_dialog_accept_ssa";
-    private static readonly By SellAgreementCheckBox = By.Id(SellAgreementCheckBoxId);
+    private const string SellAgreementCheckBoxId = "//*[@id='market_sell_dialog_accept_ssa']";
+    private static readonly By SellAgreementCheckBox = By.XPath(SellAgreementCheckBoxId);
 
-    private const string SellAgreementButtonId = "market_sell_dialog_accept";
-    private static readonly By SellAgreementButton = By.Id(SellAgreementButtonId);
+    private const string SellAgreementButtonId = "//*[@id='market_sell_dialog_accept']";
+    private static readonly By SellAgreementButton = By.XPath(SellAgreementButtonId);
 
-    private const string SellConfirmationButtonId = "market_sell_dialog_ok";
-    private static readonly By SellConfirmationButton = By.Id(SellConfirmationButtonId);
+    private const string SellConfirmationButtonId = "//*[@id='market_sell_dialog_ok']";
+    private static readonly By SellConfirmationButton = By.XPath(SellConfirmationButtonId);
 
     private static string GetInventoryPageAddress(string userId) =>
         $"https://steamcommunity.com/profiles/{userId}/inventory/#730";
@@ -224,18 +230,25 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
             _webDriver.SetPage(GetInventoryPageAddress(userId));
             for (var itemNum = 0; itemNum < inventoryFindRange; itemNum++)
             {
-                _webDriver.ClickOnElement(GetInventoryItemElement(userId, itemNum));
-                var currentItemName = _webDriver.ReadFromElement(ItemNameLabel).Trim();
-                var currentItemQuality = GetItemQuality(_webDriver.ReadFromElement(ItemDescriptionLabel));
+                _webDriver.ClickOnElement(GetInventoryItemElement(userId, itemNum), true, 1);
+                var currentItemName = _webDriver.ReadFromElement(ItemNameLabel1).Trim() != string.Empty 
+                    ? _webDriver.ReadFromElement(ItemNameLabel1).Trim()
+                    : _webDriver.ReadFromElement(ItemNameLabel2).Trim();
+
+                var description = _webDriver.ReadFromElement(ItemDescriptionLabel1).Trim() != string.Empty
+                    ? _webDriver.ReadFromElement(ItemDescriptionLabel1).Trim()
+                    : _webDriver.ReadFromElement(ItemDescriptionLabel2).Trim();
+
+                var currentItemQuality = GetItemQuality(description);
                 var fullItemName = $"{currentItemName} ({currentItemQuality})";
                 if (itemName != fullItemName) continue;
                 _webDriver.ExecuteJs(ScrollPageJScript);
                 _webDriver.ExecuteJs(SellSelectedItemJScript);
                 _webDriver.Clear(SellPriceTextBox);
-                _webDriver.SendKey(SellPriceTextBox, $"{price}");
+                _webDriver.SendKey(SellPriceTextBox, price.ToString());
                 _webDriver.ClickOnElement(SellAgreementCheckBox);
                 _webDriver.ClickOnElement(SellAgreementButton);
-                _webDriver.ClickOnElement(SellConfirmationButton, true, 2);
+                _webDriver.ClickOnElement(SellConfirmationButton, true);
                 return true;
             }
             return false;
