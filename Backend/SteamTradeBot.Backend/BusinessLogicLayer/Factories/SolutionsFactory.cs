@@ -10,30 +10,30 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
 public sealed class SolutionsFactory
 {
-    private readonly IStateService _stateService;
+    private readonly IEventService _eventService;
     private readonly MarketRules _rules;
     private readonly Dictionary<string, MarketSolution> _solutions;
 
     public SolutionsFactory(
         ISteamApi api, 
         IConfigurationService configurationService, 
-        IStateService stateService, 
+        IEventService eventService, 
         OrdersRepository sqlOrdersDb, 
         MarketRules rules)
     {
         _rules = rules;
-        _stateService = stateService;
+        _eventService = eventService;
         _solutions = new Dictionary<string, MarketSolution>
         {
-            { nameof(BuyMarketSolution), new BuyMarketSolution(api, configurationService, stateService, sqlOrdersDb) },
-            { nameof(SellMarketSolution), new SellMarketSolution(api, configurationService, stateService, sqlOrdersDb) },
-            { nameof(CancelMarketSolution), new CancelMarketSolution(api, configurationService, stateService, sqlOrdersDb) }
+            { nameof(BuyMarketSolution), new BuyMarketSolution(api, configurationService, eventService, sqlOrdersDb) },
+            { nameof(SellMarketSolution), new SellMarketSolution(api, configurationService, eventService, sqlOrdersDb) },
+            { nameof(CancelMarketSolution), new CancelMarketSolution(api, configurationService, eventService, sqlOrdersDb) }
         };
     }
 
     public async Task<MarketSolution?> GetSolutionAsync(ItemPage itemPage)
     {
-        await _stateService.OnItemAnalyzingAsync(itemPage);
+        await _eventService.OnItemAnalyzingAsync(itemPage);
 
         if (await _rules.CanSellItemAsync(itemPage))
             return _solutions[nameof(SellMarketSolution)];

@@ -11,19 +11,17 @@ using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Services;
 
-public sealed class StateService : Hub, IStateService
+public sealed class EventService : Hub, IEventService
 {
     private readonly IConfigurationService _configurationService;
-    private readonly IHubContext<StateService> _context;
+    private readonly IHubContext<EventService> _context;
     private readonly StateRepository _stateRepository;
     private readonly HistoryRepository _historyRepository;
     private readonly UptimeProvider _uptimeProvider;
 
-    #region PublicInterface
-
-    public StateService(
+    public EventService(
         IConfigurationService configurationService,
-        IHubContext<StateService> context,
+        IHubContext<EventService> context,
         StateRepository stateRepository,
         HistoryRepository historyRepository)
     {
@@ -35,7 +33,7 @@ public sealed class StateService : Hub, IStateService
         _uptimeProvider.UptimeUpdate += OnUptimeUpdated;
     }
 
-    #region State
+    #region Manage
 
     public async Task EnsureStateCreated()
     {
@@ -45,13 +43,13 @@ public sealed class StateService : Hub, IStateService
         await _stateRepository.AddOrUpdateStateAsync(new ServiceState { ApiKey = _configurationService.ApiKey });
     }
 
-    public async Task<ServiceState> GetServiceStateAsync(string apiKey)
+    public async Task<ServiceState> GetHistorySummaryAsync(string apiKey)
     {
         var currentState = await _stateRepository.GetStateAsync(apiKey);
         return currentState ?? new ServiceState();
     }
 
-    public async Task ClearServiceStateAsync(string apiKey)
+    public async Task ClearHistorySummaryAsync(string apiKey)
     {
         var stateToClear = await _stateRepository.GetStateAsync(apiKey);
 
@@ -69,8 +67,21 @@ public sealed class StateService : Hub, IStateService
         stateToClear.WorkingState = ServiceWorkingState.Down;
 
         await _stateRepository.AddOrUpdateStateAsync(stateToClear);
-        await PublishState(stateToClear);
     }
+
+    public async Task<List<TradingEvent>> GetHistoryAsync(string apiKey)
+    {
+        return await _historyRepository.GetHistoryAsync(apiKey);
+    }
+
+    public async Task ClearHistoryAsync(string apiKey)
+    {
+        await _historyRepository.ClearHistoryAsync(apiKey);
+    }
+
+    #endregion
+
+    #region EventHandlers
 
     public async Task OnTradingStartedAsync()
     {
@@ -79,7 +90,6 @@ public sealed class StateService : Hub, IStateService
         storedState.WorkingState = ServiceWorkingState.Up;
         await _stateRepository.AddOrUpdateStateAsync(storedState);
         _uptimeProvider.StartCountdown();
-        await PublishState(storedState);
         Log.Information("Worker has started");
     }
 
@@ -91,7 +101,6 @@ public sealed class StateService : Hub, IStateService
         storedState.Uptime = TimeSpan.Zero;
         await _stateRepository.AddOrUpdateStateAsync(storedState);
         _uptimeProvider.StopCountdown();
-        await PublishState(storedState);
         Log.Information("Worker has stopped");
     }
 
@@ -100,7 +109,6 @@ public sealed class StateService : Hub, IStateService
         var storedState = await _stateRepository.GetStateAsync(_configurationService.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.IsLoggedIn = LogInState.Pending;
-        await PublishState(storedState);
         await _stateRepository.AddOrUpdateStateAsync(storedState);
     }
 
@@ -110,7 +118,6 @@ public sealed class StateService : Hub, IStateService
                           ?? throw new Exception("There is no state for this api key");
         storedState.IsLoggedIn = LogInState.LoggedIn;
         storedState.ApiKey = _configurationService.ApiKey;
-        await PublishState(storedState);
         await _stateRepository.AddOrUpdateStateAsync(storedState);
     }
 
@@ -119,17 +126,7 @@ public sealed class StateService : Hub, IStateService
         var storedState = await _stateRepository.GetStateAsync(_configurationService.ApiKey)
                           ?? throw new Exception("There is no state for this api key");
         storedState.IsLoggedIn = LogInState.NotLoggedIn;
-        await PublishState(storedState);
         await _stateRepository.AddOrUpdateStateAsync(storedState);
-    }
-
-    #endregion
-
-    #region History
-
-    public async Task<List<TradingEvent>> GetServiceHistoryAsync(string apiKey)
-    {
-        return await _historyRepository.GetHistoryAsync(apiKey);
     }
 
     public async Task OnErrorAsync(Exception exception)
@@ -138,7 +135,6 @@ public sealed class StateService : Hub, IStateService
                           ?? throw new Exception("There is no state for this api key");
         storedState.Errors++;
         await _stateRepository.AddOrUpdateStateAsync(storedState);
-        await PublishState(storedState);
         var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationService.ApiKey,
@@ -156,8 +152,6 @@ public sealed class StateService : Hub, IStateService
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemsAnalyzed++;
         await _stateRepository.AddOrUpdateStateAsync(storedState);
-        await PublishState(storedState);
-
         var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationService.ApiKey,
@@ -176,7 +170,6 @@ public sealed class StateService : Hub, IStateService
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemsSold++;
         await _stateRepository.AddOrUpdateStateAsync(storedState);
-        await PublishState(storedState);
         var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationService.ApiKey,
@@ -197,7 +190,6 @@ public sealed class StateService : Hub, IStateService
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemsBought++;
         await _stateRepository.AddOrUpdateStateAsync(storedState);
-        await PublishState(storedState);
         var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationService.ApiKey,
@@ -217,7 +209,6 @@ public sealed class StateService : Hub, IStateService
                           ?? throw new Exception("There is no state for this api key");
         storedState.ItemCanceled++;
         await _stateRepository.AddOrUpdateStateAsync(storedState);
-        await PublishState(storedState);
         var tradingEvent = new TradingEvent
         {
             ApiKey = _configurationService.ApiKey,
@@ -229,8 +220,6 @@ public sealed class StateService : Hub, IStateService
         await _historyRepository.AddNewEventAsync(tradingEvent);
         await PublishEvent(tradingEvent);
     }
-
-    #endregion
 
     #endregion
 
@@ -252,7 +241,6 @@ public sealed class StateService : Hub, IStateService
                           ?? throw new Exception("There is no state for this api key");
         storedState.Uptime = uptime;
         await _stateRepository.AddOrUpdateStateAsync(storedState);
-        await PublishState(storedState);
     }
 
     #endregion

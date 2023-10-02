@@ -25,10 +25,11 @@ public sealed class SqlHistoryRepository : HistoryRepository
         return await context.History.Where(x => x.ApiKey == apiKey).ToListAsync();
     }
 
-    public override async Task ClearHistoryAsync()
+    public override async Task ClearHistoryAsync(string apiKey)
     {
         await using var context = await TradeBotDataContextFactory.CreateDbContextAsync();
-        await context.History.ExecuteDeleteAsync();
+        var eventsSetToRemove = await context.History.Where(t => t.ApiKey == apiKey).ToListAsync();
+        context.History.RemoveRange(eventsSetToRemove);
         await context.SaveChangesAsync();
     }
 }

@@ -12,9 +12,9 @@ public sealed class SellMarketSolution : MarketSolution
     public SellMarketSolution(
         ISteamApi api, 
         IConfigurationService configurationService, 
-        IStateService stateService, 
+        IEventService eventService, 
         OrdersRepository ordersRepository) 
-        : base(api, configurationService, stateService, ordersRepository) { }
+        : base(api, configurationService, eventService, ordersRepository) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -61,7 +61,7 @@ public sealed class SellMarketSolution : MarketSolution
                     await OrdersRepository.RemoveOrderAsync(buyOrder);
 
                 await OrdersRepository.AddOrUpdateOrderAsync(sellOrder);
-                await StateService.OnItemSellingAsync(sellOrder);
+                await EventService.OnItemSellingAsync(sellOrder);
                 Log.Information("Sell order {0} (Price: {1}) placed successfully.", sellOrder.EngItemName, sellOrder.SellPrice);
             }
             else

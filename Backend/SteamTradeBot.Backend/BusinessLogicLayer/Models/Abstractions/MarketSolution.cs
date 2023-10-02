@@ -9,18 +9,18 @@ public abstract class MarketSolution
 {
     protected readonly ISteamApi SteamApi;
     protected readonly IConfigurationService ConfigurationService;
-    protected readonly IStateService StateService;
+    protected readonly IEventService EventService;
     protected readonly OrdersRepository OrdersRepository;
 
     protected MarketSolution(
         ISteamApi api,
         IConfigurationService configurationService,
-        IStateService stateService,
+        IEventService eventService,
         OrdersRepository ordersRepository)
     {
         SteamApi = api;
         ConfigurationService = configurationService;
-        StateService = stateService;
+        EventService = eventService;
         OrdersRepository = ordersRepository;
     }
 

@@ -13,5 +13,5 @@ public abstract class HistoryRepository : Repository
 
     public abstract Task<List<TradingEvent>> GetHistoryAsync(string apiKey);
 
-    public abstract Task ClearHistoryAsync();
+    public abstract Task ClearHistoryAsync(string apiKey);
 }

@@ -12,7 +12,7 @@ public class WorkerService
     private readonly ItemsNamesProvider _itemsNamesProvider;
     private readonly ItemPageFactory _itemPageFactory;
     private readonly SolutionsFactory _solutionsFactory;
-    private readonly IStateService _stateService;
+    private readonly IEventService _eventService;
 
     private CancellationTokenSource? _cancellationTokenSource;
 
@@ -21,12 +21,12 @@ public class WorkerService
         ItemsNamesProvider itemsNamesProvider,
         ItemPageFactory itemPageFactory,
         SolutionsFactory solutionsFactory,
-        IStateService stateService)
+        IEventService eventService)
     {
         _itemsNamesProvider = itemsNamesProvider;
         _itemPageFactory = itemPageFactory;
         _solutionsFactory = solutionsFactory;
-        _stateService = stateService;
+        _eventService = eventService;
     }
 
     public async Task StartAsync()
@@ -37,7 +37,7 @@ public class WorkerService
 
     private async Task WorkerLoop()
     {
-        await _stateService.OnTradingStartedAsync();
+        await _eventService.OnTradingStartedAsync();
         _cancellationTokenSource = new CancellationTokenSource();
         await foreach (var name in _itemsNamesProvider.GetNamesAsync())
         {
@@ -55,10 +55,10 @@ public class WorkerService
             {
                 Log.Logger.Error("Item skipped due to error -> \r\nMessage: {0}, StackTrace: {1}",
                     e.Message, e.StackTrace);
-                await _stateService.OnErrorAsync(e);
+                await _eventService.OnErrorAsync(e);
             }
         }
-        await _stateService.OnTradingStoppedAsync();
+        await _eventService.OnTradingStoppedAsync();
     }
 
     public async Task StopAsync()

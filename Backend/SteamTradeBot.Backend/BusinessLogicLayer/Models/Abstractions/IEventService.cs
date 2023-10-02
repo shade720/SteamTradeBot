@@ -6,11 +6,12 @@ using SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
 
-public interface IStateService
+public interface IEventService
 {
-    public Task<ServiceState> GetServiceStateAsync(string apiKey);
-    public Task<List<TradingEvent>> GetServiceHistoryAsync(string apiKey);
-    public Task ClearServiceStateAsync(string apiKey);
+    public Task<ServiceState> GetHistorySummaryAsync(string apiKey);
+    public Task ClearHistorySummaryAsync(string apiKey);
+    public Task<List<TradingEvent>> GetHistoryAsync(string apiKey);
+    public Task ClearHistoryAsync(string apiKey);
     public Task OnTradingStartedAsync();
     public Task OnTradingStoppedAsync();
     public Task OnLogInPendingAsync();

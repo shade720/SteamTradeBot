@@ -79,7 +79,7 @@ builder.Services.AddTransient<IBuyRule, TrendRule>();
 builder.Services.AddTransient<ISellRule, CurrentQuantityCheckRule>();
 builder.Services.AddTransient<ICancelRule, FitPriceRule>();
 
-builder.Services.AddSingleton<IStateService, StateService>();
+builder.Services.AddSingleton<IEventService, EventService>();
 builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<IConfigurationService, JsonFileBasedConfigurationService>();
@@ -113,7 +113,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.MapHub<StateService>("/stateService");
+app.MapHub<EventService>("/eventService");
 app.MapControllers();
 app.UseMiddleware<TokenAuthenticationMiddleware>();
 app.UseMiddleware<ExclusiveAccessMiddleware>();
@@ -122,10 +122,10 @@ app.UseExceptionHandler(async exceptionHandlerApp =>
     var exception = exceptionHandlerApp.ServerFeatures.Get<IExceptionHandlerFeature>()?.Error;
     if (exception is null)
         return;
-    var stateManager = exceptionHandlerApp.ApplicationServices.GetService<IStateService>();
+    var stateManager = exceptionHandlerApp.ApplicationServices.GetService<IEventService>();
     if (stateManager is null)
     {
-        Log.Error("Application error: stateService does not configured (ExceptionHandler)");
+        Log.Error("Application error: eventService does not configured (ExceptionHandler)");
         return;
     }
     await stateManager.OnErrorAsync(exception);

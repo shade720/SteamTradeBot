@@ -21,21 +21,21 @@ public class TradeBotController : ControllerBase
     public async Task<IResult> StartBot(
         WorkerService worker,
         ISteamApi api,
-        IStateService stateService,
+        IEventService eventService,
         Credentials credentials)
     {
-        if (stateService is not StateService dbBasedStateManager)
-            throw new ApplicationException("Application error: stateService does not configured");
+        if (eventService is not EventService dbBasedStateManager)
+            throw new ApplicationException("Application error: eventService does not configured");
         await dbBasedStateManager.EnsureStateCreated();
 
-        await stateService.OnLogInPendingAsync();
+        await eventService.OnLogInPendingAsync();
         var isAuthenticated = await api.LogIn(credentials.Login, credentials.Password, credentials.Secret);
         if (!isAuthenticated)
         {
-            await stateService.OnLoggedOutAsync();
+            await eventService.OnLoggedOutAsync();
             return Results.BadRequest("Authorization failed.");
         }
-        await stateService.OnLoggedInAsync();
+        await eventService.OnLoggedInAsync();
         await worker.StartAsync();
 
         return Results.Ok();
@@ -72,28 +72,28 @@ public class TradeBotController : ControllerBase
     [HttpGet]
     [Route("state")]
     public async Task<ServiceState> GetState(
-        IStateService stateService,
+        IEventService eventService,
         [FromQuery] string apiKey)
     {
-        return await stateService.GetServiceStateAsync(apiKey);
+        return await eventService.GetHistorySummaryAsync(apiKey);
     }
 
     [HttpGet]
     [Route("history")]
     public async Task<List<TradingEvent>> GetHistory(
-        IStateService stateService,
+        IEventService eventService,
         [FromQuery] string apiKey)
     {
-        return await stateService.GetServiceHistoryAsync(apiKey);
+        return await eventService.GetHistoryAsync(apiKey);
     }
 
     [HttpPost]
     [Route("clearState")]
     public async Task CancelOrders(
-        IStateService cancellingService,
+        IEventService cancellingService,
         [FromQuery] string apiKey)
     {
-        await cancellingService.ClearServiceStateAsync(apiKey);
+        await cancellingService.ClearHistorySummaryAsync(apiKey);
     }
 
     [HttpGet]
