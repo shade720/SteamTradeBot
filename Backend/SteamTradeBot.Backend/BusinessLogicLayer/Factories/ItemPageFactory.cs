@@ -1,6 +1,6 @@
 ﻿using Serilog;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Models.ItemModel;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +11,14 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 public sealed class ItemPageFactory
 {
     private readonly ISteamApi _api;
-    private readonly IConfigurationManager _configurationManager;
+    private readonly IConfigurationService _configurationService;
 
     public ItemPageFactory(
         ISteamApi api,
-        IConfigurationManager configurationManager)
+        IConfigurationService configurationService)
     {
         _api = api;
-        _configurationManager = configurationManager;
+        _configurationService = configurationService;
     }
 
     public async Task<ItemPage> CreateAsync(string engItemName)
@@ -43,10 +43,10 @@ public sealed class ItemPageFactory
             };
         }
 
-        var fromDate = DateTime.Now.AddDays(-_configurationManager.AnalysisIntervalDays);
+        var fromDate = DateTime.Now.AddDays(-_configurationService.AnalysisIntervalDays);
         itemPage.SalesChart = await _api.GetChartAsync(itemPage.ItemUrl, fromDate);
 
-        itemPage.SellOrderBook = await _api.GetSellOrdersBookAsync(itemPage.ItemUrl, _configurationManager.SellListingFindRange);
+        itemPage.SellOrderBook = await _api.GetSellOrdersBookAsync(itemPage.ItemUrl, _configurationService.SellListingFindRange);
 
         var salesPerDay = itemPage.SalesChart
             .GroupBy(x => x.Date.Date)
@@ -58,7 +58,7 @@ public sealed class ItemPageFactory
             .Aggregate(new List<OrderBookItem>(), (resultOrderBook, orderBookItem) =>
             {
                 var salesToCompare = resultOrderBook.Sum(x => x.Quantity);
-                if (salesToCompare < salesPerDay * _configurationManager.SalesRatio)
+                if (salesToCompare < salesPerDay * _configurationService.SalesRatio)
                     resultOrderBook.Add(orderBookItem);
                 return resultOrderBook;
             });

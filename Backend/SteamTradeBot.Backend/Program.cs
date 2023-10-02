@@ -10,17 +10,19 @@ using OpenQA.Selenium.Remote;
 using Serilog;
 using Serilog.Events;
 using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
+using SteamTradeBot.Backend.BusinessLogicLayer.Middlewares;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
+using SteamTradeBot.Backend.BusinessLogicLayer.Services;
+using SteamTradeBot.Backend.BusinessLogicLayer.SteamConnectors.Selenium;
 using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Middlewares;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Services;
 using System;
 using System.IO;
-using SteamTradeBot.Backend.BusinessLogicLayer;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
@@ -45,6 +47,10 @@ builder.Configuration
     .SetBasePath(Environment.CurrentDirectory)
     .AddJsonFile("appsettings.json", true, true);
 
+builder.Services.AddTransient<OrdersRepository, SqlOrdersRepository>();
+builder.Services.AddTransient<HistoryRepository, SqlHistoryRepository>();
+builder.Services.AddTransient<StateRepository, SqlStateRepository>();
+builder.Services.AddTransient<TokenRepository, SqlTokenRepository>();
 builder.Services.AddDbContextFactory<TradeBotDataContext>(options =>
 {
     var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING");
@@ -57,13 +63,30 @@ builder.Services.AddDbContextFactory<TradeBotDataContext>(options =>
     }
 });
 
-var webDriverHostFromEnvironment = Environment.GetEnvironmentVariable("SELENIUM_HOST");
-
 builder.Services.AddSingleton<WorkerService>();
-builder.Services.AddSingleton<IConfigurationManager, JsonFileBasedConfigurationManagerService>();
-builder.Services.AddSingleton<IStateManager, StateManagerService>();
+
+builder.Services.AddTransient<ItemsNamesProvider>();
+builder.Services.AddTransient<ItemPageFactory>();
+builder.Services.AddTransient<SolutionsFactory>();
+
+builder.Services.AddTransient<MarketRules>();
+builder.Services.AddTransient<IBuyRule, AvailableBalanceRule>();
+builder.Services.AddTransient<IBuyRule, AveragePriceRule>();
+builder.Services.AddTransient<IBuyRule, SalesCountRule>();
+builder.Services.AddTransient<IBuyRule, OrderAlreadyExistRule>();
+builder.Services.AddTransient<IBuyRule, RequiredProfitRule>();
+builder.Services.AddTransient<IBuyRule, TrendRule>();
+builder.Services.AddTransient<ISellRule, CurrentQuantityCheckRule>();
+builder.Services.AddTransient<ICancelRule, FitPriceRule>();
+
+builder.Services.AddSingleton<IStateService, StateService>();
 builder.Services.AddSignalR();
 
+builder.Services.AddSingleton<IConfigurationService, JsonFileBasedConfigurationService>();
+builder.Services.AddTransient<LogsProviderService>();
+builder.Services.AddTransient<OrderCancellingService>();
+
+var webDriverHostFromEnvironment = Environment.GetEnvironmentVariable("SELENIUM_HOST");
 builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>();
 builder.Services.AddSingleton<IItemsTableApi, SkinsTableApi>();
 builder.Services.AddSingleton(_ => new SeleniumWebDriver(() =>
@@ -86,33 +109,11 @@ builder.Services.AddSingleton(_ => new SeleniumWebDriver(() =>
     return new ChromeDriver(driverService, chromeOptions);
 }));
 
-builder.Services.AddTransient<OrdersDbAccess>();
-builder.Services.AddTransient<HistoryDbAccess>();
-builder.Services.AddTransient<StateDbAccess>();
-builder.Services.AddTransient<TokenDbAccess>();
-
-builder.Services.AddTransient<LogsProviderService>();
-builder.Services.AddTransient<OrderCancellingService>();
-
-builder.Services.AddTransient<IBuyRule, AvailableBalanceRule>();
-builder.Services.AddTransient<IBuyRule, AveragePriceRule>();
-builder.Services.AddTransient<IBuyRule, SalesCountRule>();
-builder.Services.AddTransient<IBuyRule, OrderAlreadyExistRule>();
-builder.Services.AddTransient<IBuyRule, RequiredProfitRule>();
-builder.Services.AddTransient<IBuyRule, TrendRule>();
-builder.Services.AddTransient<ISellRule, CurrentQuantityCheckRule>();
-builder.Services.AddTransient<ICancelRule, FitPriceRule>();
-
-builder.Services.AddTransient<MarketRules>();
-builder.Services.AddTransient<SolutionsFactory>();
-builder.Services.AddTransient<ItemPageFactory>();
-builder.Services.AddTransient<ItemsNamesProvider>();
-
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.MapHub<StateManagerService>("/stateManager");
+app.MapHub<StateService>("/stateService");
 app.MapControllers();
 app.UseMiddleware<TokenAuthenticationMiddleware>();
 app.UseMiddleware<ExclusiveAccessMiddleware>();
@@ -121,10 +122,10 @@ app.UseExceptionHandler(async exceptionHandlerApp =>
     var exception = exceptionHandlerApp.ServerFeatures.Get<IExceptionHandlerFeature>()?.Error;
     if (exception is null)
         return;
-    var stateManager = exceptionHandlerApp.ApplicationServices.GetService<IStateManager>();
+    var stateManager = exceptionHandlerApp.ApplicationServices.GetService<IStateService>();
     if (stateManager is null)
     {
-        Log.Error("Application error: stateManager does not configured (ExceptionHandler)");
+        Log.Error("Application error: stateService does not configured (ExceptionHandler)");
         return;
     }
     await stateManager.OnErrorAsync(exception);

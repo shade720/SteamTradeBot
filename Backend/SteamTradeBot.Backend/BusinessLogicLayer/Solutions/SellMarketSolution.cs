@@ -1,9 +1,9 @@
-﻿using SteamTradeBot.Backend.DataAccessLayer;
+﻿using Serilog;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
 using System;
 using System.Threading.Tasks;
-using Serilog;
-using SteamTradeBot.Backend.Models.ItemModel;
-using SteamTradeBot.Backend.Models.Abstractions;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Solutions;
 
@@ -11,10 +11,10 @@ public sealed class SellMarketSolution : MarketSolution
 {
     public SellMarketSolution(
         ISteamApi api, 
-        IConfigurationManager configurationManager, 
-        IStateManager stateManager, 
-        OrdersDbAccess ordersDb) 
-        : base(api, configurationManager, stateManager, ordersDb) { }
+        IConfigurationService configurationService, 
+        IStateService stateService, 
+        OrdersRepository ordersRepository) 
+        : base(api, configurationService, stateService, ordersRepository) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -24,7 +24,7 @@ public sealed class SellMarketSolution : MarketSolution
     public override async Task PerformAsync(ItemPage itemPage)
     {
         Log.Logger.Information("Placing sell order ({0})...", itemPage.EngItemName);
-        var buyOrder = await OrdersDb.GetOrderAsync(itemPage.EngItemName, ConfigurationManager.ApiKey, OrderType.BuyOrder);
+        var buyOrder = await OrdersRepository.GetOrderAsync(itemPage.EngItemName, ConfigurationService.ApiKey, OrderType.BuyOrder);
 
         if (buyOrder is null)
             throw new Exception("Can't load stored buy order for sell order forming.");
@@ -38,7 +38,7 @@ public sealed class SellMarketSolution : MarketSolution
 
         var sellOrder = new Order
         {
-            ApiKey = ConfigurationManager.ApiKey,
+            ApiKey = ConfigurationService.ApiKey,
             EngItemName = itemPage.EngItemName,
             RusItemName = itemPage.RusItemName,
             ItemUrl = itemPage.ItemUrl,
@@ -51,17 +51,17 @@ public sealed class SellMarketSolution : MarketSolution
         for (var itemNum = 0; itemNum < itemsCountToSell; itemNum++)
         {
             var isPlacedSuccessfully = await SteamApi.PlaceSellOrderAsync(sellOrder.EngItemName, sellOrder.SellPrice,
-                ConfigurationManager.SteamUserId);
+                ConfigurationService.SteamUserId);
             if (isPlacedSuccessfully)
             {
                 buyOrder.Quantity -= 1;
                 if (buyOrder.Quantity > 0)
-                    await OrdersDb.AddOrUpdateOrderAsync(buyOrder);
+                    await OrdersRepository.AddOrUpdateOrderAsync(buyOrder);
                 else
-                    await OrdersDb.RemoveOrderAsync(buyOrder);
+                    await OrdersRepository.RemoveOrderAsync(buyOrder);
 
-                await OrdersDb.AddOrUpdateOrderAsync(sellOrder);
-                await StateManager.OnItemSellingAsync(sellOrder);
+                await OrdersRepository.AddOrUpdateOrderAsync(sellOrder);
+                await StateService.OnItemSellingAsync(sellOrder);
                 Log.Information("Sell order {0} (Price: {1}) placed successfully.", sellOrder.EngItemName, sellOrder.SellPrice);
             }
             else

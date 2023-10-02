@@ -1,7 +1,7 @@
 ﻿using Serilog;
-using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Models.ItemModel;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,13 +10,13 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
 
 public sealed class FitPriceRule : ICancelRule
 {
-    private readonly OrdersDbAccess _ordersDb;
-    private readonly IConfigurationManager _configurationManager;
+    private readonly OrdersRepository _ordersRepository;
+    private readonly IConfigurationService _configurationService;
 
-    public FitPriceRule(IConfigurationManager configurationManager, OrdersDbAccess ordersDb)
+    public FitPriceRule(IConfigurationService configurationService, OrdersRepository ordersRepository)
     {
-        _configurationManager = configurationManager;
-        _ordersDb = ordersDb;
+        _configurationService = configurationService;
+        _ordersRepository = ordersRepository;
     }
 
     public bool IsFollowed(ItemPage itemPage)
@@ -36,10 +36,10 @@ public sealed class FitPriceRule : ICancelRule
             Log.Information("Can't check if order obsolete. Buy order book is empty.");
             return false;
         }
-        var existedBuyOrder = await _ordersDb.GetOrderAsync(itemPage.EngItemName, _configurationManager.ApiKey, OrderType.BuyOrder);
+        var existedBuyOrder = await _ordersRepository.GetOrderAsync(itemPage.EngItemName, _configurationService.ApiKey, OrderType.BuyOrder);
 
         var isOrderObsolete = existedBuyOrder is not null && 
-                              itemPage.BuyOrderBook.All(x => Math.Abs(x.Price - existedBuyOrder.BuyPrice) > _configurationManager.FitPriceRange);
+                              itemPage.BuyOrderBook.All(x => Math.Abs(x.Price - existedBuyOrder.BuyPrice) > _configurationService.FitPriceRange);
         if (!isOrderObsolete)
         {
             Log.Information("Order is still relevant.");

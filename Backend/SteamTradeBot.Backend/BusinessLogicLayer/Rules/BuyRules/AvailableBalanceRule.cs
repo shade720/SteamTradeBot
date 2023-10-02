@@ -1,21 +1,21 @@
-﻿using System.Linq;
+﻿using Serilog;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
+using System.Linq;
 using System.Threading.Tasks;
-using Serilog;
-using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
 public sealed class AvailableBalanceRule : IBuyRule
 {
-    private readonly IConfigurationManager _configurationManager;
-    private readonly OrdersDbAccess _ordersDbAccess;
+    private readonly IConfigurationService _configurationService;
+    private readonly OrdersRepository _ordersRepository;
 
-    public AvailableBalanceRule(IConfigurationManager configurationManager, OrdersDbAccess ordersDbAccess)
+    public AvailableBalanceRule(IConfigurationService configurationService, OrdersRepository ordersRepository)
     {
-        _configurationManager = configurationManager;
-        _ordersDbAccess = ordersDbAccess;
+        _configurationService = configurationService;
+        _ordersRepository = ordersRepository;
     }
     public bool IsFollowed(ItemPage itemPage)
     {
@@ -24,8 +24,8 @@ public sealed class AvailableBalanceRule : IBuyRule
 
     public async Task<bool> IsFollowedAsync(ItemPage itemPage)
     {
-        var balanceInWork = (await _ordersDbAccess.GetOrdersAsync(_configurationManager.ApiKey, OrderType.BuyOrder)).Sum(buyOrder => buyOrder.BuyPrice * buyOrder.Quantity);
-        var availableBalance = (itemPage.CurrentBalance - balanceInWork) * _configurationManager.AvailableBalance;
+        var balanceInWork = (await _ordersRepository.GetOrdersAsync(_configurationService.ApiKey, OrderType.BuyOrder)).Sum(buyOrder => buyOrder.BuyPrice * buyOrder.Quantity);
+        var availableBalance = (itemPage.CurrentBalance - balanceInWork) * _configurationService.AvailableBalance;
 
         if (availableBalance > (itemPage.EstimatedBuyPrice ?? 0))
         {

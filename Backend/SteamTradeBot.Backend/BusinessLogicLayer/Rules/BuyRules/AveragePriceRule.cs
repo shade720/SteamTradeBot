@@ -1,18 +1,18 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Models.ItemModel;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
 public sealed class AveragePriceRule : IBuyRule
 {
-    private readonly IConfigurationManager _configurationManager;
+    private readonly IConfigurationService _configurationService;
 
-    public AveragePriceRule(IConfigurationManager configurationManager)
+    public AveragePriceRule(IConfigurationService configurationService)
     {
-        _configurationManager = configurationManager;
+        _configurationService = configurationService;
     }
     public bool IsFollowed(ItemPage itemPage)
     {
@@ -30,13 +30,13 @@ public sealed class AveragePriceRule : IBuyRule
             }
 
             var avgPriceFromChart = AveragePriceFromChart(itemPage.SalesChart);
-            if (itemPage.BuyOrderBook.Any(buyOrder => IsBuyPriceLowerThanAverage(buyOrder.Price, avgPriceFromChart, _configurationManager.AveragePriceRatio)))
+            if (itemPage.BuyOrderBook.Any(buyOrder => IsBuyPriceLowerThanAverage(buyOrder.Price, avgPriceFromChart, _configurationService.AveragePriceRatio)))
             {
                 Log.Information("Average price is ok.");
                 return true;
             }
             Log.Information("Average price is bad. Average price is higher than needed. Min buy price: {0} < Required average price: {1}",
-                itemPage.BuyOrderBook.Min(buyOrder => buyOrder.Price), avgPriceFromChart * (1 + _configurationManager.AveragePriceRatio));
+                itemPage.BuyOrderBook.Min(buyOrder => buyOrder.Price), avgPriceFromChart * (1 + _configurationService.AveragePriceRatio));
             return false;
         });
     }

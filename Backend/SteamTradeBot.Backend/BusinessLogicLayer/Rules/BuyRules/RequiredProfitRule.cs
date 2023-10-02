@@ -1,6 +1,6 @@
 ﻿using Serilog;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Models.ItemModel;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +10,11 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
 public sealed class RequiredProfitRule : IBuyRule
 {
-    private readonly IConfigurationManager _configurationManager;
+    private readonly IConfigurationService _configurationService;
 
-    public RequiredProfitRule(IConfigurationManager configurationManager)
+    public RequiredProfitRule(IConfigurationService configurationService)
     {
-        _configurationManager = configurationManager;
+        _configurationService = configurationService;
     }
 
     public bool IsFollowed(ItemPage itemPage)
@@ -40,8 +40,8 @@ public sealed class RequiredProfitRule : IBuyRule
             var isPricesFound = GetBestPricesFromListings(
                 itemPage.BuyOrderBook,
                 itemPage.SellOrderBook,
-                _configurationManager.SteamCommission,
-                _configurationManager.RequiredProfit,
+                _configurationService.SteamCommission,
+                _configurationService.RequiredProfit,
                 out var buyPrice, out var sellPrice);
 
             if (!isPricesFound)

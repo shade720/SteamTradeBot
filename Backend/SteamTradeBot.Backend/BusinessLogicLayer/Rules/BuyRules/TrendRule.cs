@@ -1,19 +1,19 @@
-﻿using System;
+﻿using Serilog;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Serilog;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
 public sealed class TrendRule : IBuyRule
 {
-    private readonly IConfigurationManager _configurationManager;
+    private readonly IConfigurationService _configurationService;
 
-    public TrendRule(IConfigurationManager configurationManager)
+    public TrendRule(IConfigurationService configurationService)
     {
-        _configurationManager = configurationManager;
+        _configurationService = configurationService;
     }
 
     public bool IsFollowed(ItemPage itemPage)
@@ -27,13 +27,13 @@ public sealed class TrendRule : IBuyRule
         return await Task.Run(() =>
         {
             var trend = PriceTrend(itemPage.SalesChart);
-            if (trend > _configurationManager.Trend)
+            if (trend > _configurationService.Trend)
             {
                 Log.Information("Trend is ok.");
                 return true;
             }
             Log.Information("Trend is bad. Lower than needed. Current trend: {0} < Required trend: {1}",
-                trend.ToString("F10"), _configurationManager.Trend);
+                trend.ToString("F10"), _configurationService.Trend);
             return false;
         });
     }

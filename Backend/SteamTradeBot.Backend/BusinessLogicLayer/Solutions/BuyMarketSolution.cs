@@ -1,7 +1,7 @@
 ﻿using Serilog;
-using SteamTradeBot.Backend.DataAccessLayer;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Models.ItemModel;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
 using System;
 using System.Threading.Tasks;
 
@@ -11,10 +11,10 @@ public sealed class BuyMarketSolution : MarketSolution
 {
     public BuyMarketSolution(
         ISteamApi api, 
-        IConfigurationManager configurationManager, 
-        IStateManager stateManager, 
-        OrdersDbAccess ordersDb) : 
-        base(api, configurationManager, stateManager, ordersDb) { }
+        IConfigurationService configurationService, 
+        IStateService stateService, 
+        OrdersRepository ordersRepository) : 
+        base(api, configurationService, stateService, ordersRepository) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -30,19 +30,19 @@ public sealed class BuyMarketSolution : MarketSolution
         
         var buyOrder = new Order
         {
-            ApiKey = ConfigurationManager.ApiKey,
+            ApiKey = ConfigurationService.ApiKey,
             EngItemName = itemPage.EngItemName,
             RusItemName = itemPage.RusItemName,
             ItemUrl = itemPage.ItemUrl,
             OrderType = OrderType.BuyOrder,
             BuyPrice = itemPage.EstimatedBuyPrice.Value,
             SellPrice = itemPage.EstimatedSellPrice.Value,
-            Quantity = ConfigurationManager.OrderQuantity
+            Quantity = ConfigurationService.OrderQuantity
         };
 
         await SteamApi.PlaceBuyOrderAsync(buyOrder.ItemUrl, buyOrder.BuyPrice, buyOrder.Quantity);
-        await OrdersDb.AddOrUpdateOrderAsync(buyOrder);
-        await StateManager.OnItemBuyingAsync(buyOrder);
+        await OrdersRepository.AddOrUpdateOrderAsync(buyOrder);
+        await StateService.OnItemBuyingAsync(buyOrder);
 
         Log.Logger.Information("Buy order {0} has been placed:\r\nItem name: {1}\r\nUrl: {2}\r\nBuy price: {3}\r\nEstimated sell price: {4}\r\nQuantity: {5}", 
             buyOrder.EngItemName, buyOrder.ItemUrl, buyOrder.ItemUrl, buyOrder.BuyPrice, buyOrder.SellPrice, buyOrder.Quantity);

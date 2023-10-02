@@ -1,18 +1,18 @@
-﻿using System.Linq;
+﻿using Serilog;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
+using System.Linq;
 using System.Threading.Tasks;
-using Serilog;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
 public sealed class SalesCountRule : IBuyRule
 {
-    private readonly IConfigurationManager _configurationManager;
+    private readonly IConfigurationService _configurationService;
 
-    public SalesCountRule(IConfigurationManager configurationManager)
+    public SalesCountRule(IConfigurationService configurationService)
     {
-        _configurationManager = configurationManager;
+        _configurationService = configurationService;
     }
     public bool IsFollowed(ItemPage itemPage)
     {
@@ -24,13 +24,13 @@ public sealed class SalesCountRule : IBuyRule
         return await Task.Run(() =>
         {
             var salesPerDayFromChart = SalesPerDayFromChart(itemPage.SalesChart);
-            if (salesPerDayFromChart > _configurationManager.SalesPerDay)
+            if (salesPerDayFromChart > _configurationService.SalesPerDay)
             {
                 Log.Information("Sales count is ok.");
                 return true;
             }
             Log.Information("Sales count is bad. Sales volume is lower than needed. Current sales: {0} < Required sales: {1}", 
-                salesPerDayFromChart, _configurationManager.SalesPerDay);
+                salesPerDayFromChart, _configurationService.SalesPerDay);
             return false;
         });
     }

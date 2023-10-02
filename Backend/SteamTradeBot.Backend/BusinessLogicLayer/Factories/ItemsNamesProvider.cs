@@ -1,26 +1,26 @@
 ﻿using Serilog;
-using SteamTradeBot.Backend.DataAccessLayer;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
 using System.Collections.Generic;
 using System.Linq;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 
 public sealed class ItemsNamesProvider
 {
     private readonly IItemsTableApi _api;
-    private readonly IConfigurationManager _configurationManager;
-    private readonly OrdersDbAccess _ordersDb;
+    private readonly IConfigurationService _configurationService;
+    private readonly OrdersRepository _ordersRepository;
 
     public ItemsNamesProvider(
         IItemsTableApi api, 
-        IConfigurationManager configurationManager, 
-        OrdersDbAccess ordersDb)
+        IConfigurationService configurationService,
+        OrdersRepository ordersRepository)
     {
         _api = api;
-        _configurationManager = configurationManager;
-        _ordersDb = ordersDb;
+        _configurationService = configurationService;
+        _ordersRepository = ordersRepository;
     }
 
     public async IAsyncEnumerable<string> GetNamesAsync()
@@ -32,10 +32,10 @@ public sealed class ItemsNamesProvider
             try
             {
                 loadedItemNamesList = await _api.GetItemNamesListAsync(
-                    _configurationManager.MinPrice,
-                    _configurationManager.MaxPrice,
-                    _configurationManager.SalesPerDay * 7,
-                    _configurationManager.ItemListSize);
+                    _configurationService.MinPrice,
+                    _configurationService.MaxPrice,
+                    _configurationService.SalesPerDay * 7,
+                    _configurationService.ItemListSize);
             }
             catch
             {
@@ -43,7 +43,7 @@ public sealed class ItemsNamesProvider
                 loadedItemNamesList = new List<string>();
             }
             
-            var existingOrders = await _ordersDb.GetOrdersAsync(_configurationManager.ApiKey, OrderType.BuyOrder);
+            var existingOrders = await _ordersRepository.GetOrdersAsync(_configurationService.ApiKey, OrderType.BuyOrder);
             foreach (var existingOrderName in existingOrders.Select(x => x.EngItemName))
             {
                 loadedItemNamesList.Insert(0, existingOrderName);

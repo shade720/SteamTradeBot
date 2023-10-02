@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SteamTradeBot.Backend.Models;
-using SteamTradeBot.Backend.Models.Abstractions;
-using SteamTradeBot.Backend.Models.StateModel;
-using SteamTradeBot.Backend.Services;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel;
+using SteamTradeBot.Backend.BusinessLogicLayer.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,21 +21,21 @@ public class TradeBotController : ControllerBase
     public async Task<IResult> StartBot(
         WorkerService worker,
         ISteamApi api,
-        IStateManager stateManager,
+        IStateService stateService,
         Credentials credentials)
     {
-        if (stateManager is not StateManagerService dbBasedStateManager)
-            throw new ApplicationException("Application error: stateManager does not configured");
+        if (stateService is not StateService dbBasedStateManager)
+            throw new ApplicationException("Application error: stateService does not configured");
         await dbBasedStateManager.EnsureStateCreated();
 
-        await stateManager.OnLogInPendingAsync();
+        await stateService.OnLogInPendingAsync();
         var isAuthenticated = await api.LogIn(credentials.Login, credentials.Password, credentials.Secret);
         if (!isAuthenticated)
         {
-            await stateManager.OnLoggedOutAsync();
+            await stateService.OnLoggedOutAsync();
             return Results.BadRequest("Authorization failed.");
         }
-        await stateManager.OnLoggedInAsync();
+        await stateService.OnLoggedInAsync();
         await worker.StartAsync();
 
         return Results.Ok();
@@ -52,11 +52,11 @@ public class TradeBotController : ControllerBase
     [HttpPost]
     [Route("refreshConfiguration")]
     public async Task<IResult> SetConfiguration(
-        IConfigurationManager configurationManager,
+        IConfigurationService configurationService,
         UserConfiguration userConfiguration,
         [FromQuery] string apiKey)
     {
-        var isSuccessful = await configurationManager.RefreshConfigurationAsync(apiKey, userConfiguration);
+        var isSuccessful = await configurationService.RefreshConfigurationAsync(apiKey, userConfiguration);
         return !isSuccessful ? Results.BadRequest("Settings have not been updated. UserConfiguration was corrupted.") : Results.Ok();
     }
 
@@ -72,25 +72,25 @@ public class TradeBotController : ControllerBase
     [HttpGet]
     [Route("state")]
     public async Task<ServiceState> GetState(
-        IStateManager stateManager,
+        IStateService stateService,
         [FromQuery] string apiKey)
     {
-        return await stateManager.GetServiceStateAsync(apiKey);
+        return await stateService.GetServiceStateAsync(apiKey);
     }
 
     [HttpGet]
     [Route("history")]
     public async Task<List<TradingEvent>> GetHistory(
-        IStateManager stateManager,
+        IStateService stateService,
         [FromQuery] string apiKey)
     {
-        return await stateManager.GetServiceHistoryAsync(apiKey);
+        return await stateService.GetServiceHistoryAsync(apiKey);
     }
 
     [HttpPost]
     [Route("clearState")]
     public async Task CancelOrders(
-        IStateManager cancellingService,
+        IStateService cancellingService,
         [FromQuery] string apiKey)
     {
         await cancellingService.ClearServiceStateAsync(apiKey);
