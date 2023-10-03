@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using SteamTradeBot.Desktop.Winforms.Models;
-using SteamTradeBot.Desktop.Winforms.Models.DTOs;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models.DTOs;
 using System.Text;
 
 namespace SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;

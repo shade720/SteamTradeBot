@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-using SteamTradeBot.Desktop.Winforms.Models;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models;
 
 namespace SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
 

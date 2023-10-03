@@ -1,4 +1,4 @@
-﻿namespace SteamTradeBot.Desktop.Winforms.Models;
+﻿namespace SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models;
 
 public class StateInfo
 {
@@ -17,7 +17,7 @@ public class StateInfo
     {
         Up,
         Down,
-        
+
     }
 
     public enum ConnectionState

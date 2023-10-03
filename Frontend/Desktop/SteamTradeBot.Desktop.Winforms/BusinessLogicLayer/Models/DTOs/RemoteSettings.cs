@@ -1,4 +1,6 @@
-﻿namespace SteamTradeBot.Desktop.Winforms.Models.DTOs;
+﻿using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models;
+
+namespace SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models.DTOs;
 
 public class RemoteSettings
 {

@@ -1,9 +1,7 @@
-﻿using SteamTradeBot.Desktop.Winforms.Models;
+﻿using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models.DTOs;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
-using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
-using SteamTradeBot.Desktop.Winforms.Models.DTOs;
-using System.Data;
-using System.Windows.Forms;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -20,6 +18,26 @@ public partial class WorkerForm : Form
         InitializeComponent();
         _restClient = restClient;
         _signalRClient = signalRClient;
+    }
+
+    private async void WorkerForm_Load(object sender, EventArgs e)
+    {
+        _signalRClient.OnStateRefreshEvent += RefreshServiceStatePanel;
+        _signalRClient.OnHistoryRefreshEvent += RefreshHistoryTable;
+        HistoryFilterComboBox.SelectedIndex = 0;
+        var initState = await _restClient.GetInitState();
+        RefreshServiceStatePanel(initState);
+        var initTradingHistory = await _restClient.GetInitHistory();
+        foreach (var tradingEvent in initTradingHistory.OrderBy(x => x.Time))
+        {
+            RefreshHistoryTable(tradingEvent);
+        }
+    }
+
+    private void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        _signalRClient.OnStateRefreshEvent -= RefreshServiceStatePanel;
+        _signalRClient.OnHistoryRefreshEvent -= RefreshHistoryTable;
     }
 
     private async void StartButton_Click(object sender, EventArgs e)
@@ -72,12 +90,6 @@ public partial class WorkerForm : Form
             MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         CancelOrdersButtons.Enabled = true;
-    }
-
-    private async void CheckConnectionButton_Click(object sender, EventArgs e)
-    {
-        var currentState = await _restClient.GetInitState();
-        RefreshServiceStatePanel(currentState);
     }
 
     private void RefreshServiceStatePanel(StateInfo state)
@@ -158,38 +170,6 @@ public partial class WorkerForm : Form
             var logs = await _restClient.GetLogFile();
             var logsForm = new LogForm(logs);
             logsForm.Show();
-        }
-        catch (Exception exception)
-        {
-            MessageBox.Show(exception.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-    }
-
-    private async void WorkerForm_Load(object sender, EventArgs e)
-    {
-        _signalRClient.OnStateRefreshEvent += RefreshServiceStatePanel;
-        _signalRClient.OnHistoryRefreshEvent += RefreshHistoryTable;
-        HistoryFilterComboBox.SelectedIndex = 0;
-        var initState = await _restClient.GetInitState();
-        RefreshServiceStatePanel(initState);
-        var initTradingHistory = await _restClient.GetInitHistory();
-        foreach (var tradingEvent in initTradingHistory.OrderBy(x => x.Time))
-        {
-            RefreshHistoryTable(tradingEvent);
-        }
-    }
-
-    private async void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)
-    {
-        _signalRClient.OnStateRefreshEvent -= RefreshServiceStatePanel;
-        _signalRClient.OnHistoryRefreshEvent -= RefreshHistoryTable;
-    }
-
-    private async void ResetStateButton_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            await _restClient.ResetState();
         }
         catch (Exception exception)
         {

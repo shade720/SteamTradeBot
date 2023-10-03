@@ -1,4 +1,4 @@
-﻿namespace SteamTradeBot.Desktop.Winforms.Models.DTOs;
+﻿namespace SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models.DTOs;
 
 public class Credentials
 {

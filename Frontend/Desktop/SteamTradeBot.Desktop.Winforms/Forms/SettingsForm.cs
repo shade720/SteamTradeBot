@@ -2,9 +2,9 @@
 using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models.DTOs;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
-using SteamTradeBot.Desktop.Winforms.Models;
-using SteamTradeBot.Desktop.Winforms.Models.DTOs;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 

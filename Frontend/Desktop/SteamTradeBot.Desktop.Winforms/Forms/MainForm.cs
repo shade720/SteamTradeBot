@@ -1,6 +1,6 @@
 ﻿using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
-using SteamTradeBot.Desktop.Winforms.Models;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 

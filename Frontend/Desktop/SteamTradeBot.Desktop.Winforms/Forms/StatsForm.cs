@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms.DataVisualization.Charting;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer;
+using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models;
 using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
-using SteamTradeBot.Desktop.Winforms.Models;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -52,8 +52,9 @@ public partial class StatsForm : Form
             var sold = dayEvents.Count(x => x.Type == InfoType.ItemSold);
             var canceled = dayEvents.Count(x => x.Type == InfoType.ItemCanceled);
             var uptime = dayEvents.GroupBy(x => x.Time.Hour).Count() / 24.0 * 100;
+            var profit = dayEvents.Sum(e => e.Profit);
             var balance = dayEvents.Max(x => x.CurrentBalance);
-            InfoTable.Rows.Add(day.ToString("dd.MM.yyyy"), bought, sold, canceled, $"{uptime}%", balance);
+            InfoTable.Rows.Add(day.ToString("dd.MM.yyyy"), bought, sold, canceled, uptime.ToString("F2")+'%', profit.ToString("F2"), balance);
         }
     }
 
@@ -64,6 +65,7 @@ public partial class StatsForm : Form
         var canceledSeries = GetSpecifiedSeries("Items canceled", Color.Gray);
 
         var balanceSeries = GetSpecifiedSeries("Balance", Color.Gold);
+        var profitSeries = GetSpecifiedSeries("Profit", Color.Chartreuse);
 
         var uptimeSeries = GetSpecifiedSeries("Uptime", Color.DodgerBlue);
 
@@ -75,7 +77,8 @@ public partial class StatsForm : Form
             soldSeries.Points.AddXY(day, row.Cells[2].Value);
             canceledSeries.Points.AddXY(day, row.Cells[3].Value);
 
-            balanceSeries.Points.AddXY(day, row.Cells[5].Value);
+            balanceSeries.Points.AddXY(day, row.Cells[6].Value);
+            profitSeries.Points.AddXY(day, row.Cells[5].Value);
 
             uptimeSeries.Points.AddXY(day, double.Parse(row.Cells[4].Value.ToString().Replace("%", "")));
         }
@@ -86,6 +89,7 @@ public partial class StatsForm : Form
 
         BalanceChart.Series.Clear();
         BalanceChart.Series.Add(balanceSeries);
+        BalanceChart.Series.Add(profitSeries);
         BalanceChart.Legends[0].Font = new Font(new FontFamily("Segoe UI"), 10, FontStyle.Regular);
 
         TradingChart.Series.Clear();
@@ -124,9 +128,13 @@ public partial class StatsForm : Form
             switch (tradingEvent.Type)
             {
                 case InfoType.ItemAnalyzed:
-                    InfoTable.Rows[^1].Cells[5].Value = tradingEvent.CurrentBalance;
-                    BalanceChart.Series["Balance"].Points.ElementAt(^1).SetValueY(tradingEvent.CurrentBalance);
-                    BalanceChart.Refresh();
+                    var oldValue = double.Parse(InfoTable.Rows[^1].Cells[5].Value.ToString());
+                    if (oldValue < tradingEvent.CurrentBalance)
+                    {
+                        InfoTable.Rows[^1].Cells[6].Value = tradingEvent.CurrentBalance;
+                        BalanceChart.Series["Balance"].Points.ElementAt(^1).SetValueY(tradingEvent.CurrentBalance);
+                        BalanceChart.Refresh();
+                    }
                     break;
                 case InfoType.ItemBought:
                     var previousBoughtValue = int.Parse(InfoTable.Rows[^1].Cells[1].Value.ToString());

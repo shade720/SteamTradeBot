@@ -1,4 +1,4 @@
-﻿using SteamTradeBot.Desktop.Winforms.Models;
+﻿using SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.Models;
 
 namespace SteamTradeBot.Desktop.Winforms.Forms;
 
@@ -34,11 +34,11 @@ public partial class LogForm : Form
                 Date = DateTime.Parse(date),
                 Level = level switch
                 {
-                    "[Fatal]" => Models.LogLevel.Fatal,
-                    "[Error]" => Models.LogLevel.Error,
-                    "[Warning]" => Models.LogLevel.Warning,
-                    "[Information]" => Models.LogLevel.Information,
-                    _ => Models.LogLevel.Information
+                    "[Fatal]" => BusinessLogicLayer.Models.LogLevel.Fatal,
+                    "[Error]" => BusinessLogicLayer.Models.LogLevel.Error,
+                    "[Warning]" => BusinessLogicLayer.Models.LogLevel.Warning,
+                    "[Information]" => BusinessLogicLayer.Models.LogLevel.Information,
+                    _ => BusinessLogicLayer.Models.LogLevel.Information
                 },
                 Message = logMessage
             };
