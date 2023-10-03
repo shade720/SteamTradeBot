@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             groupBox1 = new GroupBox();
             UptimeLabel = new Label();
             WarningsLabel = new Label();
@@ -64,6 +64,7 @@
             StopButton = new Button();
             panel1 = new Panel();
             panel2 = new Panel();
+            StateRefresher = new System.ComponentModel.BackgroundWorker();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)HistoryDataGridView).BeginInit();
@@ -365,24 +366,24 @@
             HistoryDataGridView.BorderStyle = BorderStyle.None;
             HistoryDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             HistoryDataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = Color.DodgerBlue;
-            dataGridViewCellStyle10.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle10.ForeColor = Color.White;
-            dataGridViewCellStyle10.SelectionBackColor = Color.White;
-            dataGridViewCellStyle10.SelectionForeColor = Color.DodgerBlue;
-            dataGridViewCellStyle10.WrapMode = DataGridViewTriState.True;
-            HistoryDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = Color.DodgerBlue;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle4.ForeColor = Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = Color.White;
+            dataGridViewCellStyle4.SelectionForeColor = Color.DodgerBlue;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            HistoryDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             HistoryDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             HistoryDataGridView.Columns.AddRange(new DataGridViewColumn[] { TimeColumn, Item, OrderTypeColumn, BuyPrice, SellPrice, Profit });
-            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = Color.White;
-            dataGridViewCellStyle11.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle11.ForeColor = Color.DodgerBlue;
-            dataGridViewCellStyle11.SelectionBackColor = Color.Red;
-            dataGridViewCellStyle11.SelectionForeColor = Color.White;
-            dataGridViewCellStyle11.WrapMode = DataGridViewTriState.True;
-            HistoryDataGridView.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = Color.White;
+            dataGridViewCellStyle5.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle5.ForeColor = Color.DodgerBlue;
+            dataGridViewCellStyle5.SelectionBackColor = Color.Red;
+            dataGridViewCellStyle5.SelectionForeColor = Color.White;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            HistoryDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
             HistoryDataGridView.EnableHeadersVisualStyles = false;
             HistoryDataGridView.Location = new Point(10, 36);
             HistoryDataGridView.Margin = new Padding(2);
@@ -390,14 +391,14 @@
             HistoryDataGridView.ReadOnly = true;
             HistoryDataGridView.RowHeadersVisible = false;
             HistoryDataGridView.RowHeadersWidth = 51;
-            dataGridViewCellStyle12.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = Color.White;
-            dataGridViewCellStyle12.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            dataGridViewCellStyle12.ForeColor = Color.Black;
-            dataGridViewCellStyle12.SelectionBackColor = Color.DodgerBlue;
-            dataGridViewCellStyle12.SelectionForeColor = Color.White;
-            dataGridViewCellStyle12.WrapMode = DataGridViewTriState.False;
-            HistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = Color.White;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+            dataGridViewCellStyle6.ForeColor = Color.Black;
+            dataGridViewCellStyle6.SelectionBackColor = Color.DodgerBlue;
+            dataGridViewCellStyle6.SelectionForeColor = Color.White;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
+            HistoryDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle6;
             HistoryDataGridView.RowTemplate.Height = 29;
             HistoryDataGridView.Size = new Size(907, 569);
             HistoryDataGridView.TabIndex = 0;
@@ -535,6 +536,10 @@
             panel2.Size = new Size(382, 635);
             panel2.TabIndex = 5;
             // 
+            // StateRefresher
+            // 
+            StateRefresher.DoWork += StateRefresher_DoWork;
+            // 
             // WorkerForm
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
@@ -594,5 +599,6 @@
         private DataGridViewTextBoxColumn SellPrice;
         private DataGridViewTextBoxColumn Profit;
         private ComboBox HistoryFilterComboBox;
+        private System.ComponentModel.BackgroundWorker StateRefresher;
     }
 }

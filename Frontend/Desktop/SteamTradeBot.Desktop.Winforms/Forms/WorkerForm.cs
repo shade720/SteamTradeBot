@@ -22,11 +22,9 @@ public partial class WorkerForm : Form
 
     private async void WorkerForm_Load(object sender, EventArgs e)
     {
-        _signalRClient.OnStateRefreshEvent += RefreshServiceStatePanel;
         _signalRClient.OnHistoryRefreshEvent += RefreshHistoryTable;
         HistoryFilterComboBox.SelectedIndex = 0;
-        var initState = await _restClient.GetInitState();
-        RefreshServiceStatePanel(initState);
+        StateRefresher.RunWorkerAsync();
         var initTradingHistory = await _restClient.GetInitHistory();
         foreach (var tradingEvent in initTradingHistory.OrderBy(x => x.Time))
         {
@@ -36,7 +34,7 @@ public partial class WorkerForm : Form
 
     private void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        _signalRClient.OnStateRefreshEvent -= RefreshServiceStatePanel;
+        StateRefresher.CancelAsync();
         _signalRClient.OnHistoryRefreshEvent -= RefreshHistoryTable;
     }
 
@@ -65,12 +63,24 @@ public partial class WorkerForm : Form
         StartButton.Enabled = true;
     }
 
+    private async void StateRefresher_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+    {
+        while (!StateRefresher.CancellationPending)
+        {
+            var currentState = await _restClient.GetState();
+            RefreshServiceStatePanel(currentState);
+            await Task.Delay(1000);
+        }
+        e.Cancel = true;
+    }
+
     private async void StopButton_Click(object sender, EventArgs e)
     {
         try
         {
             StopButton.Enabled = false;
             await _restClient.Stop();
+
         }
         catch (Exception exception)
         {

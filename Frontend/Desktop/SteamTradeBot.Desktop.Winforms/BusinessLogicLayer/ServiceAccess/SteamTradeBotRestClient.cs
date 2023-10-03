@@ -47,7 +47,7 @@ public class SteamTradeBotRestClient
         await GetResponseContent(response);
     }
 
-    public async Task<StateInfo> GetInitState()
+    public async Task<StateInfo> GetState()
     {
         using var restClient = _clientProvider.Create();
         try
