@@ -1,7 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Factories.ItemPageFactory">
-    <Position X="7.25" Y="3.5" Width="1.5" />
+    <Position X="6.75" Y="2.75" Width="1.5" />
+    <AssociationLine Name="_api" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.ISteamApi" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.25" Y="3.562" />
+        <Point X="8.625" Y="3.562" />
+        <Point X="8.625" Y="4.375" />
+        <Point X="16.04" Y="4.375" Type="JumpStart" />
+        <Point X="16.207" Y="4.375" Type="JumpEnd" />
+        <Point X="18.167" Y="4.375" Type="JumpStart" />
+        <Point X="18.333" Y="4.375" Type="JumpEnd" />
+        <Point X="18.5" Y="4.375" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_configurationService" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IConfigurationService" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.25" Y="3.25" />
+        <Point X="8.625" Y="3.25" />
+        <Point X="8.625" Y="2.562" />
+        <Point X="18.5" Y="2.562" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAACAAAAAAAAAAIAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Factories\ItemPageFactory.cs</FileName>
@@ -12,43 +32,22 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Factories.ItemsNamesProvider">
-    <Position X="10.25" Y="3.5" Width="2" />
-    <AssociationLine Name="_api" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IItemsTableApi" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="11.75" Y="4.796" />
-        <Point X="11.75" Y="15.625" />
-        <Point X="11.583" Y="15.625" Type="JumpStart" />
-        <Point X="11.417" Y="15.625" Type="JumpEnd" />
-        <Point X="9.609" Y="15.625" />
-        <Point X="9.609" Y="16" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="_configurationService" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IConfigurationService" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="11.5" Y="4.796" />
-        <Point X="11.5" Y="15.906" />
-        <Point X="9.693" Y="15.906" Type="JumpStart" />
-        <Point X="9.526" Y="15.906" Type="JumpEnd" />
-        <Point X="8.333" Y="15.906" Type="JumpStart" />
-        <Point X="8.167" Y="15.906" Type="JumpEnd" />
-        <Point X="7.99" Y="15.906" Type="JumpStart" />
-        <Point X="7.823" Y="15.906" Type="JumpEnd" />
-        <Point X="7.75" Y="15.906" />
-        <Point X="7.75" Y="16" />
-      </Path>
-    </AssociationLine>
+    <Position X="6.75" Y="0.5" Width="1.5" />
     <AssociationLine Name="_ordersRepository" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.OrdersRepository" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="12" Y="4.796" />
-        <Point X="12" Y="5.312" />
-        <Point X="12.448" Y="5.312" Type="JumpStart" />
-        <Point X="12.615" Y="5.312" Type="JumpEnd" />
-        <Point X="16.417" Y="5.312" Type="JumpStart" />
-        <Point X="16.583" Y="5.312" Type="JumpEnd" />
-        <Point X="17.542" Y="5.312" Type="JumpStart" />
-        <Point X="17.708" Y="5.312" Type="JumpEnd" />
-        <Point X="19.062" Y="5.312" />
-        <Point X="19.062" Y="17" />
+        <Point X="8.25" Y="0.625" />
+        <Point X="11.55" Y="0.625" />
+        <Point X="11.55" Y="0.25" />
+        <Point X="22.25" Y="0.25" />
+        <Point X="22.25" Y="1" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_configurationService" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IConfigurationService" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.25" Y="1.438" />
+        <Point X="8.875" Y="1.438" />
+        <Point X="8.875" Y="2.375" />
+        <Point X="18.5" Y="2.375" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -62,16 +61,23 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Factories.SolutionsFactory">
-    <Position X="4.5" Y="3.5" Width="1.5" />
-    <AssociationLine Name="_eventService" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IEventService" FixedFromPoint="true" FixedToPoint="true">
+    <Position X="6.75" Y="5" Width="1.5" />
+    <AssociationLine Name="_eventService" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IEventService" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="4.5" Y="4.148" />
-        <Point X="1.646" Y="4.148" Type="JumpStart" />
-        <Point X="1.479" Y="4.148" Type="JumpEnd" />
-        <Point X="0.5" Y="4.148" />
-        <Point X="0.5" Y="15.875" />
-        <Point X="1.062" Y="15.875" />
-        <Point X="1.062" Y="16.25" />
+        <Point X="8.25" Y="5.75" />
+        <Point X="9.75" Y="5.75" />
+        <Point X="9.75" Y="6.931" />
+        <Point X="15.612" Y="6.931" />
+        <Point X="15.612" Y="9.875" />
+        <Point X="18.5" Y="9.875" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_solutions" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.MarketSolution" ManuallyRouted="true">
+      <Path>
+        <Point X="8.25" Y="6.062" />
+        <Point X="8.625" Y="6.062" />
+        <Point X="8.625" Y="7.744" />
+        <Point X="11" Y="7.744" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -87,118 +93,104 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Factories.UptimeProvider" Collapsed="true">
-    <Position X="1" Y="29.25" Width="1.5" />
-    <NestedTypes>
-      <Delegate Name="SteamTradeBot.Backend.BusinessLogicLayer.Factories.UptimeProvider.UptimeUpdateHandler" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>BusinessLogicLayer\Factories\UptimeProvider.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
-    </NestedTypes>
+    <Position X="36.5" Y="10" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAABAAAgAAAAAAAAAAAAAAAARAAABAAAAIAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Factories\UptimeProvider.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Middlewares.ExclusiveAccessMiddleware">
-    <Position X="19.25" Y="1" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Middlewares.ExclusiveAccessMiddleware" Collapsed="true">
+    <Position X="29.5" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQwAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Middlewares\ExclusiveAccessMiddleware.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_stateRepository" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Middlewares.TokenAuthenticationMiddleware">
-    <Position X="21.75" Y="1" Width="1.5" />
-    <AssociationLine Name="_db" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.TokenRepository" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="21.75" Y="1.874" />
-        <Point X="21.375" Y="1.874" />
-        <Point X="21.375" Y="16.625" />
-        <Point X="19.146" Y="16.625" Type="JumpStart" />
-        <Point X="18.979" Y="16.625" Type="JumpEnd" />
-        <Point X="18.302" Y="16.625" Type="JumpStart" />
-        <Point X="18.135" Y="16.625" Type="JumpEnd" />
-        <Point X="17.708" Y="16.625" Type="JumpStart" />
-        <Point X="17.542" Y="16.625" Type="JumpEnd" />
-        <Point X="14.812" Y="16.625" />
-        <Point X="14.812" Y="17" />
-      </Path>
-    </AssociationLine>
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Middlewares.TokenAuthenticationMiddleware" Collapsed="true">
+    <Position X="29.5" Y="10" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Middlewares\TokenAuthenticationMiddleware.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_db" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.HistoryRepository" Collapsed="true">
-    <Position X="15.75" Y="17" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.HistoryRepository">
+    <Position X="21.5" Y="5.25" Width="1.5" />
+    <InheritanceLine Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.Repository" FixedToPoint="true">
+      <Path>
+        <Point X="26" Y="2.055" />
+        <Point X="26" Y="6.312" />
+        <Point X="23" Y="6.312" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\Abstractions\RepositoryAbstractions\HistoryRepository.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.OrdersRepository" Collapsed="true">
-    <Position X="18" Y="17" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.OrdersRepository">
+    <Position X="21.5" Y="1" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACAAAAAAAAAAAAAAAAIAAAACAAACAAAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\Abstractions\RepositoryAbstractions\OrdersRepository.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.Repository">
-    <Position X="14.5" Y="14.5" Width="1.5" />
+    <Position X="25.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\Abstractions\RepositoryAbstractions\Repository.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.StateRepository" Collapsed="true">
-    <Position X="11.25" Y="17" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.StateRepository">
+    <Position X="21.5" Y="7.5" Width="1.5" />
+    <InheritanceLine Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.Repository" FixedToPoint="true">
+      <Path>
+        <Point X="26" Y="2.055" />
+        <Point X="26" Y="8.375" />
+        <Point X="23" Y="8.375" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>ACAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
       <FileName>BusinessLogicLayer\Models\Abstractions\RepositoryAbstractions\StateRepository.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.TokenRepository" Collapsed="true">
-    <Position X="13.5" Y="17" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.TokenRepository">
+    <Position X="21.5" Y="3.25" Width="1.5" />
+    <InheritanceLine Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.Repository" FixedToPoint="true">
+      <Path>
+        <Point X="26" Y="2.055" />
+        <Point X="26" Y="4.062" />
+        <Point X="23" Y="4.062" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\Abstractions\RepositoryAbstractions\TokenRepository.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.MarketSolution">
-    <Position X="8" Y="9" Width="1.5" />
-    <AssociationLine Name="EventService" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IEventService" FixedFromPoint="true" FixedToPoint="true">
+    <Position X="11" Y="7" Width="1.5" />
+    <AssociationLine Name="ConfigurationService" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IConfigurationService" ManuallyRouted="true">
       <Path>
-        <Point X="8.75" Y="10.488" />
-        <Point X="8.75" Y="15.75" />
-        <Point X="8.333" Y="15.75" Type="JumpStart" />
-        <Point X="8.167" Y="15.75" Type="JumpEnd" />
-        <Point X="7.99" Y="15.75" Type="JumpStart" />
-        <Point X="7.823" Y="15.75" Type="JumpEnd" />
-        <Point X="6.146" Y="15.75" Type="JumpStart" />
-        <Point X="5.979" Y="15.75" Type="JumpEnd" />
-        <Point X="5.708" Y="15.75" Type="JumpStart" />
-        <Point X="5.542" Y="15.75" Type="JumpEnd" />
-        <Point X="5.083" Y="15.75" Type="JumpStart" />
-        <Point X="4.917" Y="15.75" Type="JumpEnd" />
-        <Point X="2.406" Y="15.75" />
-        <Point X="2.406" Y="16.25" />
+        <Point X="12.5" Y="7.312" />
+        <Point X="15.529" Y="7.312" Type="JumpStart" />
+        <Point X="15.696" Y="7.312" Type="JumpEnd" />
+        <Point X="16.124" Y="7.312" />
+        <Point X="16.124" Y="2.718" />
+        <Point X="18.5" Y="2.718" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="SteamApi" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.ISteamApi" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="OrdersRepository" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions.OrdersRepository" ManuallyRouted="true">
       <Path>
-        <Point X="8" Y="9.621" />
-        <Point X="7.99" Y="9.621" Type="JumpStart" />
-        <Point X="7.823" Y="9.621" Type="JumpEnd" />
-        <Point X="6.146" Y="9.621" Type="JumpStart" />
-        <Point X="5.823" Y="9.621" Type="JumpEnd" />
-        <Point X="5" Y="9.621" />
-        <Point X="5" Y="16.25" />
+        <Point X="12.5" Y="7.5" />
+        <Point X="15.529" Y="7.5" Type="JumpStart" />
+        <Point X="15.696" Y="7.5" Type="JumpEnd" />
+        <Point X="18.25" Y="7.5" />
+        <Point X="18.25" Y="3.322" />
+        <Point X="21.125" Y="3.322" />
+        <Point X="21.125" Y="2.688" />
+        <Point X="21.5" Y="2.688" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -213,71 +205,64 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel.Chart" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="31" Y="0.5" Width="1.5" />
-    <NestedTypes>
-      <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel.Chart.PointInfo" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>BusinessLogicLayer\Models\ItemModel\Chart.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-    </NestedTypes>
+    <Position X="34.75" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAABAACAAAAAAAAAAAAAQEAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\ItemModel\Chart.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel.ItemPage">
-    <Position X="23.75" Y="8" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel.ItemPage" Collapsed="true">
+    <Position X="33" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAQQAABAAAAIAEAACIAAgAAAAIAAgAAAABAAAAAIA=</HashCode>
       <FileName>BusinessLogicLayer\Models\ItemModel\ItemPage.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel.Order">
-    <Position X="18" Y="19.5" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel.Order" Collapsed="true">
+    <Position X="33" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAIQAAgAIgAAAAAAAAAAAAAAAgAAAAIA=</HashCode>
       <FileName>BusinessLogicLayer\Models\ItemModel\Order.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel.ServiceState">
-    <Position X="11.25" Y="19.5" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel.ServiceState" Collapsed="true">
+    <Position X="34.75" Y="9" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAgCAgAAAAAAoQAAAAAAgAAAAAAAAAAAAAACAACAEAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\StateModel\ServiceState.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel.TradingEvent">
-    <Position X="15.75" Y="19.5" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel.TradingEvent" Collapsed="true">
+    <Position X="33" Y="10" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAABAAAAIQAAAAAgAACAAAAAAAAAQAAAEAAAQA=</HashCode>
       <FileName>BusinessLogicLayer\Models\StateModel\TradingEvent.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.ApiKey">
-    <Position X="13.5" Y="19.5" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.ApiKey" Collapsed="true">
+    <Position X="29.5" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\ApiKey.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.TradeBotDataContext">
-    <Position X="15" Y="11.5" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.TradeBotDataContext" Collapsed="true">
+    <Position X="31.25" Y="10" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAEAAAAAAAAAAAAAAAAAIAAAEAAAAAAAABACAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\TradeBotDataContext.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.UserConfiguration">
-    <Position X="25.75" Y="2.25" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.UserConfiguration" Collapsed="true">
+    <Position X="38.25" Y="10" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAAABAQAAAAYAAABCAAAgAAEAAAAAABAAAAABIAQMAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\UserConfiguration.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules.AvailableBalanceRule" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="0.75" Y="11" Width="1.5" />
+    <Position X="31.25" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAIAAAAgAAAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>BusinessLogicLayer\Rules\BuyRules\AvailableBalanceRule.cs</FileName>
@@ -285,7 +270,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules.AveragePriceRule" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="0.75" Y="8.75" Width="1.5" />
+    <Position X="33" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAAAAABgAAIAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Rules\BuyRules\AveragePriceRule.cs</FileName>
@@ -293,7 +278,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules.OrderAlreadyExistRule" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="0.75" Y="12.5" Width="1.5" />
+    <Position X="34.75" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Rules\BuyRules\OrderAlreadyExistRule.cs</FileName>
@@ -301,7 +286,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules.RequiredProfitRule" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="0.75" Y="9.5" Width="1.5" />
+    <Position X="38.25" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACAAAgAAIAAAAgAAAAAAAAAAAAAAAAAABAA=</HashCode>
       <FileName>BusinessLogicLayer\Rules\BuyRules\RequiredProfitRule.cs</FileName>
@@ -309,7 +294,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules.SalesCountRule" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="0.75" Y="11.75" Width="1.5" />
+    <Position X="29.5" Y="9" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAIAAAAgAAAIAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Rules\BuyRules\SalesCountRule.cs</FileName>
@@ -317,15 +302,15 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules.TrendRule" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="0.75" Y="10.25" Width="1.5" />
+    <Position X="34.75" Y="10" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAIAIAAgAAAAAAAAAEAAAAAAAgAAA=</HashCode>
       <FileName>BusinessLogicLayer\Rules\BuyRules\TrendRule.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules.FitPriceRule" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="4.25" Y="8.75" Width="1.5" />
+    <Position X="31.25" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAIAAAAgAAAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>BusinessLogicLayer\Rules\CancelRules\FitPriceRule.cs</FileName>
@@ -333,7 +318,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules.CurrentQuantityCheckRule" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="2.5" Y="8.75" Width="1.5" />
+    <Position X="36.5" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAIAAAAgAAAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>BusinessLogicLayer\Rules\SellRules\CurrentQuantityCheckRule.cs</FileName>
@@ -341,97 +326,71 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Rules.MarketRules">
-    <Position X="2.25" Y="6" Width="1.5" />
+    <Position X="11" Y="5" Width="1.5" />
+    <AssociationLine Name="_sellRules" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.Rules.ISellRule" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="12.5" Y="6.375" />
+        <Point X="12.875" Y="6.375" />
+        <Point X="12.875" Y="6.531" />
+        <Point X="14.25" Y="6.531" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAEAAAAAAAAAACAAAAAAgAAAAEAAQAEAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Rules\MarketRules.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Field Name="_buyRules" />
-      <Field Name="_cancelRules" />
       <Field Name="_sellRules" />
+      <Field Name="_cancelRules" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Services.EventService" BaseTypeListCollapsed="true">
-    <Position X="1" Y="21.75" Width="1.5" />
-    <AssociationLine Name="_configurationService" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IConfigurationService" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="1.688" Y="21.75" />
-        <Point X="1.688" Y="20.815" />
-        <Point X="7.75" Y="20.815" />
-        <Point X="7.75" Y="20.44" />
-      </Path>
-    </AssociationLine>
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Services.EventService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="38.25" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AQAABAEIAAAABQAQAAAIAkABAAJUAARAUAAAAAFAAIA=</HashCode>
       <FileName>BusinessLogicLayer\Services\EventService.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_configurationService" />
-      <Field Name="_uptimeProvider" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Services.JsonFileBasedConfigurationService" BaseTypeListCollapsed="true">
-    <Position X="7" Y="21.25" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Services.JsonFileBasedConfigurationService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="38.25" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAAABAQAAAAYAAABCAQAgAAEAAEAAABAAAkABIAQMAA=</HashCode>
       <FileName>BusinessLogicLayer\Services\JsonFileBasedConfigurationService.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Services.LogsProviderService">
-    <Position X="13" Y="1" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Services.LogsProviderService" Collapsed="true">
+    <Position X="29.5" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Services\LogsProviderService.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Services.OrderCancellingService">
-    <Position X="15.75" Y="1" Width="1.5" />
-    <AssociationLine Name="_api" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.ISteamApi" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="16.5" Y="2.296" />
-        <Point X="16.5" Y="11.25" />
-        <Point X="12.615" Y="11.25" Type="JumpStart" />
-        <Point X="12.448" Y="11.25" Type="JumpEnd" />
-        <Point X="11.833" Y="11.25" Type="JumpStart" />
-        <Point X="11.667" Y="11.25" Type="JumpEnd" />
-        <Point X="11.583" Y="11.25" Type="JumpStart" />
-        <Point X="11.417" Y="11.25" Type="JumpEnd" />
-        <Point X="8.833" Y="11.25" Type="JumpStart" />
-        <Point X="8.667" Y="11.25" Type="JumpEnd" />
-        <Point X="8.333" Y="11.25" Type="JumpStart" />
-        <Point X="8.167" Y="11.25" Type="JumpEnd" />
-        <Point X="7.99" Y="11.25" Type="JumpStart" />
-        <Point X="7.823" Y="11.25" Type="JumpEnd" />
-        <Point X="6.146" Y="11.25" Type="JumpStart" />
-        <Point X="5.979" Y="11.25" Type="JumpEnd" />
-        <Point X="5.625" Y="11.25" />
-        <Point X="5.625" Y="19.812" />
-        <Point X="5.25" Y="19.812" />
-      </Path>
-    </AssociationLine>
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Services.OrderCancellingService" Collapsed="true">
+    <Position X="36.5" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAACAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>BusinessLogicLayer\Services\OrderCancellingService.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_api" />
-      <Field Name="_ordersRepository" />
-    </ShowAsAssociation>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Services.WorkerService">
-    <Position X="7.75" Y="1" Width="2.75" />
-    <AssociationLine Name="_eventService" Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IEventService" FixedFromPoint="true" FixedToPoint="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <AssociationLine Name="_itemPageFactory" Type="SteamTradeBot.Backend.BusinessLogicLayer.Factories.ItemPageFactory" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="7.75" Y="1.784" />
-        <Point X="1.562" Y="1.784" />
-        <Point X="1.562" Y="7.938" />
-        <Point X="2.312" Y="7.938" />
-        <Point X="2.312" Y="16.156" />
-        <Point X="1.562" Y="16.156" />
-        <Point X="1.562" Y="16.25" />
+        <Point X="2" Y="1.475" />
+        <Point X="2.375" Y="1.475" />
+        <Point X="2.375" Y="3.403" />
+        <Point X="6.75" Y="3.403" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_itemsNamesProvider" Type="SteamTradeBot.Backend.BusinessLogicLayer.Factories.ItemsNamesProvider" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2" Y="0.787" />
+        <Point X="4.509" Y="0.787" />
+        <Point X="4.509" Y="1.148" />
+        <Point X="6.75" Y="1.148" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -439,205 +398,129 @@
       <FileName>BusinessLogicLayer\Services\WorkerService.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="_eventService" />
-      <Field Name="_itemPageFactory" />
       <Field Name="_solutionsFactory" />
+      <Field Name="_itemPageFactory" />
       <Field Name="_itemsNamesProvider" />
+      <Field Name="_eventService" />
     </ShowAsAssociation>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Solutions.BuyMarketSolution">
-    <Position X="6.25" Y="6.75" Width="1.5" />
-    <InheritanceLine Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.MarketSolution" FixedFromPoint="true">
-      <Path>
-        <Point X="8.75" Y="9" />
-        <Point X="8.75" Y="8.742" />
-        <Point X="7.99" Y="8.742" Type="JumpStart" />
-        <Point X="7.823" Y="8.742" Type="JumpEnd" />
-        <Point X="7" Y="8.742" />
-        <Point X="7" Y="8.367" />
-      </Path>
-    </InheritanceLine>
+    <Position X="8.25" Y="9.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAgAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Solutions\BuyMarketSolution.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Solutions.CancelMarketSolution">
-    <Position X="8" Y="6.75" Width="1.5" />
-    <InheritanceLine Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.MarketSolution" FixedFromPoint="true">
-      <Path>
-        <Point X="8.75" Y="9" />
-        <Point X="8.75" Y="8.367" />
-      </Path>
-    </InheritanceLine>
+    <Position X="10" Y="9.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAgAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Solutions\CancelMarketSolution.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.Solutions.SellMarketSolution">
-    <Position X="9.75" Y="6.75" Width="1.5" />
-    <InheritanceLine Type="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.MarketSolution" ManuallyRouted="true" FixedFromPoint="true">
-      <Path>
-        <Point X="8.75" Y="9" />
-        <Point X="8.75" Y="8.742" />
-        <Point X="10.5" Y="8.742" />
-        <Point X="10.5" Y="8.367" />
-      </Path>
-    </InheritanceLine>
+    <Position X="11.75" Y="9.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAgAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Solutions\SellMarketSolution.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.SteamConnectors.Selenium.SeleniumSteamApi" BaseTypeListCollapsed="true">
-    <Position X="3.75" Y="21.25" Width="1.5" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <NestedTypes>
-      <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.SteamConnectors.Selenium.SeleniumSteamApi.ClosenessComparer" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>BusinessLogicLayer\SteamConnectors\Selenium\SeleniumSteamApi.cs</NewMemberFileName>
-        </TypeIdentifier>
-        <Lollipop Position="0.2" />
-      </Class>
-    </NestedTypes>
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.SteamConnectors.Selenium.SeleniumSteamApi" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="31.25" Y="9" Width="1.5" />
     <TypeIdentifier>
       <HashCode>wCABAKBBAjBKQxkQiogFXLwgAYwECBBwZhaLEE4QE3o=</HashCode>
       <FileName>BusinessLogicLayer\SteamConnectors\Selenium\SeleniumSteamApi.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_webDriver" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.SteamConnectors.Selenium.SeleniumWebDriver" BaseTypeListCollapsed="true">
-    <Position X="7.5" Y="28.5" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.SteamConnectors.Selenium.SeleniumWebDriver" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="33" Y="9" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AABAAAAAgiAACEgAABQAAICAAQICAABBAAAAAABBAAA=</HashCode>
       <FileName>BusinessLogicLayer\SteamConnectors\Selenium\SeleniumWebDriver.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.SteamConnectors.Selenium.SkinsTableApi" BaseTypeListCollapsed="true">
-    <Position X="9.5" Y="21.25" Width="1.5" />
+  <Class Name="SteamTradeBot.Backend.BusinessLogicLayer.SteamConnectors.Selenium.SkinsTableApi" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="36.5" Y="9" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAACAAAAAAAAACA=</HashCode>
       <FileName>BusinessLogicLayer\SteamConnectors\Selenium\SkinsTableApi.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_webDriver" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="SteamTradeBot.Backend.DataAccessLayer.SqlHistoryRepository" Collapsed="true">
-    <Position X="15.75" Y="18.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQAAA=</HashCode>
-      <FileName>DataAccessLayer\SqlHistoryRepository.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="SteamTradeBot.Backend.DataAccessLayer.SqlOrdersRepository" Collapsed="true">
-    <Position X="18" Y="18.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AACAAAAAAAAAAAAAAAAIAAAACAAACAAAAAAAAAAAAAA=</HashCode>
-      <FileName>DataAccessLayer\SqlOrdersRepository.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="SteamTradeBot.Backend.DataAccessLayer.SqlStateRepository" Collapsed="true">
-    <Position X="11.25" Y="18.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ACAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
-      <FileName>DataAccessLayer\SqlStateRepository.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="SteamTradeBot.Backend.DataAccessLayer.SqlTokenRepository" Collapsed="true">
-    <Position X="13.5" Y="18.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
-      <FileName>DataAccessLayer\SqlTokenRepository.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="SteamTradeBot.Backend.Controllers.TradeBotController">
-    <Position X="30.75" Y="1.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAEAACAAAAAAAAAEAAAAAAggAAAAAAAAQAAEAAAA=</HashCode>
-      <FileName>Controllers\TradeBotController.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IBuyRule" Collapsed="true">
-    <Position X="0.75" Y="8" Width="1.5" />
+  <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.Rules.IBuyRule" Collapsed="true">
+    <Position X="14.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BusinessLogicLayer\Models\Abstractions\IBuyRule.cs</FileName>
+      <FileName>BusinessLogicLayer\Models\Abstractions\Rules\IBuyRule.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.ICancelRule" Collapsed="true">
-    <Position X="4.25" Y="8" Width="1.5" />
+  <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.Rules.ICancelRule" Collapsed="true">
+    <Position X="14.25" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAgAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BusinessLogicLayer\Models\Abstractions\ICancelRule.cs</FileName>
+      <FileName>BusinessLogicLayer\Models\Abstractions\Rules\ICancelRule.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IConfigurationService">
-    <Position X="7" Y="16" Width="1.5" />
+  <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.Rules.ISellRule" Collapsed="true">
+    <Position X="14.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLogicLayer\Models\Abstractions\Rules\ISellRule.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IConfigurationService" Collapsed="true">
+    <Position X="18.5" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAAABAQAAAAYAAABCAAAgAAEAAEAAABAAAAABIAQMAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\Abstractions\IConfigurationService.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IEventService">
-    <Position X="1" Y="16.25" Width="1.5" />
+    <Position X="18.5" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AQAAAAEIAAAAAQAAAAAIAEABAAIUAAAAUAAAAAEAAIA=</HashCode>
       <FileName>BusinessLogicLayer\Models\Abstractions\IEventService.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.IItemsTableApi">
-    <Position X="9.5" Y="16" Width="1.5" />
+    <Position X="18.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\Abstractions\IItemsTableApi.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.ISellRule" Collapsed="true">
-    <Position X="2.5" Y="8" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAgAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BusinessLogicLayer\Models\Abstractions\ISellRule.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.ISteamApi">
-    <Position X="3.75" Y="16.25" Width="1.5" />
+    <Position X="18.5" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAIAAAAAAAQAAAgAADIgAAYAAABAgBAAAEAgAAQA=</HashCode>
       <FileName>BusinessLogicLayer\Models\Abstractions\ISteamApi.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel.OrderType" Collapsed="true">
-    <Position X="27.25" Y="1" Width="1.5" />
+    <Position X="24.25" Y="16" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\ItemModel\OrderType.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel.InfoType" Collapsed="true">
-    <Position X="27.25" Y="1.75" Width="1.5" />
+    <Position X="20.75" Y="16" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAgAAAAAAAwAAAAAAABAAABAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\StateModel\InfoType.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel.LogInState" Collapsed="true">
-    <Position X="25.5" Y="1" Width="1.5" />
+    <Position X="22.5" Y="16" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAIAAAAAIAAAAAA=</HashCode>
       <FileName>BusinessLogicLayer\Models\StateModel\LogInState.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel.ServiceWorkingState" Collapsed="true">
-    <Position X="29" Y="1" Width="1.5" />
+    <Position X="26" Y="16" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
       <FileName>BusinessLogicLayer\Models\StateModel\ServiceWorkingState.cs</FileName>
