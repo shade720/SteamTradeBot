@@ -46,6 +46,8 @@ public sealed class ItemsNamesProvider
             var existingOrders = await _ordersRepository.GetOrdersAsync(_configurationService.ApiKey, OrderType.BuyOrder);
             foreach (var existingOrderName in existingOrders.Select(x => x.EngItemName))
             {
+                if (loadedItemNamesList.Contains(existingOrderName))
+                    loadedItemNamesList.Remove(existingOrderName);
                 loadedItemNamesList.Insert(0, existingOrderName);
                 Log.Logger.Information("Add {0} as existing order", existingOrderName);
             }

@@ -2,6 +2,6 @@
 
 public enum ServiceWorkingState
 {
+    Down,
     Up,
-    Down
 }

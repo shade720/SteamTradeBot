@@ -3,6 +3,6 @@
 public enum LogInState
 {
     NotLoggedIn,
+    Pending,
     LoggedIn,
-    Pending
 }

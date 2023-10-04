@@ -11,6 +11,7 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 
 public sealed class RequiredProfitRule : IBuyRule
 {
+    private const double SellPriceReduceValue = 0.02;
     private readonly IConfigurationService _configurationService;
 
     public RequiredProfitRule(IConfigurationService configurationService)
@@ -66,12 +67,13 @@ public sealed class RequiredProfitRule : IBuyRule
         sellPrice = 0;
         foreach (var buyOrder in buyListing)
         {
-            foreach (var sellOrder in sellListing.Where(sellOrder => IsBuyPriceProfitable(buyOrder.Price, sellOrder.Price, commission, requiredProfit)))
-            {
-                buyPrice = buyOrder.Price;
-                sellPrice = sellOrder.Price;
-                return true;
-            }
+            var profitSellOrder = sellListing.FirstOrDefault(sellOrder =>
+                IsBuyPriceProfitable(buyOrder.Price, sellOrder.Price, commission, requiredProfit));
+            if (profitSellOrder is null)
+                continue;
+            buyPrice = buyOrder.Price;
+            sellPrice = profitSellOrder.Price - SellPriceReduceValue;
+            return true;
         }
         return false;
     }
