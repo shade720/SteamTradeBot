@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Serilog;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.Rules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;

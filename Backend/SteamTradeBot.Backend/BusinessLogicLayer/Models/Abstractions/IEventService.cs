@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
 

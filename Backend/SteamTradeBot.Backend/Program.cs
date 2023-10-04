@@ -23,6 +23,7 @@ using SteamTradeBot.Backend.DataAccessLayer;
 using System;
 using System.IO;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.Rules;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 

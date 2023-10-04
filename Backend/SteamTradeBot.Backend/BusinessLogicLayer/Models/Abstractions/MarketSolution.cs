@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
+﻿using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
-using SteamTradeBot.Backend.DataAccessLayer;
+using System.Threading.Tasks;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
 

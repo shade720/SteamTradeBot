@@ -6,7 +6,7 @@ namespace SteamTradeBot.Desktop.Winforms.BusinessLogicLayer.ServiceAccess;
 public class SteamTradeBotSignalRClient
 {
     private const string DefaultHost = "http://localhost:5050";
-    private const string SignalREndpoint = "stateManager";
+    private const string SignalREndpoint = "eventService";
     private const int DelayBetweenAttemptsMs = 1000;
 
     private readonly HubConnection _hub;
@@ -32,8 +32,8 @@ public class SteamTradeBotSignalRClient
             .WithAutomaticReconnect()
             .Build();
         _hub.Closed += HubOnClosed;
-        _hub.On<StateInfo>("getState", state => OnStateRefreshEvent?.Invoke(state));
-        _hub.On<TradingEvent>("getEvents", tradingEvent =>OnHistoryRefreshEvent?.Invoke(tradingEvent));
+        _hub.On<TradingEvent>("getEvents", tradingEvent => 
+            OnHistoryRefreshEvent?.Invoke(tradingEvent));
     }
 
     private async Task HubOnClosed(Exception? arg)

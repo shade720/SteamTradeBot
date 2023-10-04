@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
 

@@ -90,10 +90,10 @@ public class TradeBotController : ControllerBase
     [HttpPost]
     [Route("clearState")]
     public async Task CancelOrders(
-        IEventService cancellingService,
+        IEventService eventService,
         [FromQuery] string apiKey)
     {
-        await cancellingService.ClearHistorySummaryAsync(apiKey);
+        await eventService.ClearHistorySummaryAsync(apiKey);
     }
 
     [HttpGet]

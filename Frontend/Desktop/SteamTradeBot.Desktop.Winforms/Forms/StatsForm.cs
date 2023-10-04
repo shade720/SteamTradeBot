@@ -21,7 +21,7 @@ public partial class StatsForm : Form
 
     private async void StatsForm_Load(object sender, EventArgs e)
     {
-        _signalRClient.OnHistoryRefreshEvent += RefreshCharts;
+        //_signalRClient.OnHistoryRefreshEvent += RefreshCharts;
         var initTradingHistory = await _restClient.GetInitHistory();
         InitInfoTable(initTradingHistory);
         RenderChartsByTable();

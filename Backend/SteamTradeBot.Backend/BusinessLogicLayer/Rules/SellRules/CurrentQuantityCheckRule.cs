@@ -3,6 +3,7 @@ using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
 using System.Threading.Tasks;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.Rules;
 
 namespace SteamTradeBot.Backend.BusinessLogicLayer.Rules.SellRules;
 

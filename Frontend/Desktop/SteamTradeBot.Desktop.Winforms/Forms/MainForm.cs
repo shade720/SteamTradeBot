@@ -84,6 +84,7 @@ public partial class MainForm : Form
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        return;
     }
 
     private void StartDisplayLoadingIcon(string startActionText)

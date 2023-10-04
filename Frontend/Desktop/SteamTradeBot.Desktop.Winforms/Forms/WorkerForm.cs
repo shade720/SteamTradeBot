@@ -13,6 +13,8 @@ public partial class WorkerForm : Form
     public delegate void OnWorkingStateChanged(StateInfo state);
     public event OnWorkingStateChanged? OnWorkingStateChangedEvent;
 
+    private const int StatePollingDelay = 1000;
+
     public WorkerForm(SteamTradeBotRestClient restClient, SteamTradeBotSignalRClient signalRClient)
     {
         InitializeComponent();
@@ -23,6 +25,7 @@ public partial class WorkerForm : Form
     private async void WorkerForm_Load(object sender, EventArgs e)
     {
         _signalRClient.OnHistoryRefreshEvent += RefreshHistoryTable;
+        _signalRClient.OnStateRefreshEvent += RefreshServiceStatePanel;
         HistoryFilterComboBox.SelectedIndex = 0;
         StateRefresher.RunWorkerAsync();
         var initTradingHistory = await _restClient.GetInitHistory();
@@ -35,7 +38,9 @@ public partial class WorkerForm : Form
     private void WorkerForm_FormClosing(object sender, FormClosingEventArgs e)
     {
         StateRefresher.CancelAsync();
+        StateRefresher.Dispose();
         _signalRClient.OnHistoryRefreshEvent -= RefreshHistoryTable;
+        _signalRClient.OnStateRefreshEvent -= RefreshServiceStatePanel;
     }
 
     private async void StartButton_Click(object sender, EventArgs e)
@@ -69,7 +74,7 @@ public partial class WorkerForm : Form
         {
             var currentState = await _restClient.GetState();
             RefreshServiceStatePanel(currentState);
-            await Task.Delay(1000);
+            await Task.Delay(StatePollingDelay);
         }
         e.Cancel = true;
     }

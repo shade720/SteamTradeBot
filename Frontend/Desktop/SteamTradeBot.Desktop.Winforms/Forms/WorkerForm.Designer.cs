@@ -64,7 +64,7 @@
             StopButton = new Button();
             panel1 = new Panel();
             panel2 = new Panel();
-            StateRefresher = new System.ComponentModel.BackgroundWorker();
+            this.StateRefresher = new System.ComponentModel.BackgroundWorker();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)HistoryDataGridView).BeginInit();
@@ -538,7 +538,7 @@
             // 
             // StateRefresher
             // 
-            StateRefresher.DoWork += StateRefresher_DoWork;
+            this.StateRefresher.DoWork += this.StateRefresher_DoWork;
             // 
             // WorkerForm
             // 
