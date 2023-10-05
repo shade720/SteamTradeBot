@@ -15,9 +15,8 @@ public class StateInfo
 
     public enum ServiceWorkingState
     {
-        Up,
         Down,
-
+        Up,
     }
 
     public enum ConnectionState
@@ -28,7 +27,7 @@ public class StateInfo
     public enum LogInState
     {
         NotLoggedIn,
+        Pending,
         LoggedIn,
-        Pending
     }
 }

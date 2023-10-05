@@ -3,8 +3,6 @@ using Serilog;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,6 +11,11 @@ namespace SteamTradeBot.Backend.BusinessLogicLayer.SteamConnectors.Selenium;
 public class SkinsTableApi : IItemsTableApi, IDisposable
 {
     private readonly SeleniumWebDriver _webDriver;
+
+    private const int MaxPageRefreshPeriodSeconds = 10000;
+    private const int MinPageRefreshPeriodSeconds = 5;
+    private const int ItemsNamesPerScreen = 20;
+    private const char CorrectSortingSign = '↓';
 
     public SkinsTableApi(SeleniumWebDriver webDriver)
     {
@@ -39,36 +42,52 @@ public class SkinsTableApi : IItemsTableApi, IDisposable
 
             _webDriver.SetPage("https://skins-table.xyz/table/");
 
+            // Выставляем большой период обновления страницы, чтобы успеть скачать нужное количество предметов до того
+            // как страница обновится.
+            _webDriver.Clear(By.Id("refresh"));
+            _webDriver.WriteToElement(By.Id("refresh"), MinPageRefreshPeriodSeconds.ToString());
+
             _webDriver.ClickOnElement(By.CssSelector("#scroll > div > div.sites.first > div:nth-child(30)"));
             _webDriver.ClickOnElement(By.CssSelector("#scroll > div > div.sites.second > div:nth-child(29)"));
-            _webDriver.SendKey(By.Id("price1_from"), $"\b\b\b\b\b\b\b{fromPrice}");
-            _webDriver.SendKey(By.Id("price1_to"), $"\b\b\b\b\b\b\b{toPrice}");
-            _webDriver.SendKey(By.Id("price2_from"), $"\b\b\b\b\b\b\b{fromPrice}");
-            _webDriver.SendKey(By.Id("price2_to"), $"\b\b\b\b\b\b\b{toPrice}");
-            _webDriver.SendKey(By.Id("sc1"), $"\b\b\b\b{salesVolumeByWeek}");
-            _webDriver.ClickOnElement(By.Id("change1"));
 
-            Thread.Sleep(15000);
-            for (var i = 1; i < 10; i++)
+            _webDriver.Clear(By.Id("price1_from"));
+            _webDriver.SendKey(By.Id("price1_from"), fromPrice.ToString());
+
+            _webDriver.Clear(By.Id("price1_to"));
+            _webDriver.SendKey(By.Id("price1_to"), toPrice.ToString());
+
+            _webDriver.Clear(By.Id("price2_from"));
+            _webDriver.SendKey(By.Id("price2_from"), fromPrice.ToString());
+
+            _webDriver.Clear(By.Id("price2_to"));
+            _webDriver.SendKey(By.Id("price2_to"), toPrice.ToString());
+
+            _webDriver.Clear(By.Id("sc1"));
+            _webDriver.SendKey(By.Id("sc1"), salesVolumeByWeek.ToString());
+            // Нужна проверка, правильно ли установлена сортировка.
+            var sortingStateStr = _webDriver.ReadFromElement(By.Id("change1"));
+            if (!sortingStateStr.Contains(CorrectSortingSign))
+                _webDriver.ClickOnElement(By.Id("change1"));
+
+            Thread.Sleep(MinPageRefreshPeriodSeconds * 1000);
+            _webDriver.Clear(By.Id("refresh"));
+            _webDriver.WriteToElement(By.Id("refresh"), MaxPageRefreshPeriodSeconds.ToString());
+
+            _webDriver.ExecuteJs("scroll(0, 500);");
+
+            for (var itemsTableIndex = 1; itemsTableIndex <= listSize; itemsTableIndex++)
             {
-                _webDriver.ExecuteJs("scroll(0, 20000000);");
-            }
-
-            var htmlCode = _webDriver.GetPageSource();
-            var regex = new Regex(@"data-clipboard-text=\p{P}[^\p{P}]*\p{P}?[^\p{P}]*\p{P}?[^\p{P}]*\p{P}?[^\p{P}]*\p{P}[^\p{P}]*\p{P}?[^\p{P}]*\p{P}\p{P}");
-            var matches = regex.Matches(htmlCode);
-
-            if (matches.Count <= 0)
-                return new List<string>();
-
-            for (var i = 0; i < listSize; i++)
-            {
-                var itemName = string.Join("", matches[i].ToString().SkipWhile(x => x != '=').Skip(2).SkipLast(1));
+                var itemName = _webDriver.ReadFromElement(By.XPath($"//*[@id='data-table']/tbody/tr[{itemsTableIndex}]/td"));
                 if (itemName.Contains("Sealed Graffiti") || itemName.Contains("Sticker") || itemName.Contains("Case"))
                     continue;
-                Log.Logger.Information("Got {0} item name", itemName);
+                Log.Logger.Information("Got {0} item name", 
+                    itemName);
                 result.Add(itemName);
+
+                if (itemsTableIndex % ItemsNamesPerScreen == 0)
+                    _webDriver.ExecuteJs("scroll(0, 1350);");
             }
+
             return result;
         });
     }

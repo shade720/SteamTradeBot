@@ -24,49 +24,41 @@ public class SeleniumWebDriver : IDisposable
         Log.Logger.Information("Selenium steam API created!");
     }
 
+    public bool IsVisible(By by, bool explicitly = false, int waitTime = 5)
+    {
+        return GetElementWithWait(by, explicitly, waitTime).Displayed;
+    }
+
     public void WriteToElement(By by, string message, bool explicitly = false, int waitTime = 5)
     {
-        if (explicitly)
-        {
-            ExplicitWait(by, waitTime).SendKeys(message);
-            return;
-        }
-        ImplicitWait(by, DefaultImplicitWaitTime).SendKeys(message);
+        GetElementWithWait(by, explicitly, waitTime).SendKeys(message);
     }
 
     public string ReadFromElement(By by, bool explicitly = false, int waitTime = 5)
     {
-        return explicitly ? ExplicitWait(by, waitTime).Text : ImplicitWait(by, DefaultImplicitWaitTime).Text;
+        return GetElementWithWait(by, explicitly, waitTime).Text;
     }
 
     public void ClickOnElement(By by, bool explicitly = false, int waitTime = 5)
     {
-        if (explicitly)
-        {
-            ExplicitWait(by, waitTime).Click();
-            return;
-        }
-        ImplicitWait(by, DefaultImplicitWaitTime).Click();
+        GetElementWithWait(by, explicitly, waitTime).Click();
     }
 
     public void SendKey(By by, string key, bool explicitly = false, int waitTime = 5)
     {
-        if (explicitly)
-        {
-            ExplicitWait(by, waitTime).SendKeys(key);
-            return;
-        }
-        ImplicitWait(by, DefaultImplicitWaitTime).SendKeys(key);
+        GetElementWithWait(by, explicitly, waitTime).SendKeys(key);
+    }
+
+    public void SetCheckBox(By by, bool checkBoxValue, bool explicitly = false, int waitTime = 5)
+    {
+        var element = GetElementWithWait(by, explicitly, waitTime);
+        if (element.Selected != checkBoxValue)
+           element.Click();
     }
 
     public void Clear(By by, bool explicitly = false, int waitTime = 5)
     {
-        if (explicitly)
-        {
-            ExplicitWait(by, waitTime).Clear();
-            return;
-        }
-        ImplicitWait(by, DefaultImplicitWaitTime).Clear();
+        GetElementWithWait(by, explicitly, waitTime).Clear();
     }
 
     public string GetPageSource()
@@ -130,5 +122,10 @@ public class SeleniumWebDriver : IDisposable
     {
         _chromeBrowser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(waitTime);
         return _chromeBrowser.FindElement(by);
+    }
+
+    private IWebElement GetElementWithWait(By by, bool explicitly = false, int waitTime = 5)
+    {
+        return explicitly ? ExplicitWait(by, waitTime) : ImplicitWait(by, DefaultImplicitWaitTime);
     }
 }

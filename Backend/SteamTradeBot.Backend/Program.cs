@@ -99,7 +99,7 @@ builder.Services.AddSingleton(_ => new SeleniumWebDriver(() =>
     chromeOptions.AddArgument("--disable-dev-shm-usage");
     chromeOptions.AddArgument("--start-maximized");
     chromeOptions.AddArgument("--window-size=1920,1080");
-    chromeOptions.AddArgument("--headless");
+    //chromeOptions.AddArgument("--headless");
     chromeOptions.AddArgument("--disable-logging");
     chromeOptions.AddArgument("--log-level=3");
     if (webDriverHostFromEnvironment is not null)
