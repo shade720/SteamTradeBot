@@ -13,6 +13,8 @@ using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 using SteamTradeBot.Backend.BusinessLogicLayer.Middlewares;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
+using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.Rules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.BuyRules;
 using SteamTradeBot.Backend.BusinessLogicLayer.Rules.CancelRules;
@@ -22,8 +24,6 @@ using SteamTradeBot.Backend.BusinessLogicLayer.SteamConnectors.Selenium;
 using SteamTradeBot.Backend.DataAccessLayer;
 using System;
 using System.IO;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions.Rules;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
@@ -56,7 +56,9 @@ builder.Services.AddDbContextFactory<TradeBotDataContext>(options =>
 {
     var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING");
     if (postgresConnectionString is not null)
+    {
         options.UseNpgsql(postgresConnectionString);
+    }
     else
     {
         var sqlServerConnectionString = builder.Configuration["MsSqlServerConnectionString"];
@@ -99,7 +101,7 @@ builder.Services.AddSingleton(_ => new SeleniumWebDriver(() =>
     chromeOptions.AddArgument("--disable-dev-shm-usage");
     chromeOptions.AddArgument("--start-maximized");
     chromeOptions.AddArgument("--window-size=1920,1080");
-    //chromeOptions.AddArgument("--headless");
+    chromeOptions.AddArgument("--headless");
     chromeOptions.AddArgument("--disable-logging");
     chromeOptions.AddArgument("--log-level=3");
     if (webDriverHostFromEnvironment is not null)

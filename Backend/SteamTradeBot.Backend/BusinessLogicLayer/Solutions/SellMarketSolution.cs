@@ -32,10 +32,6 @@ public sealed class SellMarketSolution : MarketSolution
         if (itemPage.MyBuyOrder is not null && itemPage.MyBuyOrder.Quantity == buyOrder.Quantity)
             throw new Exception($"Can't form sell order. Nothing was bought. Current quantity: {itemPage.MyBuyOrder.Quantity}; Stored quantity: {buyOrder.Quantity}");
 
-        var itemsCountToSell = itemPage.MyBuyOrder is null
-            ? buyOrder.Quantity
-            : buyOrder.Quantity - itemPage.MyBuyOrder.Quantity;
-
         var sellOrder = new Order
         {
             ApiKey = ConfigurationService.ApiKey,
@@ -47,6 +43,10 @@ public sealed class SellMarketSolution : MarketSolution
             SellPrice = buyOrder.SellPrice,
             Quantity = 1
         };
+
+        var itemsCountToSell = itemPage.MyBuyOrder is null
+            ? buyOrder.Quantity
+            : buyOrder.Quantity - itemPage.MyBuyOrder.Quantity;
 
         for (var itemNum = 0; itemNum < itemsCountToSell; itemNum++)
         {
@@ -62,10 +62,11 @@ public sealed class SellMarketSolution : MarketSolution
 
                 await OrdersRepository.AddOrUpdateOrderAsync(sellOrder);
                 await EventService.OnItemSellingAsync(sellOrder);
-                Log.Information("Sell order {0} (Price: {1}) placed successfully.", sellOrder.EngItemName, sellOrder.SellPrice);
+                Log.Information("Sell order {0} (Price: {1}) placed successfully.", 
+                    sellOrder.EngItemName, sellOrder.SellPrice);
             }
             else
-                Log.Error("Can't place sell order {0} (Price: {1}). Item not found in inventory!", sellOrder.EngItemName, sellOrder.SellPrice);
+                throw new ApplicationException($"Can't place sell order {sellOrder.EngItemName} (Price: {sellOrder.SellPrice}). Item not found in inventory!");
         }
     }
 }
