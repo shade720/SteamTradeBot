@@ -18,16 +18,16 @@ public sealed class SolutionsFactory
         ISteamApi api, 
         IConfigurationService configurationService, 
         IEventService eventService, 
-        OrdersRepository sqlOrdersDb, 
+        OrdersRepository ordersRepository, 
         MarketRules rules)
     {
         _rules = rules;
         _eventService = eventService;
         _solutions = new Dictionary<string, MarketSolution>
         {
-            { nameof(BuyMarketSolution), new BuyMarketSolution(api, configurationService, eventService, sqlOrdersDb) },
-            { nameof(SellMarketSolution), new SellMarketSolution(api, configurationService, eventService, sqlOrdersDb) },
-            { nameof(CancelMarketSolution), new CancelMarketSolution(api, configurationService, eventService, sqlOrdersDb) }
+            { nameof(BuyMarketSolution), new BuyMarketSolution(api, configurationService, eventService, ordersRepository) },
+            { nameof(SellMarketSolution), new SellMarketSolution(api, configurationService, eventService, ordersRepository) },
+            { nameof(CancelMarketSolution), new CancelMarketSolution(api, configurationService, eventService, ordersRepository) }
         };
     }
 
