@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel;
-using SteamTradeBot.Backend.BusinessLogicLayer.Services;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SteamTradeBot.Backend.Application.Services;
+using SteamTradeBot.Backend.Domain;
+using SteamTradeBot.Backend.Domain.Abstractions;
+using SteamTradeBot.Backend.Domain.StateModel;
 
-namespace SteamTradeBot.Backend.Controllers;
+namespace SteamTradeBot.Backend.UI.Controllers;
 
 [Route("api")]
 [ApiController]
