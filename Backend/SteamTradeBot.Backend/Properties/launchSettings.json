@@ -6,7 +6,7 @@
       "publishAllPorts": true,
       "useSSL": true
     },
-    "SteamTradeBot.Backend": {
+    "SteamTradeBot.Backend.UI": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

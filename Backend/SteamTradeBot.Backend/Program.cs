@@ -6,12 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
-using SteamTradeBot.Backend.Application;
-using SteamTradeBot.Backend.Domain.Abstractions;
-using SteamTradeBot.Backend.Infrastructure;
 using SteamTradeBot.Backend.UI.Middlewares;
 using System;
 using System.IO;
+using SteamTradeBot.Backend.Application;
+using SteamTradeBot.Backend.Domain.Abstractions;
+using SteamTradeBot.Backend.Infrastructure;
 
 var logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
