@@ -4,7 +4,6 @@ using SteamTradeBot.Backend.BusinessLogicLayer.Models;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.StateModel;
 using SteamTradeBot.Backend.BusinessLogicLayer.Services;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -21,21 +20,20 @@ public class TradeBotController : ControllerBase
     public async Task<IResult> StartBot(
         WorkerService worker,
         ISteamApi api,
-        IEventService eventService,
+        IEventHistoryAgent eventHistoryAgent,
+        ITradingEventHandler tradingEventHandler,
         Credentials credentials)
     {
-        if (eventService is not EventService dbBasedStateManager)
-            throw new ApplicationException("Application error: eventService does not configured");
-        await dbBasedStateManager.EnsureStateCreated();
+        await (eventHistoryAgent as DbEventHistoryAgent).EnsureStateCreated();
 
-        await eventService.OnLogInPendingAsync();
+        await tradingEventHandler.OnLogInPendingAsync();
         var isAuthenticated = await api.LogIn(credentials.Login, credentials.Password, credentials.Secret);
         if (!isAuthenticated)
         {
-            await eventService.OnLoggedOutAsync();
+            await tradingEventHandler.OnLoggedOutAsync();
             return Results.BadRequest("Authorization failed.");
         }
-        await eventService.OnLoggedInAsync();
+        await tradingEventHandler.OnLoggedInAsync();
         await worker.StartAsync();
 
         return Results.Ok();
@@ -72,28 +70,28 @@ public class TradeBotController : ControllerBase
     [HttpGet]
     [Route("state")]
     public async Task<ServiceState> GetState(
-        IEventService eventService,
+        IEventHistoryAgent eventHistoryAgent,
         [FromQuery] string apiKey)
     {
-        return await eventService.GetHistorySummaryAsync(apiKey);
+        return await eventHistoryAgent.GetHistorySummaryAsync(apiKey);
     }
 
     [HttpGet]
     [Route("history")]
     public async Task<List<TradingEvent>> GetHistory(
-        IEventService eventService,
+        IEventHistoryAgent eventHistoryAgent,
         [FromQuery] string apiKey)
     {
-        return await eventService.GetHistoryAsync(apiKey);
+        return await eventHistoryAgent.GetHistoryAsync(apiKey);
     }
 
     [HttpPost]
     [Route("clearState")]
     public async Task CancelOrders(
-        IEventService eventService,
+        IEventHistoryAgent eventHistoryAgent,
         [FromQuery] string apiKey)
     {
-        await eventService.ClearHistorySummaryAsync(apiKey);
+        await eventHistoryAgent.ClearHistorySummaryAsync(apiKey);
     }
 
     [HttpGet]

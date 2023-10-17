@@ -439,7 +439,6 @@ public sealed class SeleniumSteamApi : ISteamApi, IDisposable
 
     public async Task<bool> LogIn(string login, string password, string secret)
     {
-        Log.Information("Signing in...");
         Log.Information($"User {login}");
 
         if (IsAuthenticated(login))

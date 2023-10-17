@@ -12,9 +12,9 @@ public sealed class BuyMarketSolution : MarketSolution
     public BuyMarketSolution(
         ISteamApi api, 
         IConfigurationService configurationService, 
-        IEventService eventService, 
+        ITradingEventHandler tradingEventHandler, 
         OrdersRepository ordersRepository) : 
-        base(api, configurationService, eventService, ordersRepository) { }
+        base(api, configurationService, tradingEventHandler, ordersRepository) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -42,9 +42,6 @@ public sealed class BuyMarketSolution : MarketSolution
 
         await SteamApi.PlaceBuyOrderAsync(buyOrder.ItemUrl, buyOrder.BuyPrice, buyOrder.Quantity);
         await OrdersRepository.AddOrUpdateOrderAsync(buyOrder);
-        await EventService.OnItemBuyingAsync(buyOrder);
-
-        Log.Logger.Information("Buy order {0} has been placed:\r\nItem name: {1}\r\nUrl: {2}\r\nBuy price: {3}\r\nEstimated sell price: {4}\r\nQuantity: {5}", 
-            buyOrder.EngItemName, buyOrder.ItemUrl, buyOrder.ItemUrl, buyOrder.BuyPrice, buyOrder.SellPrice, buyOrder.Quantity);
+        await TradingEventHandler.OnItemBuyingAsync(buyOrder);
     }
 }

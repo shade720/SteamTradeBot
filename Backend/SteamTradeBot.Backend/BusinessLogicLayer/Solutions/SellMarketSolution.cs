@@ -12,9 +12,9 @@ public sealed class SellMarketSolution : MarketSolution
     public SellMarketSolution(
         ISteamApi api, 
         IConfigurationService configurationService, 
-        IEventService eventService, 
+        ITradingEventHandler tradingEventHandler, 
         OrdersRepository ordersRepository) 
-        : base(api, configurationService, eventService, ordersRepository) { }
+        : base(api, configurationService, tradingEventHandler, ordersRepository) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -61,9 +61,7 @@ public sealed class SellMarketSolution : MarketSolution
                     await OrdersRepository.RemoveOrderAsync(buyOrder);
 
                 await OrdersRepository.AddOrUpdateOrderAsync(sellOrder);
-                await EventService.OnItemSellingAsync(sellOrder);
-                Log.Information("Sell order {0} (Price: {1}) placed successfully.", 
-                    sellOrder.EngItemName, sellOrder.SellPrice);
+                await TradingEventHandler.OnItemSellingAsync(sellOrder);
             }
             else
                 throw new ApplicationException($"Can't place sell order {sellOrder.EngItemName} (Price: {sellOrder.SellPrice}). Item not found in inventory!");

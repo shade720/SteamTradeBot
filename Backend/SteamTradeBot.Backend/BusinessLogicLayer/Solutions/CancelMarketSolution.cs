@@ -12,9 +12,9 @@ public sealed class CancelMarketSolution : MarketSolution
     public CancelMarketSolution(
         ISteamApi api,
         IConfigurationService configurationService,
-        IEventService eventService,
+        ITradingEventHandler tradingEventHandler,
         OrdersRepository ordersRepository)
-        : base(api, configurationService, eventService, ordersRepository) { }
+        : base(api, configurationService, tradingEventHandler, ordersRepository) { }
 
     public override void Perform(ItemPage itemPage)
     {
@@ -35,9 +35,7 @@ public sealed class CancelMarketSolution : MarketSolution
         if (successfullyCanceled)
         {
             await OrdersRepository.RemoveOrderAsync(order);
-            await EventService.OnItemCancellingAsync(order);
-            Log.Information("Buy order {0} (Price: {1}, Quantity: {2}) has been canceled.",
-                order.EngItemName, order.BuyPrice, order.Quantity);
+            await TradingEventHandler.OnItemCancellingAsync(order);
         }
         else
         {

@@ -1,5 +1,4 @@
-﻿using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
+﻿using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
 using System;
 using System.Threading;
@@ -12,7 +11,7 @@ public class WorkerService
     private readonly ItemsNamesProvider _itemsNamesProvider;
     private readonly ItemPageFactory _itemPageFactory;
     private readonly SolutionsFactory _solutionsFactory;
-    private readonly IEventService _eventService;
+    private readonly ITradingEventHandler _tradingEventHandler;
 
     private CancellationTokenSource? _cancellationTokenSource;
 
@@ -21,12 +20,12 @@ public class WorkerService
         ItemsNamesProvider itemsNamesProvider,
         ItemPageFactory itemPageFactory,
         SolutionsFactory solutionsFactory,
-        IEventService eventService)
+        ITradingEventHandler tradingEventHandler)
     {
         _itemsNamesProvider = itemsNamesProvider;
         _itemPageFactory = itemPageFactory;
         _solutionsFactory = solutionsFactory;
-        _eventService = eventService;
+        _tradingEventHandler = tradingEventHandler;
     }
 
     public async Task StartAsync()
@@ -37,7 +36,7 @@ public class WorkerService
 
     private async Task WorkerLoop()
     {
-        await _eventService.OnTradingStartedAsync();
+        await _tradingEventHandler.OnTradingStartedAsync();
         _cancellationTokenSource = new CancellationTokenSource();
         await foreach (var name in _itemsNamesProvider.GetNamesAsync())
         {
@@ -46,6 +45,8 @@ public class WorkerService
             try
             {
                 var itemPage = await _itemPageFactory.CreateAsync(name);
+                await _tradingEventHandler.OnItemAnalyzingAsync(itemPage);
+
                 var solution = await _solutionsFactory.GetSolutionAsync(itemPage);
                 if (solution is null)
                     continue;
@@ -53,12 +54,10 @@ public class WorkerService
             }
             catch (Exception e)
             {
-                Log.Logger.Error("Item skipped due to error -> \r\nMessage: {0}, StackTrace: {1}",
-                    e.Message, e.StackTrace);
-                await _eventService.OnErrorAsync(e);
+                await _tradingEventHandler.OnErrorAsync(e);
             }
         }
-        await _eventService.OnTradingStoppedAsync();
+        await _tradingEventHandler.OnTradingStoppedAsync();
     }
 
     public async Task StopAsync()

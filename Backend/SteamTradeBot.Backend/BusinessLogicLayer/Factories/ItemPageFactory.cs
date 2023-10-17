@@ -1,5 +1,4 @@
-﻿using Serilog;
-using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
+﻿using SteamTradeBot.Backend.BusinessLogicLayer.Models.Abstractions;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models.ItemModel;
 using System;
 using System.Collections.Generic;
@@ -23,7 +22,6 @@ public sealed class ItemPageFactory
 
     public async Task<ItemPage> CreateAsync(string engItemName)
     {
-        Log.Information("Providing {0} page...", engItemName);
         var itemPage = new ItemPage { EngItemName = engItemName };
         itemPage.ItemUrl = await _api.GetItemUrlAsync(itemPage.EngItemName);
         itemPage.RusItemName = await _api.GetRusItemNameAsync(itemPage.ItemUrl);
@@ -63,12 +61,6 @@ public sealed class ItemPageFactory
                 return resultOrderBook;
             });
         itemPage.CurrentBalance = await _api.GetBalanceAsync();
-
-        Log.Logger.Information("Item {0} provided:\r\nUrl: {1}\r\nRusName: {2}\r\nExisting order: (Price: {3}; Quantity: {4})\r\nBuy order book: {5}...\r\nSell order book: {6}...",
-            itemPage.ToString(), itemPage.ItemUrl, itemPage.RusItemName, price is null? "null" : price, quantity is null ? "null" : quantity, 
-            string.Join("; ", itemPage.BuyOrderBook.Select(x => Math.Round(x.Price, 2, MidpointRounding.AwayFromZero)).Take(3)), 
-            string.Join("; ", itemPage.SellOrderBook.Select(x => Math.Round(x.Price, 2, MidpointRounding.AwayFromZero)).Take(3)));
-
         return itemPage;
     }
 }

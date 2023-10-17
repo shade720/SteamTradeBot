@@ -9,6 +9,8 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using Serilog;
 using Serilog.Events;
+using SteamTradeBot.Backend.BusinessLogicLayer.Decorators;
+using SteamTradeBot.Backend.BusinessLogicLayer.EventHandlers;
 using SteamTradeBot.Backend.BusinessLogicLayer.Factories;
 using SteamTradeBot.Backend.BusinessLogicLayer.Middlewares;
 using SteamTradeBot.Backend.BusinessLogicLayer.Models;
@@ -82,7 +84,11 @@ builder.Services.AddTransient<IBuyRule, TrendRule>();
 builder.Services.AddTransient<ISellRule, CurrentQuantityCheckRule>();
 builder.Services.AddTransient<ICancelRule, FitPriceRule>();
 
-builder.Services.AddSingleton<IEventService, EventService>();
+builder.Services.AddSingleton<ITradingEventHandler, DbBasedTradingEventHandler>();
+builder.Services.Decorate<ITradingEventHandler, TimerUpdateTradingEventHandler>();
+builder.Services.Decorate<ITradingEventHandler, LogEventHandler>();
+builder.Services.Decorate<ITradingEventHandler, SignalTradingEventHandler>();
+
 builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<IConfigurationService, JsonFileBasedConfigurationService>();
@@ -116,7 +122,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.MapHub<EventService>("/eventService");
+app.MapHub<SignalTradingEventHandler>("/tradingEventHandler");
 app.MapControllers();
 app.UseMiddleware<TokenAuthenticationMiddleware>();
 app.UseMiddleware<ExclusiveAccessMiddleware>();
@@ -125,10 +131,10 @@ app.UseExceptionHandler(async exceptionHandlerApp =>
     var exception = exceptionHandlerApp.ServerFeatures.Get<IExceptionHandlerFeature>()?.Error;
     if (exception is null)
         return;
-    var stateManager = exceptionHandlerApp.ApplicationServices.GetService<IEventService>();
+    var stateManager = exceptionHandlerApp.ApplicationServices.GetService<ITradingEventHandler>();
     if (stateManager is null)
     {
-        Log.Error("Application error: eventService does not configured (ExceptionHandler)");
+        Log.Error("Application error: tradingEventHandler does not configured (ExceptionHandler)");
         return;
     }
     await stateManager.OnErrorAsync(exception);
