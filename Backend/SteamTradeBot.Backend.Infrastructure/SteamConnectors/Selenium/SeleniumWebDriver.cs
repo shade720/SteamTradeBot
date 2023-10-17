@@ -5,7 +5,7 @@ using Serilog;
 
 namespace SteamTradeBot.Backend.Infrastructure.SteamConnectors.Selenium;
 
-public class SeleniumWebDriver : IDisposable
+internal class SeleniumWebDriver : IDisposable
 {
     private readonly IWebDriver _chromeBrowser;
 

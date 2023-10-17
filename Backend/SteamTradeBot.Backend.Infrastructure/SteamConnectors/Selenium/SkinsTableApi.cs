@@ -1,11 +1,10 @@
 ﻿using OpenQA.Selenium;
 using Serilog;
 using SteamTradeBot.Backend.Domain.Abstractions;
-using SteamTradeBot.Backend.Infrastructure.SteamConnectors.Selenium;
 
-namespace SteamTradeBot.Backend.Application.SteamConnectors.Selenium;
+namespace SteamTradeBot.Backend.Infrastructure.SteamConnectors.Selenium;
 
-public class SkinsTableApi : IItemsTableApi, IDisposable
+internal class SkinsTableApi : IItemsTableApi, IDisposable
 {
     private readonly SeleniumWebDriver _webDriver;
 

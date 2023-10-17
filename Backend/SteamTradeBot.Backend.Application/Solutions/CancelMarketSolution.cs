@@ -5,7 +5,7 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Solutions;
 
-public sealed class CancelMarketSolution : MarketSolution
+internal sealed class CancelMarketSolution : MarketSolution
 {
     public CancelMarketSolution(
         ISteamApi api,

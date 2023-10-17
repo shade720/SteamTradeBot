@@ -2,7 +2,7 @@
 
 namespace SteamTradeBot.Backend.Application.Factories;
 
-internal sealed class UptimeProvider
+internal sealed class CurrentUptimeProvider
 {
     private Timer? _timer;
     private readonly Stopwatch _stopwatch;
@@ -13,7 +13,7 @@ internal sealed class UptimeProvider
     public delegate Task UptimeUpdateHandler(TimeSpan currentUptime);
     public event UptimeUpdateHandler? UptimeUpdate;
 
-    public UptimeProvider()
+    public CurrentUptimeProvider()
     {
         _stopwatch = new Stopwatch();
     }

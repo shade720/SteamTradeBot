@@ -6,7 +6,7 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Rules.SellRules;
 
-public sealed class CurrentQuantityCheckRule : ISellRule
+internal sealed class CurrentQuantityCheckRule : ISellRule
 {
     private readonly IConfigurationService _configurationService;
     private readonly OrdersRepository _ordersRepository;

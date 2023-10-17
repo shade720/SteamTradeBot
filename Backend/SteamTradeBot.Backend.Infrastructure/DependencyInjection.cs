@@ -5,7 +5,6 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
 using SteamTradeBot.Backend.Domain;
-using SteamTradeBot.Backend.Application.SteamConnectors.Selenium;
 using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Infrastructure.SteamConnectors.Selenium;
 

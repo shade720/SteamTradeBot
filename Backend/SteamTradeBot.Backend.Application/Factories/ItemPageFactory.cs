@@ -8,7 +8,7 @@ public sealed class ItemPageFactory
     private readonly ISteamApi _api;
     private readonly IConfigurationService _configurationService;
 
-    public ItemPageFactory(
+    internal ItemPageFactory(
         ISteamApi api,
         IConfigurationService configurationService)
     {
@@ -16,7 +16,7 @@ public sealed class ItemPageFactory
         _configurationService = configurationService;
     }
 
-    public async Task<ItemPage> CreateAsync(string engItemName)
+    internal async Task<ItemPage> CreateAsync(string engItemName)
     {
         var itemPage = new ItemPage { EngItemName = engItemName };
         itemPage.ItemUrl = await _api.GetItemUrlAsync(itemPage.EngItemName);

@@ -7,7 +7,7 @@ namespace SteamTradeBot.Backend.Application.EventHandlers;
 
 internal class TimerUpdateTradingEventHandler : ITradingEventHandler
 {
-    private readonly UptimeProvider _uptimeProvider;
+    private readonly CurrentUptimeProvider _currentUptimeProvider;
     private readonly IConfigurationService _configurationService;
     private readonly StateRepository _stateRepository;
     private readonly ITradingEventHandler _innerEventHandler;
@@ -20,21 +20,21 @@ internal class TimerUpdateTradingEventHandler : ITradingEventHandler
         _configurationService = configurationService;
         _stateRepository = stateRepository;
         _innerEventHandler = innerEventHandler;
-        _uptimeProvider = new UptimeProvider();
-        _uptimeProvider.UptimeUpdate += OnUptimeUpdated;
+        _currentUptimeProvider = new CurrentUptimeProvider();
+        _currentUptimeProvider.UptimeUpdate += OnCurrentUptimeUpdated;
     }
 
     #region Decorated
 
     public async Task OnTradingStartedAsync()
     {
-        _uptimeProvider.StartCountdown();
+        _currentUptimeProvider.StartCountdown();
         await _innerEventHandler.OnTradingStartedAsync();
     }
 
     public async Task OnTradingStoppedAsync()
     {
-        _uptimeProvider.StopCountdown();
+        _currentUptimeProvider.StopCountdown();
         await _innerEventHandler.OnTradingStoppedAsync();
     }
 
@@ -84,7 +84,7 @@ internal class TimerUpdateTradingEventHandler : ITradingEventHandler
 
     #endregion
 
-    private async Task OnUptimeUpdated(TimeSpan uptime)
+    private async Task OnCurrentUptimeUpdated(TimeSpan uptime)
     {
         var storedState = await _stateRepository.GetStateAsync(_configurationService.ApiKey)
                           ?? throw new Exception("There is no state for this api key");

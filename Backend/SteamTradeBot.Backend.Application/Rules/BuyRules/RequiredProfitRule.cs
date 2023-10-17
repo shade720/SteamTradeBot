@@ -5,7 +5,7 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Rules.BuyRules;
 
-public sealed class RequiredProfitRule : IBuyRule
+internal sealed class RequiredProfitRule : IBuyRule
 {
     private const double SellPriceReduceValue = 0.02;
     private readonly IConfigurationService _configurationService;

@@ -11,7 +11,7 @@ public sealed class SolutionsFactory
     private readonly MarketRules _rules;
     private readonly Dictionary<string, MarketSolution> _solutions;
 
-    public SolutionsFactory(
+    internal SolutionsFactory(
         ISteamApi api, 
         IConfigurationService configurationService, 
         ITradingEventHandler tradingEventHandler, 
@@ -27,7 +27,7 @@ public sealed class SolutionsFactory
         };
     }
 
-    public async Task<MarketSolution?> GetSolutionAsync(ItemPage itemPage)
+    internal async Task<MarketSolution?> GetSolutionAsync(ItemPage itemPage)
     {
         if (await _rules.CanSellItemAsync(itemPage))
             return _solutions[nameof(SellMarketSolution)];

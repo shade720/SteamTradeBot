@@ -6,7 +6,7 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Rules.CancelRules;
 
-public sealed class FitPriceRule : ICancelRule
+internal sealed class FitPriceRule : ICancelRule
 {
     private readonly OrdersRepository _ordersRepository;
     private readonly IConfigurationService _configurationService;

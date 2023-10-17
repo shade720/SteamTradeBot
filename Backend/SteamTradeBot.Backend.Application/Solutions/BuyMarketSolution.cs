@@ -5,14 +5,14 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Solutions;
 
-public sealed class BuyMarketSolution : MarketSolution
+internal sealed class BuyMarketSolution : MarketSolution
 {
     public BuyMarketSolution(
         ISteamApi api, 
         IConfigurationService configurationService, 
         ITradingEventHandler tradingEventHandler, 
-        OrdersRepository ordersRepository) : 
-        base(api, configurationService, tradingEventHandler, ordersRepository) { }
+        OrdersRepository ordersRepository) 
+        : base(api, configurationService, tradingEventHandler, ordersRepository) { }
 
     public override void Perform(ItemPage itemPage)
     {

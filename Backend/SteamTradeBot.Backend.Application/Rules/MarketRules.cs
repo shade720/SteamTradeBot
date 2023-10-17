@@ -3,7 +3,7 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Rules;
 
-public class MarketRules
+internal class MarketRules
 {
     private readonly IEnumerable<IBuyRule> _buyRules;
     private readonly IEnumerable<ISellRule> _sellRules;

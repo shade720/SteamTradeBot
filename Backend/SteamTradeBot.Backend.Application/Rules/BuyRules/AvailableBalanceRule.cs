@@ -6,7 +6,7 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Rules.BuyRules;
 
-public sealed class AvailableBalanceRule : IBuyRule
+internal sealed class AvailableBalanceRule : IBuyRule
 {
     private readonly IConfigurationService _configurationService;
     private readonly OrdersRepository _ordersRepository;

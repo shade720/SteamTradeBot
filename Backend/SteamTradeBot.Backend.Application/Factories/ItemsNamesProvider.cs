@@ -11,7 +11,7 @@ public sealed class ItemsNamesProvider
     private readonly IConfigurationService _configurationService;
     private readonly OrdersRepository _ordersRepository;
 
-    public ItemsNamesProvider(
+    internal ItemsNamesProvider(
         IItemsTableApi api, 
         IConfigurationService configurationService,
         OrdersRepository ordersRepository)
@@ -21,7 +21,7 @@ public sealed class ItemsNamesProvider
         _ordersRepository = ordersRepository;
     }
 
-    public async IAsyncEnumerable<string> GetNamesAsync()
+    internal async IAsyncEnumerable<string> GetNamesAsync()
     {
         while (true)
         {

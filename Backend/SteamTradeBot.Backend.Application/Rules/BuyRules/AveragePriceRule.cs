@@ -5,7 +5,7 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Rules.BuyRules;
 
-public sealed class AveragePriceRule : IBuyRule
+internal sealed class AveragePriceRule : IBuyRule
 {
     private readonly IConfigurationService _configurationService;
 

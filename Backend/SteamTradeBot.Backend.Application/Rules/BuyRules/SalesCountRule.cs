@@ -5,7 +5,7 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Rules.BuyRules;
 
-public sealed class SalesCountRule : IBuyRule
+internal sealed class SalesCountRule : IBuyRule
 {
     private readonly IConfigurationService _configurationService;
 

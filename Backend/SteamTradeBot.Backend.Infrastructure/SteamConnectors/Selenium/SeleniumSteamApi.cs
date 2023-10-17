@@ -1,12 +1,12 @@
-﻿using System.Globalization;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using Serilog;
 using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Domain.ItemModel;
+using System.Globalization;
 
 namespace SteamTradeBot.Backend.Infrastructure.SteamConnectors.Selenium;
 
-public sealed class SeleniumSteamApi : ISteamApi, IDisposable
+internal sealed class SeleniumSteamApi : ISteamApi, IDisposable
 {
     private readonly SeleniumWebDriver _webDriver;
 

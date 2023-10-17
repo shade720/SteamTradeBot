@@ -5,7 +5,7 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Solutions;
 
-public sealed class SellMarketSolution : MarketSolution
+internal sealed class SellMarketSolution : MarketSolution
 {
     public SellMarketSolution(
         ISteamApi api, 

@@ -4,7 +4,7 @@ using SteamTradeBot.Backend.Domain.ItemModel;
 
 namespace SteamTradeBot.Backend.Application.Rules.BuyRules;
 
-public sealed class OrderAlreadyExistRule : IBuyRule
+internal sealed class OrderAlreadyExistRule : IBuyRule
 {
     public bool IsFollowed(ItemPage itemPage)
     {
