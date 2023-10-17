@@ -68,22 +68,23 @@ builder.Services.AddDbContextFactory<TradeBotDataContext>(options =>
     }
 });
 
-builder.Services.AddSingleton<WorkerService>();
+builder.Services.AddScoped<WorkerService>();
 
-builder.Services.AddTransient<ItemsNamesProvider>();
-builder.Services.AddTransient<ItemPageFactory>();
-builder.Services.AddTransient<SolutionsFactory>();
+builder.Services.AddSingleton<ItemsNamesProvider>();
+builder.Services.AddSingleton<ItemPageFactory>();
+builder.Services.AddSingleton<SolutionsFactory>();
 
-builder.Services.AddTransient<MarketRules>();
-builder.Services.AddTransient<IBuyRule, AvailableBalanceRule>();
-builder.Services.AddTransient<IBuyRule, AveragePriceRule>();
-builder.Services.AddTransient<IBuyRule, SalesCountRule>();
-builder.Services.AddTransient<IBuyRule, OrderAlreadyExistRule>();
-builder.Services.AddTransient<IBuyRule, RequiredProfitRule>();
-builder.Services.AddTransient<IBuyRule, TrendRule>();
-builder.Services.AddTransient<ISellRule, CurrentQuantityCheckRule>();
-builder.Services.AddTransient<ICancelRule, FitPriceRule>();
+builder.Services.AddSingleton<MarketRules>();
+builder.Services.AddSingleton<IBuyRule, AvailableBalanceRule>();
+builder.Services.AddSingleton<IBuyRule, AveragePriceRule>();
+builder.Services.AddSingleton<IBuyRule, SalesCountRule>();
+builder.Services.AddSingleton<IBuyRule, OrderAlreadyExistRule>();
+builder.Services.AddSingleton<IBuyRule, RequiredProfitRule>();
+builder.Services.AddSingleton<IBuyRule, TrendRule>();
+builder.Services.AddSingleton<ISellRule, CurrentQuantityCheckRule>();
+builder.Services.AddSingleton<ICancelRule, FitPriceRule>();
 
+builder.Services.AddSingleton<IEventHistoryAgent, DbEventHistoryAgent>();
 builder.Services.AddSingleton<ITradingEventHandler, DbBasedTradingEventHandler>();
 builder.Services.Decorate<ITradingEventHandler, TimerUpdateTradingEventHandler>();
 builder.Services.Decorate<ITradingEventHandler, LogEventHandler>();
@@ -92,8 +93,6 @@ builder.Services.Decorate<ITradingEventHandler, SignalTradingEventHandler>();
 builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<IConfigurationService, JsonFileBasedConfigurationService>();
-builder.Services.AddTransient<LogsProviderService>();
-builder.Services.AddTransient<OrderCancellingService>();
 
 var webDriverHostFromEnvironment = Environment.GetEnvironmentVariable("SELENIUM_HOST");
 builder.Services.AddSingleton<ISteamApi, SeleniumSteamApi>();
@@ -117,6 +116,9 @@ builder.Services.AddSingleton(_ => new SeleniumWebDriver(() =>
     driverService.SuppressInitialDiagnosticInformation = true;
     return new ChromeDriver(driverService, chromeOptions);
 }));
+
+builder.Services.AddScoped<LogsProviderService>();
+builder.Services.AddScoped<OrderCancellingService>();
 
 builder.Services.AddControllers();
 
