@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamTradeBot.Backend.Infra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CEF4D4BF-4572-4EC5-AEAA-1531E251730D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTests", "Application.UnitTests\Application.UnitTests.csproj", "{89EAF4A7-0C22-4E80-AD40-F1EBF674F593}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.UnitTests", "Backend\Tests\Application.UnitTests\Application.UnitTests.csproj", "{89EAF4A7-0C22-4E80-AD40-F1EBF674F593}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.UnitTests", "Backend\Tests\Infrastructure.UnitTests\Infrastructure.UnitTests.csproj", "{034B9CCD-7CF2-4FF0-A9A7-F3707B3FE29E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{89EAF4A7-0C22-4E80-AD40-F1EBF674F593}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89EAF4A7-0C22-4E80-AD40-F1EBF674F593}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89EAF4A7-0C22-4E80-AD40-F1EBF674F593}.Release|Any CPU.Build.0 = Release|Any CPU
+		{034B9CCD-7CF2-4FF0-A9A7-F3707B3FE29E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{034B9CCD-7CF2-4FF0-A9A7-F3707B3FE29E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{034B9CCD-7CF2-4FF0-A9A7-F3707B3FE29E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{034B9CCD-7CF2-4FF0-A9A7-F3707B3FE29E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{4920C597-91D2-4493-97BB-96FCFBDD7B92} = {118D2C99-58BA-47FA-81A9-E0147A6745D2}
 		{CEF4D4BF-4572-4EC5-AEAA-1531E251730D} = {118D2C99-58BA-47FA-81A9-E0147A6745D2}
 		{89EAF4A7-0C22-4E80-AD40-F1EBF674F593} = {CEF4D4BF-4572-4EC5-AEAA-1531E251730D}
+		{034B9CCD-7CF2-4FF0-A9A7-F3707B3FE29E} = {CEF4D4BF-4572-4EC5-AEAA-1531E251730D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22B12097-ADA2-4178-B53E-48C0A53FCD7F}

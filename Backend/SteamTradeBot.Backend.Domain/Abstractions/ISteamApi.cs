@@ -9,7 +9,7 @@ public interface ISteamApi
     public Task<string> GetItemUrlAsync(string itemName);
     public Task<string> GetRusItemNameAsync(string itemUrl);
     public Task<List<OrderBookItem>> GetBuyOrdersBookAsync(string itemUrl, int buyListingFindRange);
-    public Task<List<OrderBookItem>> GetSellOrdersBookAsync(string itemUrl, int sellListingFindRange);
+    public Task<List<OrderBookItem>> GetSellOrdersBookAsync(string itemUrl, int pagesFindRange);
     public Task<int?> GetBuyOrderQuantityAsync(string itemUrl);
     public Task<double?> GetBuyOrderPriceAsync(string itemUrl);
     public Task<Chart> GetChartAsync(string itemUrl, DateTime fromDate);

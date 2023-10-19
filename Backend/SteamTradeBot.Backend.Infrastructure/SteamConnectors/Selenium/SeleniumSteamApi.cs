@@ -66,7 +66,7 @@ internal sealed class SeleniumSteamApi : ISteamApi, IDisposable
     private static By GetSellListingPageButton(int pageNum)
         => By.XPath($"//*[@id='searchResults_links']/span[{pageNum + SellListingPagesOffset}]");
 
-    public async Task<List<OrderBookItem>> GetSellOrdersBookAsync(string itemUrl, int sellListingFindRange)
+    public async Task<List<OrderBookItem>> GetSellOrdersBookAsync(string itemUrl, int pagesFindRange)
     {
         await _webDriver.SafeConnect(() =>
         {
@@ -75,7 +75,7 @@ internal sealed class SeleniumSteamApi : ISteamApi, IDisposable
         });
 
         var orderBook = new List<OrderBookItem>();
-        for (var pageIdx = 1; pageIdx <= sellListingFindRange; pageIdx++)
+        for (var pageIdx = 1; pageIdx <= pagesFindRange; pageIdx++)
         {
             for (var rowIdx = HtmlElementOffset; rowIdx < SellListingPageSize + HtmlElementOffset; rowIdx++)
             {
@@ -163,7 +163,7 @@ internal sealed class SeleniumSteamApi : ISteamApi, IDisposable
                 Price = double.Parse(x[1], NumberStyles.Any, CultureInfo.InvariantCulture),
                 Quantity = int.Parse(x[2])
             })
-            .Where(x => x.Date > fromDate);
+            .Where(x => x.Date > fromDate.AddDays(1));
         return new Chart(chartPoints);
     }
 
@@ -341,10 +341,13 @@ internal sealed class SeleniumSteamApi : ISteamApi, IDisposable
     {
         return await _webDriver.SafeConnect(() =>
         {
+            var buyPrice = Math.Round(price + 0.01, 2, MidpointRounding.AwayFromZero);
             _webDriver.SetPage(itemUrl);
             _webDriver.ClickOnElement(PlaceOrderButton);
-            _webDriver.SendKey(BuyOrderPriceTextBox, $"\b\b\b\b\b\b\b\b\b\b\b{Math.Round(price + 0.01, 2, MidpointRounding.AwayFromZero)}", true);
-            _webDriver.SendKey(BuyOrderQuantityTextBox, $"\b{quantity}");
+            _webDriver.Clear(BuyOrderPriceTextBox);
+            _webDriver.SendKey(BuyOrderPriceTextBox, buyPrice.ToString(), true);
+            _webDriver.Clear(BuyOrderQuantityTextBox);
+            _webDriver.SendKey(BuyOrderQuantityTextBox, quantity.ToString());
             _webDriver.ClickOnElement(BuyAgreementCheckBox);
             _webDriver.ClickOnElement(BuyConfirmationButton);
             return true;
