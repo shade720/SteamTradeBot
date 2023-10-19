@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
 using SteamTradeBot.Backend.Application.EventHandlers;
 using SteamTradeBot.Backend.Application.Factories;
 using SteamTradeBot.Backend.Application.Rules;
