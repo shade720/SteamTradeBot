@@ -16,9 +16,10 @@ internal sealed class AvailableBalanceRule : IBuyRule
         _configurationService = configurationService;
         _ordersRepository = ordersRepository;
     }
+
     public bool IsFollowed(ItemPage itemPage)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public async Task<bool> IsFollowedAsync(ItemPage itemPage)
