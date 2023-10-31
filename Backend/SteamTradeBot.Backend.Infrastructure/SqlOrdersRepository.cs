@@ -1,17 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SteamTradeBot.Backend.Domain;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain.ItemModel;
+using SteamTradeBot.Backend.Domain.OrderAggregate;
 
 namespace SteamTradeBot.Backend.Infrastructure;
 
-internal sealed class SqlOrdersRepository : OrdersRepository
+internal sealed class SqlOrdersRepository : IOrdersRepository
 {
-    public SqlOrdersRepository(IDbContextFactory<TradeBotDataContext> tradeBotDataContextFactory) : base(tradeBotDataContextFactory) { }
+    private readonly IDbContextFactory<TradeBotDataContext> _tradeBotDataContextFactory;
 
-    public override async Task AddOrUpdateOrderAsync(Order order)
+    public SqlOrdersRepository(IDbContextFactory<TradeBotDataContext> tradeBotDataContextFactory)
     {
-        await using var context = await TradeBotDataContextFactory.CreateDbContextAsync();
+        _tradeBotDataContextFactory = tradeBotDataContextFactory;
+    }
+
+    public async Task AddOrUpdateOrderAsync(Order order)
+    {
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
         var orderSetToUpdate = await context.Orders.FirstOrDefaultAsync(o =>
             o.EngItemName == order.EngItemName && o.ApiKey == order.ApiKey && o.OrderType == order.OrderType);
         if (orderSetToUpdate is not null)
@@ -29,21 +33,21 @@ internal sealed class SqlOrdersRepository : OrdersRepository
         await context.SaveChangesAsync();
     }
 
-    public override async Task<List<Order>> GetOrdersAsync(string apiKey, OrderType type)
+    public async Task<List<Order>> GetOrdersAsync(string apiKey, OrderType type)
     {
-        await using var context = await TradeBotDataContextFactory.CreateDbContextAsync();
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
         return await context.Orders.Where(order => order.ApiKey == apiKey && order.OrderType == type).ToListAsync();
     }
 
-    public override async Task<Order?> GetOrderAsync(string engName, string apiKey, OrderType type)
+    public async Task<Order?> GetOrderAsync(string engName, string apiKey, OrderType type)
     {
-        await using var context = await TradeBotDataContextFactory.CreateDbContextAsync();
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
         return await context.Orders.FirstOrDefaultAsync(o => o.EngItemName == engName && o.ApiKey == apiKey && o.OrderType == type);
     }
 
-    public override async Task RemoveOrderAsync(Order order)
+    public async Task RemoveOrderAsync(Order order)
     {
-        await using var context = await TradeBotDataContextFactory.CreateDbContextAsync();
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
         var orderSetToRemove = await context.Orders.FirstOrDefaultAsync(o =>
             o.EngItemName == order.EngItemName && o.ApiKey == order.ApiKey && o.OrderType == order.OrderType);
         if (orderSetToRemove is not null)

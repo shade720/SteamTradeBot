@@ -44,14 +44,9 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.UseRouting();
 app.MapControllers();
-app.UseMiddleware<TokenAuthenticationMiddleware>();
-app.UseMiddleware<ExclusiveAccessMiddleware>();
 
-app.ConfigureTradeBotApplication();
-
-app.UseExceptionHandler(async exceptionHandlerApp =>  
+app.UseExceptionHandler(async exceptionHandlerApp =>
 {
     var exception = exceptionHandlerApp.ServerFeatures.Get<IExceptionHandlerFeature>()?.Error;
     if (exception is null)
@@ -65,5 +60,11 @@ app.UseExceptionHandler(async exceptionHandlerApp =>
     await stateManager.OnErrorAsync(exception);
     exceptionHandlerApp.Run(async context => await Results.Problem().ExecuteAsync(context));
 });
+
+app.UseRouting();
+app.UseMiddleware<TokenAuthenticationMiddleware>();
+app.UseMiddleware<ExclusiveAccessMiddleware>();
+
+app.ConfigureTradeBotApplication();
 
 app.Run();

@@ -1,4 +1,4 @@
-﻿namespace SteamTradeBot.Backend.Domain.StateModel;
+﻿namespace SteamTradeBot.Backend.Domain.TradingEventAggregate;
 
 public enum InfoType
 {

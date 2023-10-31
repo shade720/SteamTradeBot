@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SteamTradeBot.Backend.Domain.ItemModel;
+namespace SteamTradeBot.Backend.Domain.OrderAggregate;
 
 public class Order
 {

@@ -3,7 +3,7 @@ using SteamTradeBot.Backend.Application.Rules.BuyRules;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
 using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Domain.Abstractions.Rules;
-using SteamTradeBot.Backend.Domain.ItemModel;
+using SteamTradeBot.Backend.Domain.ItemPageAggregate;
 
 namespace Application.UnitTests;
 
@@ -12,12 +12,12 @@ public class AvailableBalanceRuleTests
     private readonly IBuyRule _sut;
 
     private readonly Mock<IConfigurationService> _configurationServiceMock;
-    private readonly Mock<OrdersRepository> _ordersRepositoryMock;
+    private readonly Mock<IOrdersRepository> _ordersRepositoryMock;
 
     public AvailableBalanceRuleTests()
     {
         _configurationServiceMock = new Mock<IConfigurationService>();
-        _ordersRepositoryMock = new Mock<OrdersRepository>();
+        _ordersRepositoryMock = new Mock<IOrdersRepository>();
 
         _sut = new AvailableBalanceRule(_configurationServiceMock.Object, _ordersRepositoryMock.Object);
     }

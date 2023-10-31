@@ -7,9 +7,11 @@ namespace SteamTradeBot.Backend.UI.Middlewares;
 public class TokenAuthenticationMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly TokenRepository _db;
+    private readonly ITokenRepository _db;
 
-    public TokenAuthenticationMiddleware(RequestDelegate next, TokenRepository db)
+    public TokenAuthenticationMiddleware(
+        RequestDelegate next, 
+        ITokenRepository db)
     {
         _next = next;
         _db = db;

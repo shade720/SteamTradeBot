@@ -1,5 +1,5 @@
 ﻿using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain.ItemModel;
+using SteamTradeBot.Backend.Domain.ItemPageAggregate;
 
 namespace SteamTradeBot.Backend.Domain.Abstractions;
 
@@ -8,13 +8,13 @@ public abstract class MarketSolution
     protected readonly ISteamApi SteamApi;
     protected readonly IConfigurationService ConfigurationService;
     protected readonly ITradingEventHandler TradingEventHandler;
-    protected readonly OrdersRepository OrdersRepository;
+    protected readonly IOrdersRepository OrdersRepository;
 
     protected MarketSolution(
         ISteamApi api,
         IConfigurationService configurationService,
         ITradingEventHandler tradingEventHandler,
-        OrdersRepository ordersRepository)
+        IOrdersRepository ordersRepository)
     {
         SteamApi = api;
         ConfigurationService = configurationService;

@@ -1,18 +1,19 @@
 ﻿using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain.StateModel;
+using SteamTradeBot.Backend.Domain.StateAggregate;
+using SteamTradeBot.Backend.Domain.TradingEventAggregate;
 
 namespace SteamTradeBot.Backend.Application.Services;
 
 public class DbEventHistoryAgent : IEventHistoryAgent
 {
-    private readonly StateRepository _stateRepository;
-    private readonly HistoryRepository _historyRepository;
+    private readonly IStateRepository _stateRepository;
+    private readonly IHistoryRepository _historyRepository;
     private readonly IConfigurationService _configurationService;
 
     public DbEventHistoryAgent(
-        StateRepository stateRepository,
-        HistoryRepository historyRepository, 
+        IStateRepository stateRepository,
+        IHistoryRepository historyRepository, 
         IConfigurationService configurationService)
     {
         _stateRepository = stateRepository;

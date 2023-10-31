@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using SteamTradeBot.Backend.Domain.Abstractions;
-using SteamTradeBot.Backend.Domain.ItemModel;
-using SteamTradeBot.Backend.Domain.StateModel;
+using SteamTradeBot.Backend.Domain.ItemPageAggregate;
+using SteamTradeBot.Backend.Domain.OrderAggregate;
+using SteamTradeBot.Backend.Domain.StateAggregate;
+using SteamTradeBot.Backend.Domain.TradingEventAggregate;
 
 namespace SteamTradeBot.Backend.Application.EventHandlers;
 

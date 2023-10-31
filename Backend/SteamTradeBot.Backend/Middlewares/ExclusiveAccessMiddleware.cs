@@ -2,16 +2,18 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain.StateModel;
+using SteamTradeBot.Backend.Domain.StateAggregate;
 
 namespace SteamTradeBot.Backend.UI.Middlewares;
 
 public class ExclusiveAccessMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly StateRepository _stateRepository;
+    private readonly IStateRepository _stateRepository;
 
-    public ExclusiveAccessMiddleware(RequestDelegate next, StateRepository stateRepository)
+    public ExclusiveAccessMiddleware(
+        RequestDelegate next, 
+        IStateRepository stateRepository)
     {
         _next = next;
         _stateRepository = stateRepository;

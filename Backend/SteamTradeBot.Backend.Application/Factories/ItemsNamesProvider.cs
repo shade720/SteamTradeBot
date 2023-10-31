@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain.ItemModel;
+using SteamTradeBot.Backend.Domain.OrderAggregate;
 
 namespace SteamTradeBot.Backend.Application.Factories;
 
@@ -9,12 +9,12 @@ public sealed class ItemsNamesProvider
 {
     private readonly IItemsTableApi _api;
     private readonly IConfigurationService _configurationService;
-    private readonly OrdersRepository _ordersRepository;
+    private readonly IOrdersRepository _ordersRepository;
 
     internal ItemsNamesProvider(
         IItemsTableApi api, 
         IConfigurationService configurationService,
-        OrdersRepository ordersRepository)
+        IOrdersRepository ordersRepository)
     {
         _api = api;
         _configurationService = configurationService;

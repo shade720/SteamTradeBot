@@ -3,9 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
-using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain;
 using SteamTradeBot.Backend.Domain.Abstractions;
+using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
 using SteamTradeBot.Backend.Infrastructure.SteamConnectors.Selenium;
 
 namespace SteamTradeBot.Backend.Infrastructure;
@@ -14,10 +13,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddTransient<OrdersRepository, SqlOrdersRepository>();
-        services.AddTransient<HistoryRepository, SqlHistoryRepository>();
-        services.AddTransient<StateRepository, SqlStateRepository>();
-        services.AddTransient<TokenRepository, SqlTokenRepository>();
+        services.AddTransient<IOrdersRepository, SqlOrdersRepository>();
+        services.AddTransient<IHistoryRepository, SqlHistoryRepository>();
+        services.AddTransient<IStateRepository, SqlStateRepository>();
+        services.AddTransient<ITokenRepository, SqlTokenRepository>();
         services.AddDbContextFactory<TradeBotDataContext>(options =>
         {
             var postgresConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION_STRING");

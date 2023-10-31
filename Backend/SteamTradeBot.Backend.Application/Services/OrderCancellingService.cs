@@ -1,16 +1,16 @@
 ﻿using Serilog;
 using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain.ItemModel;
+using SteamTradeBot.Backend.Domain.OrderAggregate;
 
 namespace SteamTradeBot.Backend.Application.Services;
 
 public class OrderCancellingService
 {
     private readonly ISteamApi _api;
-    private readonly OrdersRepository _ordersRepository;
+    private readonly IOrdersRepository _ordersRepository;
 
-    public OrderCancellingService(ISteamApi api, OrdersRepository ordersRepository)
+    public OrderCancellingService(ISteamApi api, IOrdersRepository ordersRepository)
     {
         _api = api;
         _ordersRepository = ordersRepository;

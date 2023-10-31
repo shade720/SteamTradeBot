@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SteamTradeBot.Backend.Domain.ItemModel;
-using SteamTradeBot.Backend.Domain.StateModel;
+using SteamTradeBot.Backend.Domain;
+using SteamTradeBot.Backend.Domain.OrderAggregate;
+using SteamTradeBot.Backend.Domain.StateAggregate;
+using SteamTradeBot.Backend.Domain.TradingEventAggregate;
 
-namespace SteamTradeBot.Backend.Domain;
+namespace SteamTradeBot.Backend.Infrastructure;
 
 public sealed class TradeBotDataContext : DbContext
 {

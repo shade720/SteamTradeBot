@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
 using SteamTradeBot.Backend.Application.Solutions;
-using SteamTradeBot.Backend.Domain;
 using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain.ItemModel;
+using SteamTradeBot.Backend.Domain.ItemPageAggregate;
+using SteamTradeBot.Backend.Domain.OrderAggregate;
+using SteamTradeBot.Backend.Infrastructure;
 
 namespace Application.UnitTests;
 
@@ -15,7 +16,7 @@ public class BuyMarketSolutionTests
     private readonly Mock<ISteamApi> _steamApiMock;
     private readonly Mock<IConfigurationService> _configurationServiceMock;
     private readonly Mock<ITradingEventHandler> _tradingEventHandlerMock;
-    private readonly Mock<OrdersRepository> _ordersRepositoryMock;
+    private readonly Mock<IOrdersRepository> _ordersRepositoryMock;
 
     public BuyMarketSolutionTests()
     {
@@ -24,7 +25,7 @@ public class BuyMarketSolutionTests
         _tradingEventHandlerMock = new Mock<ITradingEventHandler>();
 
         var contextMock = new Mock<IDbContextFactory<TradeBotDataContext>>();
-        _ordersRepositoryMock = new Mock<OrdersRepository>(contextMock.Object);
+        _ordersRepositoryMock = new Mock<IOrdersRepository>(contextMock.Object);
 
         _sut = new BuyMarketSolution(_steamApiMock.Object, _configurationServiceMock.Object,
             _tradingEventHandlerMock.Object, _ordersRepositoryMock.Object);

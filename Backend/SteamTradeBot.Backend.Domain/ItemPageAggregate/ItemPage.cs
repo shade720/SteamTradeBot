@@ -1,4 +1,6 @@
-﻿namespace SteamTradeBot.Backend.Domain.ItemModel;
+﻿using SteamTradeBot.Backend.Domain.OrderAggregate;
+
+namespace SteamTradeBot.Backend.Domain.ItemPageAggregate;
 
 public class ItemPage
 {

@@ -1,16 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SteamTradeBot.Backend.Domain;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
 
 namespace SteamTradeBot.Backend.Infrastructure;
 
-internal sealed class SqlTokenRepository : TokenRepository
+internal sealed class SqlTokenRepository : ITokenRepository
 {
-    public SqlTokenRepository(IDbContextFactory<TradeBotDataContext> tradeBotDataContextFactory) : base(tradeBotDataContextFactory) { }
+    private readonly IDbContextFactory<TradeBotDataContext> _tradeBotDataContextFactory;
 
-    public override async Task<bool> Contains(string token)
+    public SqlTokenRepository(IDbContextFactory<TradeBotDataContext> tradeBotDataContextFactory)
     {
-        await using var context = await TradeBotDataContextFactory.CreateDbContextAsync();
+        _tradeBotDataContextFactory = tradeBotDataContextFactory;
+    }
+
+    public async Task<bool> Contains(string token)
+    {
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
         return await context.ApiKeys.AnyAsync(x => x.Value == token);
     }
 }

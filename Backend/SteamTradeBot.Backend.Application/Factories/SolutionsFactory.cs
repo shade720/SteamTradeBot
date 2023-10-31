@@ -2,7 +2,7 @@
 using SteamTradeBot.Backend.Application.Solutions;
 using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain.ItemModel;
+using SteamTradeBot.Backend.Domain.ItemPageAggregate;
 
 namespace SteamTradeBot.Backend.Application.Factories;
 
@@ -15,7 +15,7 @@ public sealed class SolutionsFactory
         ISteamApi api, 
         IConfigurationService configurationService, 
         ITradingEventHandler tradingEventHandler, 
-        OrdersRepository ordersRepository, 
+        IOrdersRepository ordersRepository, 
         MarketRules rules)
     {
         _rules = rules;

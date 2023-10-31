@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Domain.Abstractions.Rules;
-using SteamTradeBot.Backend.Domain.ItemModel;
+using SteamTradeBot.Backend.Domain.ItemPageAggregate;
 
 namespace SteamTradeBot.Backend.Application.Rules.BuyRules;
 

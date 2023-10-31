@@ -1,17 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SteamTradeBot.Backend.Domain;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain.StateModel;
+using SteamTradeBot.Backend.Domain.StateAggregate;
 
 namespace SteamTradeBot.Backend.Infrastructure;
 
-internal sealed class SqlStateRepository : StateRepository
+internal sealed class SqlStateRepository : IStateRepository
 {
-    public SqlStateRepository(IDbContextFactory<TradeBotDataContext> tradeBotDataContextFactory) : base(tradeBotDataContextFactory) { }
+    private readonly IDbContextFactory<TradeBotDataContext> _tradeBotDataContextFactory;
 
-    public override async Task AddOrUpdateStateAsync(ServiceState state)
+    public SqlStateRepository(IDbContextFactory<TradeBotDataContext> tradeBotDataContextFactory)
     {
-        await using var context = await TradeBotDataContextFactory.CreateDbContextAsync();
+        _tradeBotDataContextFactory = tradeBotDataContextFactory;
+    }
+
+    public async Task AddOrUpdateStateAsync(ServiceState state)
+    {
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
         if (await context.ServiceStates.ContainsAsync(state))
             context.ServiceStates.Update(state);
         else
@@ -19,15 +23,15 @@ internal sealed class SqlStateRepository : StateRepository
         await context.SaveChangesAsync();
     }
 
-    public override async Task<ServiceState?> GetStateAsync(string apiKey)
+    public async Task<ServiceState?> GetStateAsync(string apiKey)
     {
-        await using var context = await TradeBotDataContextFactory.CreateDbContextAsync();
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
         return await context.ServiceStates.FirstOrDefaultAsync(x => x.ApiKey == apiKey);
     }
 
-    public override async Task<List<ServiceState>> GetStatesAsync()
+    public async Task<List<ServiceState>> GetStatesAsync()
     {
-        await using var context = await TradeBotDataContextFactory.CreateDbContextAsync();
+        await using var context = await _tradeBotDataContextFactory.CreateDbContextAsync();
         return await context.ServiceStates.ToListAsync();
     }
 }

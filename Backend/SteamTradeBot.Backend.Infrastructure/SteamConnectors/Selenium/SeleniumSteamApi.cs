@@ -1,8 +1,8 @@
 ﻿using OpenQA.Selenium;
 using Serilog;
 using SteamTradeBot.Backend.Domain.Abstractions;
-using SteamTradeBot.Backend.Domain.ItemModel;
 using System.Globalization;
+using SteamTradeBot.Backend.Domain.ItemPageAggregate;
 
 namespace SteamTradeBot.Backend.Infrastructure.SteamConnectors.Selenium;
 

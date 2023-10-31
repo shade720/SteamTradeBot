@@ -1,20 +1,22 @@
 ﻿using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
-using SteamTradeBot.Backend.Domain.ItemModel;
-using SteamTradeBot.Backend.Domain.StateModel;
+using SteamTradeBot.Backend.Domain.ItemPageAggregate;
+using SteamTradeBot.Backend.Domain.OrderAggregate;
+using SteamTradeBot.Backend.Domain.StateAggregate;
+using SteamTradeBot.Backend.Domain.TradingEventAggregate;
 
 namespace SteamTradeBot.Backend.Application.EventHandlers;
 
 internal sealed class DbBasedTradingEventHandler : ITradingEventHandler
 {
     private readonly IConfigurationService _configurationService;
-    private readonly StateRepository _stateRepository;
-    private readonly HistoryRepository _historyRepository;
+    private readonly IStateRepository _stateRepository;
+    private readonly IHistoryRepository _historyRepository;
 
     public DbBasedTradingEventHandler(
         IConfigurationService configurationService,
-        StateRepository stateRepository,
-        HistoryRepository historyRepository)
+        IStateRepository stateRepository,
+        IHistoryRepository historyRepository)
     {
         _configurationService = configurationService;
         _stateRepository = stateRepository;

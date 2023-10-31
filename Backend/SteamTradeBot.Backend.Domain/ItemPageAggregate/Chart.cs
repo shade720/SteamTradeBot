@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace SteamTradeBot.Backend.Domain.ItemModel;
+namespace SteamTradeBot.Backend.Domain.ItemPageAggregate;
 
 public class Chart : IEnumerable<Chart.PointInfo>
 {

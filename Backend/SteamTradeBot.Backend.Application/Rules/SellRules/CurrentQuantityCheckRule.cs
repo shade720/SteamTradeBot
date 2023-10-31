@@ -2,16 +2,17 @@
 using SteamTradeBot.Backend.Domain.Abstractions;
 using SteamTradeBot.Backend.Domain.Abstractions.RepositoryAbstractions;
 using SteamTradeBot.Backend.Domain.Abstractions.Rules;
-using SteamTradeBot.Backend.Domain.ItemModel;
+using SteamTradeBot.Backend.Domain.ItemPageAggregate;
+using SteamTradeBot.Backend.Domain.OrderAggregate;
 
 namespace SteamTradeBot.Backend.Application.Rules.SellRules;
 
 internal sealed class CurrentQuantityCheckRule : ISellRule
 {
     private readonly IConfigurationService _configurationService;
-    private readonly OrdersRepository _ordersRepository;
+    private readonly IOrdersRepository _ordersRepository;
 
-    public CurrentQuantityCheckRule(IConfigurationService configurationService, OrdersRepository ordersRepository)
+    public CurrentQuantityCheckRule(IConfigurationService configurationService, IOrdersRepository ordersRepository)
     {
         _configurationService = configurationService;
         _ordersRepository = ordersRepository;

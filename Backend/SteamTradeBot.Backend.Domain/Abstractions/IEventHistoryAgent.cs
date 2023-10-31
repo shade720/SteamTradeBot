@@ -1,4 +1,5 @@
-﻿using SteamTradeBot.Backend.Domain.StateModel;
+﻿using SteamTradeBot.Backend.Domain.StateAggregate;
+using SteamTradeBot.Backend.Domain.TradingEventAggregate;
 
 namespace SteamTradeBot.Backend.Domain.Abstractions;
 

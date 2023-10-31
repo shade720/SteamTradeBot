@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\SteamTradeBot.Backend.Application\SteamTradeBot.Backend.Application.csproj" />
+    <ProjectReference Include="..\..\SteamTradeBot.Backend.Infrastructure\SteamTradeBot.Backend.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

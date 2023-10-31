@@ -1,4 +1,4 @@
-﻿using SteamTradeBot.Backend.Domain.ItemModel;
+﻿using SteamTradeBot.Backend.Domain.ItemPageAggregate;
 
 namespace SteamTradeBot.Backend.Domain.Abstractions.Rules;
 
